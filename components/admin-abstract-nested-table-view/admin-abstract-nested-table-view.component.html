@@ -1,0 +1,7 @@
+<div class="alert alert-danger" role="alert" *ngIf="errorMessage">
+    <i class="fa fa-exclamation-triangle pe-2"></i>
+    <strong>Error: </strong>{{ errorMessage }}
+</div>
+
+<admin-data-table [dataLoaded]="dataLoaded" [config]="dataTableConfig" (fetchDataEvent)="fetchData()" (deleteItemEvent)="deleteItem($event)">
+</admin-data-table>

@@ -1,0 +1,66 @@
+.table.table-bordered thead th {
+    position: relative;
+}
+
+.table.table-bordered thead th .sort-icons {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: auto;
+}
+
+.table.table-bordered thead th .sort-icons .btn.up {
+    position: absolute;
+    padding: 0;
+    top: 6px;
+    right: 5px;
+    line-height: 0;
+}
+
+.table.table-bordered thead th .sort-icons .btn.down {
+    position: absolute;
+    padding: 0;
+    top: 16px;
+    right: 5px;
+    line-height: 0;
+}
+
+.table.table-bordered thead th .sort-icons .btn:active,
+.table.table-bordered thead th .sort-icons .btn:focus {
+    outline: none !important;
+    box-shadow: none;
+}
+
+.table.table-bordered thead th .sort-icons .btn i {
+    color: #ddd;
+}
+
+.table.table-bordered thead th .sort-icons .btn.active i {
+    color: #333;
+}
+
+.table-search .form-control {
+    font-size: 0.85rem;
+    height: auto;
+    border: 0;
+    outline: none;
+    color: #6e707e;
+}
+
+.table-search .form-control:focus {
+    color: #6e707e;
+    background-color: #fff;
+    border-color: #bac8f3;
+    outline: 0;
+    box-shadow: 0 0 0 0.1rem rgba(78, 115, 223, .25);
+}
+
+.input-group>.input-group-append>.btn,
+.input-group>.input-group-append>.input-group-text,
+.input-group>.input-group-prepend:first-child>.btn:not(:first-child),
+.input-group>.input-group-prepend:first-child>.input-group-text:not(:first-child),
+.input-group>.input-group-prepend:not(:first-child)>.btn,
+.input-group>.input-group-prepend:not(:first-child)>.input-group-text {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}

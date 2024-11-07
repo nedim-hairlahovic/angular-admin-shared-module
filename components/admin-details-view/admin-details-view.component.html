@@ -1,0 +1,36 @@
+<div class="card shadow mb-4">
+    <div class="card-header py-3">
+        <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
+    </div>
+    <div class="card-body">
+        <div class="row" *ngFor="let row of rows">
+            <div class="col-2">
+                {{ row.label }}:
+            </div>
+            <div class="col-10">
+                <span *ngIf="row.linkBuilder; else valueTemplate">
+                    <a [href]="row.linkBuilder()" target="_blank"><i class="fa fa-external-link-square" style="font-size: 14px;"></i> Link</a>
+                </span>
+                <ng-template #valueTemplate>
+                    <b>{{ row.value }}</b>
+                </ng-template>
+            </div>
+        </div>
+    </div>
+    <div class="card-footer">
+        <button (click)="onBack()" class="btn btn-secondary btn-icon-split">
+            <span class="icon text-white-50">
+                <i class="fa fa-arrow-left" style="font-size: 15px;"></i>
+            </span>
+            <span class="text">Nazad</span>
+        </button>
+
+        <button (click)="onEdit()" class="btn btn-primary ml-3">
+            <i class="fa fa-pencil mr-2" style="font-size: 15px;"></i>
+            <span class="text">Uredi</span>
+        </button>
+    </div>
+</div>
+
+<!-- Place for custom content -->
+<ng-content></ng-content>

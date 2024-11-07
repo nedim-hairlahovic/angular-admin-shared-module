@@ -1,0 +1,74 @@
+.input-container {
+    position: relative;
+}
+
+.input-container .form-control:disabled {
+    background-color: #fff;
+    opacity: 1;
+}
+
+.input-container .overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: white;
+    z-index: 10;
+    pointer-events: none;
+    border: 1px solid #d1d3e2;
+    border-radius: 0.35rem;
+    align-items: center;
+    /* justify-content: flex-end; */
+    display: none;
+    padding-left: 10px;
+}
+
+.input-container .overlay.visible {
+    display: flex;
+    /* Show the overlay */
+}
+
+.input-container .overlay .clear-btn {
+    pointer-events: all;
+    /* margin-right: 10px;
+    margin-bottom: px; */
+    border: none;
+    background: transparent;
+    color: white;
+    cursor: pointer;
+    padding: 0;
+    z-index: 11;
+    position: absolute;
+    right: 10px;
+    top: 4px;
+}
+
+.clear-btn i {
+    font-size: 13px;
+    color: #4e73df;
+}
+
+.input-container .dropdown-menu {
+    list-style: none;
+    padding: 0;
+}
+
+.input-container .dropdown-menu .dropdown-item {
+    cursor: default;
+}
+
+.input-container .dropdown-menu .dropdown-item.clickable:hover {
+    cursor: pointer;
+}
+
+.dropdown-item small {
+    font-size: 11px;
+    color: gray;
+}
+
+.icon-up {
+    position: relative;
+    top: -1px;
+    font-size: 12px;
+}

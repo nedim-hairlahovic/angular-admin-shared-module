@@ -1,0 +1,30 @@
+<div class="dropdown" (clickOutside)="clearInput()">
+    <div class="input-container">
+        <div class="overlay" [class.visible]="isValueSelected">
+            {{ selectedValue?.label }} <span class="ps-1">{{ selectedValue?.description }}</span>
+            <button type="button" class="clear-btn" (click)="clearSelectedValue()">
+                <i class="fa fa-times"></i>
+            </button>
+        </div>
+        <input type="text" class="form-control" [(ngModel)]="selectedValue" (input)="onSearch($event.target.value)" [disabled]="isValueSelected" autocomplete="off" id="searchableSelect{{inputName}}" data-bs-toggle="dropdown" aria-expanded="isDropdownOpen" (click)="isDropdownOpen = !isDropdownOpen"
+        />
+        <ul class="dropdown-menu" [class.show]="isDropdownOpen">
+            <li *ngIf="!searching && (selectedValue === undefined || selectedValue === null)">
+                <div class="dropdown-item" (click)="clearInput()">Unesite pojam za pretragu...</div>
+            </li>
+            <li *ngIf="searching">
+                <div class="dropdown-item" (click)="clearInput()">Pretraga se provodi...</div>
+            </li>
+            <li *ngIf="!searching && (selectedValue != undefined || selectedValue != null) && searchResults.length < 1">
+                <div class="dropdown-item" (click)="clearInput()">
+                    <i class="fa fa-ban icon-up" aria-hidden="true"></i> Nema rezultata
+                </div>
+            </li>
+            <li *ngFor="let item of searchResults">
+                <div class="dropdown-item clickable" (click)="onItemSelect(item)">
+                    {{ item.label }} <small>{{ item.description }}</small>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
