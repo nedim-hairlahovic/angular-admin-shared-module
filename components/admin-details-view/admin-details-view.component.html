@@ -9,7 +9,9 @@
             </div>
             <div class="col-10">
                 <span *ngIf="row.linkBuilder; else valueTemplate">
-                    <a [href]="row.linkBuilder()" target="_blank"><i class="fa fa-external-link-square" style="font-size: 14px;"></i> Link</a>
+                    <a [href]="row.linkBuilder()" target="_blank">
+                        <i class="fa fa-external-link-square" style="font-size: 14px;"></i> {{ row.value || 'Link'}}
+                    </a>
                 </span>
                 <ng-template #valueTemplate>
                     <b>{{ row.value }}</b>
