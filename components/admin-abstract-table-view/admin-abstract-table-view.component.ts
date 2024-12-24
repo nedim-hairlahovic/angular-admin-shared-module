@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { DataTableConfig } from '../../models/data-table';
 import { ApiResource } from '../../models/api-resource';
@@ -12,13 +12,17 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource> imp
   dataTableConfig!: DataTableConfig;
   dataLoaded: boolean = false;
   errorMessage!: string;
+  searchValue!: string | null;
 
-  constructor(private dataService: DataCrudService<T>, private router: Router) { }
+  constructor(private dataService: DataCrudService<T>, private router: Router, private route: ActivatedRoute) { }
 
   abstract getItemTitle(item: T): string;
 
   ngOnInit(): void {
-    this.fetchData();
+    this.route.queryParamMap.subscribe(params => {
+      this.searchValue = params.get('search');
+      this.fetchData();
+    });
   }
 
   fetchData(requestParams?: any): void {

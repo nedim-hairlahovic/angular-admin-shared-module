@@ -12,6 +12,7 @@ import { Pagination, PaginationFactory } from '../../models/pagination';
 export class AdminDataTableComponent implements OnChanges {
   @Input() dataLoaded!: boolean;
   @Input() config!: DataTableConfig;
+  @Input() searchValue!: string;
   @Output() deleteItemEvent = new EventEmitter<any>();
   @Output() fetchDataEvent = new EventEmitter<any>();
 
@@ -37,6 +38,12 @@ export class AdminDataTableComponent implements OnChanges {
     this.setPagination();
 
     if (changes['config'] && changes['config'].isFirstChange()) {
+      if (this.searchValue?.length > 0) {
+        this.searchForm.setValue({
+          keyword: this.searchValue
+        });
+      }
+      
       this.sortBy = this.config.defaultSort?.field;
       this.sortOrder = this.config.defaultSort?.order;
       this.emitFetchDataEvent();
