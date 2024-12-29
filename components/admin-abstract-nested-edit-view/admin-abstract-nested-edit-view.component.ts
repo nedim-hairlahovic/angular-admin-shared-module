@@ -34,6 +34,7 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
       this.getItem();
 
       this.formConfig = this.getFormConfig();
+      this.updateDefaultValuesFromQueryParams();
       this.getAndUpdateRelatedFormData()
     });
   }
@@ -49,6 +50,18 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
       error: err => console.log(err)
     })
     this.getAndUpdateRelatedFormData();
+  }
+
+  updateDefaultValuesFromQueryParams(): void {
+    // Subscribe to query params and update default values in form configuration
+    this.route.queryParamMap.subscribe((params) => {
+      this.formConfig.elements.forEach((element) => {
+        const paramValue = params.get(element.name);
+        if (paramValue) {
+          element.defaultValue = paramValue;
+        }
+      });
+    });
   }
 
   updateFormData(item: T): void {

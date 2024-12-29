@@ -28,6 +28,8 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource> impl
       this.urlId = id;
       this.mode = this.urlId === '0' ? 'ADD' : 'EDIT';
       this.getItem(id);
+
+      this.updateDefaultValuesFromQueryParams();
     });
   }
 
@@ -38,6 +40,18 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource> impl
       error: err => console.log(err)
     })
     this.getAndUpdateRelatedFormData();
+  }
+
+  updateDefaultValuesFromQueryParams(): void {
+    // Subscribe to query params and update default values in form configuration
+    this.route.queryParamMap.subscribe((params) => {
+      this.formConfig.elements.forEach((element) => {
+        const paramValue = params.get(element.name);
+        if (paramValue) {
+          element.defaultValue = paramValue;
+        }
+      });
+    });
   }
 
   updateFormData(item: T): void {
