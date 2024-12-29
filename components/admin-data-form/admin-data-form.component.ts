@@ -31,8 +31,7 @@ import { ApiResource } from '../../models/api-resource';
   templateUrl: './admin-data-form.component.html',
   styleUrls: ['../../admin-shared.css']
 })
-export class AdminDataFormComponent<T extends ApiResource>
-  implements OnInit, OnChanges, AfterViewInit {
+export class AdminDataFormComponent<T extends ApiResource> implements OnInit, OnChanges, AfterViewInit {
   @ViewChildren(FormControlName, { read: ElementRef })
   formInputElements: ElementRef[] = [];
 
@@ -42,6 +41,7 @@ export class AdminDataFormComponent<T extends ApiResource>
   @Output() btnSaveEvent = new EventEmitter<any>();
   @Output() btnBackEvent = new EventEmitter<any>();
 
+  mode: 'ADD' | 'EDIT' = 'ADD';
   dataForm!: FormGroup;
   displayMessage: { [key: string]: string } = {};
 
@@ -57,10 +57,15 @@ export class AdminDataFormComponent<T extends ApiResource>
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
+    if (this.config.data?.id !== null && this.config.data?.id !== 0) {
+      this.mode = 'EDIT';
+    }
+
     this.genericValidator = new GenericValidator(
       this.config.validationMessages
     );
     this.initDataForm();
+    this.updateDataForm();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -98,7 +103,8 @@ export class AdminDataFormComponent<T extends ApiResource>
   }
 
   updateDataForm(): void {
-    if (this.isEditForm()) {
+    // If the mode is 'EDIT', populate the form with existing data
+    if (this.mode === 'EDIT') {
       let values = {} as any;
 
       for (const element of this.config.elements) {
@@ -115,19 +121,18 @@ export class AdminDataFormComponent<T extends ApiResource>
       }
 
       this.dataForm.patchValue(values);
-    }
-  }
+    } else if (this.mode === 'ADD') {
+      // If the mode is 'ADD', initialize the form with default values if exists
+      let values = {} as any;
 
-  isEditForm(): boolean {
-    if (!this.config.data) {
-      return false;
-    }
+      for (const element of this.config.elements) {
+        if (!element.array && element.defaultValue) {
+          values[element.name] = element.defaultValue;
+        }
+      }
 
-    if (this.config.data.id) {
-      return this.config.data?.id !== 0;
+      this.dataForm.patchValue(values);
     }
-
-    return true;
   }
 
   getFormInputValue(controlName: string): any {
@@ -155,15 +160,6 @@ export class AdminDataFormComponent<T extends ApiResource>
   onSave(): void {
     if (this.dataForm.valid) {
       const formValues = { ...this.dataForm.value };
-
-      // Replace empty form element values with their defined default values (if exists)
-      const elementsWithDefaults = this.config.elements.filter(el => el.defaultValue);
-      elementsWithDefaults.forEach(el => {
-        if (formValues[el.name] === '') {
-          formValues[el.name] = el.defaultValue;
-        }
-      })
-
       const formData = { ...this.config.data, ...formValues };
       this.btnSaveEvent.emit(formData);
     }

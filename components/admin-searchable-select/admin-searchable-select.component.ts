@@ -32,6 +32,8 @@ export class AdminSearchableSelectComponent<T extends ApiResource> implements On
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    this.resetValues();
+
     if (this.initialValue) {
       this.dataService.getSingleItem(this.initialValue).subscribe({
         next: (item: T) => {
@@ -74,16 +76,19 @@ export class AdminSearchableSelectComponent<T extends ApiResource> implements On
   }
 
   clearSelectedValue(): void {
-    this.searchResults = []
-    this.selectedValue = null;
-    this.isValueSelected = false;
+    this.resetValues();
     this.onSelectEvent.emit({ inputName: this.inputName, value: null })
   }
 
   clearInput() {
     if (!this.isValueSelected) {
-      this.selectedValue = null;
-      this.searchResults = []
+      this.resetValues();
     }
+  }
+
+  resetValues() {
+    this.selectedValue = null;
+    this.searchResults = [];
+    this.isValueSelected = false;
   }
 }

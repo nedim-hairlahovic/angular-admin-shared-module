@@ -14,6 +14,8 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
   errorMessage!: string;
   parentId!: string | null;
   childId!: string | null;
+  mode: 'ADD' | 'EDIT' = 'ADD';
+  dataLoaded: boolean = false;
 
   constructor(private dataService: NestedDataService<T>, private route: ActivatedRoute, private router: Router) { }
 
@@ -27,6 +29,7 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
     this.route.paramMap.subscribe(params => {
       this.parentId = params.get(this.getParentIdKey());
       this.childId = params.get(this.getChildIdKey());
+      this.mode = this.childId === '0' ? 'ADD' : 'EDIT';
       this.getItem();
     });
   }
@@ -36,6 +39,7 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
   }
 
   getItem(): void {
+    this.dataLoaded = false;
     this.dataService.getSingleItem(this.parentId, this.childId).subscribe({
       next: (item: T) => this.updateFormData(item),
       error: err => console.log(err)
@@ -50,6 +54,8 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
       this.formConfig.title = this.pageTitle;
       this.formConfig = { ...this.formConfig, data: this.convertToRequestObject(item) };
     }
+
+    this.dataLoaded = true;
   }
 
   updateSelectValues(selectValues: any[], controlName: string,
@@ -70,23 +76,19 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
   }
 
   onSave(item: T): void {
-    if (!this.isEditMode(item)) {
+    if (this.mode === 'ADD') {
       this.dataService.createItem(this.parentId, item)
         .subscribe({
           next: () => this.onSaveComplete(),
           error: err => this.errorMessage = err.error.message
         })
-    } else {
+    } else if (this.mode === 'EDIT') {
       this.dataService.updateItem(this.parentId, this.childId, item)
         .subscribe({
           next: () => this.onSaveComplete(),
           error: err => this.errorMessage = err.error.message
         })
     }
-  }
-
-  isEditMode(item: T): boolean {
-    return this.childId !== '0';
   }
 
   onSaveComplete(): void {
