@@ -19,6 +19,7 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
 
   constructor(private dataService: NestedDataService<T>, private route: ActivatedRoute, private router: Router) { }
 
+  abstract getFormConfig(): DataFormConfig<T>;
   abstract getTitle(item: T | null): string;
   abstract getChildIdKey(): string;
   abstract getAndUpdateRelatedFormData(): void;
@@ -31,6 +32,9 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
       this.childId = params.get(this.getChildIdKey());
       this.mode = this.childId === '0' ? 'ADD' : 'EDIT';
       this.getItem();
+
+      this.formConfig = this.getFormConfig();
+      this.getAndUpdateRelatedFormData()
     });
   }
 

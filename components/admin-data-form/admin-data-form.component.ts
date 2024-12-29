@@ -57,7 +57,7 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
   constructor(private fb: FormBuilder) { }
 
   ngOnInit(): void {
-    if (this.config.data?.id !== null && this.config.data?.id !== 0) {
+    if (this.config.data && this.config.data.id !== null && this.config.data.id !== 0) {
       this.mode = 'EDIT';
     }
 
