@@ -37,6 +37,7 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
 
   @Input() config!: DataFormConfig<T>;
   @Input() errorMessage!: string;
+  @Input() formProcessing!: boolean;
 
   @Output() btnSaveEvent = new EventEmitter<any>();
   @Output() btnBackEvent = new EventEmitter<any>();
@@ -69,7 +70,7 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['config'].firstChange) {
+    if (!changes['config']?.firstChange) {
       this.updateDataForm();
     }
   }

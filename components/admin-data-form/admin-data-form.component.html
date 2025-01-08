@@ -127,8 +127,11 @@
 
                     </div>
 
-                    <button type="submit" class="btn btn-primary" style="margin-right: 5px;" [disabled]="!dataForm.valid">Spremi</button>
-                    <button type="submit" class="btn btn-outline-info " (click)="onBack()">Nazad</button>
+                    <button type="submit" class="btn btn-primary" style="margin-right: 5px;" [disabled]="!dataForm.valid || formProcessing">
+                        <span *ngIf="formProcessing" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        <span *ngIf="!formProcessing">Spremi</span>
+                    </button>
+                    <button type="submit" class="btn btn-outline-info " (click)="onBack()" [disabled]="formProcessing">Nazad</button>
                 </form>
             </div>
         </div>

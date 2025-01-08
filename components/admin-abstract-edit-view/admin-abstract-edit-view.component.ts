@@ -15,6 +15,7 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource> impl
   urlId!: string | null;
   mode: 'ADD' | 'EDIT' = 'ADD';
   dataLoaded: boolean = false;
+  processingRequest!: boolean;
 
   constructor(private dataService: DataCrudService<T>, private route: ActivatedRoute, private router: Router) { }
 
@@ -81,23 +82,31 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource> impl
   }
 
   onSave(item: T): void {
+    this.processingRequest = true;
+
     if (this.mode === 'ADD') {
       this.dataService.createItem(item)
         .subscribe({
           next: () => this.onSaveComplete(),
-          error: err => this.errorMessage = err.error.message
+          error: err => this.handleError(err)
         })
     } else if (this.mode === 'EDIT') {
       this.dataService.updateItem(item.id.toString(), item)
         .subscribe({
           next: () => this.onSaveComplete(),
-          error: err => this.errorMessage = err.error.message
+          error: err => this.handleError(err)
         })
     }
   }
 
   onSaveComplete(): void {
+    this.processingRequest = false
     this.router.navigate([this.formConfig.baseUrl]);
+  }
+
+  handleError(err: any): void {
+    this.processingRequest = false;
+    this.errorMessage = err.error.message
   }
 
   onBack(): void {

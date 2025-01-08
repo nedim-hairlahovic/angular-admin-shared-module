@@ -16,6 +16,7 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
   childId!: string | null;
   mode: 'ADD' | 'EDIT' = 'ADD';
   dataLoaded: boolean = false;
+  processingRequest!: boolean;
 
   constructor(private dataService: NestedDataService<T>, private route: ActivatedRoute, private router: Router) { }
 
@@ -93,23 +94,31 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
   }
 
   onSave(item: T): void {
+    this.processingRequest = true;
+
     if (this.mode === 'ADD') {
       this.dataService.createItem(this.parentId, item)
         .subscribe({
           next: () => this.onSaveComplete(),
-          error: err => this.errorMessage = err.error.message
+          error: err => this.handleError(err)
         })
     } else if (this.mode === 'EDIT') {
       this.dataService.updateItem(this.parentId, this.childId, item)
         .subscribe({
           next: () => this.onSaveComplete(),
-          error: err => this.errorMessage = err.error.message
+          error: err => this.handleError(err)
         })
     }
   }
 
   onSaveComplete(): void {
+    this.processingRequest = false
     this.router.navigate([this.formConfig.baseUrl]);
+  }
+
+  handleError(err: any): void {
+    this.processingRequest = false;
+    this.errorMessage = err.error.message
   }
 
   onBack(): void {

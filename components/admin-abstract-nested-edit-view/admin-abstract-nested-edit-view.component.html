@@ -5,6 +5,6 @@
         <h1 class="h3 mb-0 text-gray-800">{{ pageTitle }}</h1>
     </div>
 
-    <admin-data-form *ngIf="dataLoaded" [config]="formConfig" [errorMessage]="errorMessage" (btnSaveEvent)="onSave($event)" (btnBackEvent)="onBack()"></admin-data-form>
+    <admin-data-form *ngIf="dataLoaded" [config]="formConfig" [errorMessage]="errorMessage" [formProcessing]="processingRequest" (btnSaveEvent)="onSave($event)" (btnBackEvent)="onBack()"></admin-data-form>
 
 </div>
