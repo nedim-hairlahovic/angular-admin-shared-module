@@ -23,6 +23,11 @@ export abstract class AdminAbstractNestedDetailsViewComponent<T extends ApiResou
   abstract getOnBackUrl(): string;
   abstract getOnEditUrl(): string;
 
+  protected readonly BASE_BTN_ACTIONS: Record<string, () => void> = {
+    back: () => this.navigateBack(),
+    edit: () => this.navigateToEdit()
+  };
+
   ngOnInit(): void {
     this.pageTitle = this.getTitle(null);
     this.route.paramMap.subscribe(params => {
@@ -41,5 +46,25 @@ export abstract class AdminAbstractNestedDetailsViewComponent<T extends ApiResou
       next: (_item: T) => this.item = _item,
       error: err => console.log(err)
     })
+  }
+
+  onBtnClick(actionName: any): void {
+    const actionMap = this.getBtnActions();
+    const action = actionMap[actionName];
+    if (action) {
+      action();
+    }
+  }
+
+  protected getBtnActions(): Record<string, () => void> {
+    return this.BASE_BTN_ACTIONS;
+  }
+
+  navigateBack(): void {
+    this.router.navigate([this.getOnBackUrl()]);
+  }
+
+  navigateToEdit(): void {
+    this.router.navigate([this.getOnEditUrl()]);
   }
 }
