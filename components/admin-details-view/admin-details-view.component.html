@@ -20,16 +20,9 @@
         </div>
     </div>
     <div class="card-footer">
-        <button (click)="onBack()" class="btn btn-secondary btn-icon-split">
-            <span class="icon text-white-50">
-                <i class="fa fa-arrow-left" style="font-size: 15px;"></i>
-            </span>
-            <span class="text">Nazad</span>
-        </button>
-
-        <button (click)="onEdit()" class="btn btn-primary ml-3">
-            <i class="fa fa-pencil mr-2" style="font-size: 15px;"></i>
-            <span class="text">Uredi</span>
+        <button *ngFor="let button of buttons" (click)="handleBtnClick(button.actionName)" class="btn mr-3" [ngClass]="button.class">
+            <i *ngIf="button.icon" [class]="button.icon" class="mr-2" style="font-size: 15px;"></i>
+            <span class="text">{{ button.label }}</span>
         </button>
     </div>
 </div>

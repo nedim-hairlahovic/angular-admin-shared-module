@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 import { DetailsViewRow } from '../../models/details-view';
 import { ApiResource } from '../../models/api-resource';
@@ -11,11 +11,16 @@ import { DataCrudService } from '../../services/data.service';
 export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource> implements OnInit {
   item?: T;
 
-  constructor(private dataService: DataCrudService<T>, private route: ActivatedRoute) { }
+  constructor(private dataService: DataCrudService<T>, private route: ActivatedRoute, private router: Router) { }
 
   abstract getTitle(): string;
   abstract getDetailsData(): DetailsViewRow[];
-  abstract getOnBackUrl(): string;
+  abstract getBaseUrl(): string;
+
+  protected readonly BASE_BTN_ACTIONS: Record<string, () => void> = {
+    back: () => this.navigateBack(),
+    edit: () => this.navigateToEdit()
+  };
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -33,4 +38,24 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource> i
     });
   }
 
+  onBtnClick(actionName: any): void {
+    const actionMap = this.getBtnActions();
+    const action = actionMap[actionName];
+    if (action) {
+      action();
+    }
+  }
+
+  protected getBtnActions(): Record<string, () => void> {
+    return this.BASE_BTN_ACTIONS;
+  }
+
+  navigateBack(): void {
+    this.router.navigate([this.getBaseUrl()]);
+  }
+
+  navigateToEdit(): void {
+    const editUrl = `${this.getBaseUrl()}/${this.item?.id}/edit`;
+    this.router.navigate([editUrl]);
+  }
 }

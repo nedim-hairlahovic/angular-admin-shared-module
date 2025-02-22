@@ -1,37 +1,35 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 
 import { DetailsViewRow } from '../../models/details-view';
+import { CardButton } from '../../models/data-card';
 
 @Component({
   selector: 'admin-details-view',
   templateUrl: './admin-details-view.component.html',
-  styleUrls: ['../../admin-shared.css', './admin-details-view.component.css']
+  styleUrls: ['../../admin-shared.css']
 })
-export class AdminDetailsViewComponent implements OnInit {
+export class AdminDetailsViewComponent {
   @Input() id!: any;
   @Input() title!: string;
   @Input() rows: DetailsViewRow[] = [];
-  @Input() onBackUrl!: string;
-  @Input() onEditUrl!: string;
-
-  constructor(private router: Router) { }
-
-  ngOnInit(): void {
-  }
-
-  onBack() {
-    this.router.navigate([this.onBackUrl]);
-  }
-
-  onEdit() {
-    if (this.onEditUrl) {
-      this.router.navigate([this.onEditUrl]);
-      return;
+  @Input() buttons: CardButton[] = [
+    {
+      label: 'Nazad',
+      icon: 'fa fa-arrow-left',
+      class: 'btn-secondary',
+      actionName: 'back'
+    },
+    {
+      label: 'Uredi',
+      icon: 'fa fa-pencil',
+      class: 'btn-primary',
+      actionName: 'edit'
     }
+  ];
 
-    const editUrl = `${this.onBackUrl}/${this.id}/edit`;
-    this.router.navigate([editUrl]);
+  @Output() btnClickEvent = new EventEmitter<any>();
+
+  handleBtnClick(actionName: string) {
+    this.btnClickEvent.emit(actionName)
   }
-
 }

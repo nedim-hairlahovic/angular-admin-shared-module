@@ -1,2 +1,2 @@
-<admin-details-view [id]="item.id" [title]="getTitle()" [rows]="getDetailsData()" [onBackUrl]="getOnBackUrl()" *ngIf="item">
+<admin-details-view *ngIf="item" [id]="item.id" [title]="getTitle()" [rows]="getDetailsData()" (btnClickEvent)="onBtnClick($event)">
 </admin-details-view>
