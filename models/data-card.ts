@@ -3,4 +3,5 @@ export interface CardButton {
     icon?: string;
     class: string;
     actionName: string;
+    action: () => void;
 }

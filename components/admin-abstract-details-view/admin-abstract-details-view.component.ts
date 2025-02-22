@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { DetailsViewRow } from '../../models/details-view';
 import { ApiResource } from '../../models/api-resource';
 import { DataCrudService } from '../../services/data.service';
+import { CardButton } from '../../models/data-card';
 
 @Component({
   template: ''
@@ -17,10 +18,22 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource> i
   abstract getDetailsData(): DetailsViewRow[];
   abstract getBaseUrl(): string;
 
-  protected readonly BASE_BTN_ACTIONS: Record<string, () => void> = {
-    back: () => this.navigateBack(),
-    edit: () => this.navigateToEdit()
-  };
+  protected readonly DEFAULT_BUTTONS: CardButton[] = [
+    {
+      label: 'Nazad',
+      icon: 'fa fa-arrow-left',
+      class: 'btn-secondary',
+      actionName: 'back',
+      action: () => this.navigateBack()
+    },
+    {
+      label: 'Uredi',
+      icon: 'fa fa-pencil',
+      class: 'btn-primary',
+      actionName: 'edit',
+      action: () => this.navigateToEdit()
+    }
+  ];
 
   ngOnInit(): void {
     this.route.paramMap.subscribe(params => {
@@ -39,15 +52,18 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource> i
   }
 
   onBtnClick(actionName: any): void {
-    const actionMap = this.getBtnActions();
-    const action = actionMap[actionName];
-    if (action) {
-      action();
+    const button = this.findButtonByActionName(actionName);
+    if (button) {
+      button.action();
     }
   }
 
-  protected getBtnActions(): Record<string, () => void> {
-    return this.BASE_BTN_ACTIONS;
+  protected getButtons(): CardButton[] {
+    return this.DEFAULT_BUTTONS;
+  }
+
+  findButtonByActionName(actionName: string): CardButton | undefined {
+    return this.getButtons().find(button => button.actionName === actionName);
   }
 
   navigateBack(): void {

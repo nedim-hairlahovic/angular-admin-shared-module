@@ -12,20 +12,7 @@ export class AdminDetailsViewComponent {
   @Input() id!: any;
   @Input() title!: string;
   @Input() rows: DetailsViewRow[] = [];
-  @Input() buttons: CardButton[] = [
-    {
-      label: 'Nazad',
-      icon: 'fa fa-arrow-left',
-      class: 'btn-secondary',
-      actionName: 'back'
-    },
-    {
-      label: 'Uredi',
-      icon: 'fa fa-pencil',
-      class: 'btn-primary',
-      actionName: 'edit'
-    }
-  ];
+  @Input() buttons: CardButton[] = [];
 
   @Output() btnClickEvent = new EventEmitter<any>();
 
