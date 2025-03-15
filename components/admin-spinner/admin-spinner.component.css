@@ -1,0 +1,9 @@
+.spinner {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.spinner.lg .spinner-message {
+    font-size: 20px;
+}

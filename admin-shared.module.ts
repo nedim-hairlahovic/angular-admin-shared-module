@@ -10,6 +10,7 @@ import { AdminDataTableComponent } from './components/admin-data-table/admin-dat
 import { AdminDataFormComponent } from './components/admin-data-form/admin-data-form.component';
 import { AdminDetailsViewComponent } from './components/admin-details-view/admin-details-view.component';
 import { AdminSearchableSelectComponent } from './components/admin-searchable-select/admin-searchable-select.component';
+import { AdminSpinnerComponent } from './components/admin-spinner/admin-spinner.component';
 
 @NgModule({
   declarations: [
@@ -18,6 +19,7 @@ import { AdminSearchableSelectComponent } from './components/admin-searchable-se
     AdminDataFormComponent,
     AdminDetailsViewComponent,
     AdminSearchableSelectComponent,
+    AdminSpinnerComponent,
   ],
   imports: [
     BrowserModule,
@@ -33,6 +35,7 @@ import { AdminSearchableSelectComponent } from './components/admin-searchable-se
     AdminDataFormComponent,
     AdminDetailsViewComponent,
     AdminSearchableSelectComponent,
+    AdminSpinnerComponent
   ],
 })
 export class AdminSharedModule { }
