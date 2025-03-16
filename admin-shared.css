@@ -6067,7 +6067,7 @@ a.close.disabled {
 
 .modal-header {
     display: flex;
-    align-items: flex-start;
+    align-items: center;
     justify-content: space-between;
     padding: 1rem 1rem;
     border-bottom: 1px solid #e3e6f0;
