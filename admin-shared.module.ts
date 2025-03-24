@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
-import { HttpClientModule } from '@angular/common/http';
+import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { ClickOutsideDirective } from './directives/click-outside.directive';
@@ -21,21 +21,17 @@ import { AdminSpinnerComponent } from './components/admin-spinner/admin-spinner.
     AdminSearchableSelectComponent,
     AdminSpinnerComponent,
   ],
-  imports: [
-    BrowserModule,
-    ReactiveFormsModule,
-    FormsModule,
-    BrowserModule,
-    CommonModule,
-    HttpClientModule,
-    RouterModule
-  ],
   exports: [
     AdminDataTableComponent,
     AdminDataFormComponent,
     AdminDetailsViewComponent,
     AdminSearchableSelectComponent,
     AdminSpinnerComponent
-  ],
+  ], imports: [BrowserModule,
+    ReactiveFormsModule,
+    FormsModule,
+    BrowserModule,
+    CommonModule,
+    RouterModule], providers: [provideHttpClient(withInterceptorsFromDi())]
 })
 export class AdminSharedModule { }
