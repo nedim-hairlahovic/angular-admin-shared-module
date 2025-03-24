@@ -7,7 +7,8 @@ import { DataCrudService } from '../../services/data.service';
 import { CardButton } from '../../models/data-card';
 
 @Component({
-  template: ''
+    template: '',
+    standalone: false
 })
 export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource> implements OnInit {
   item?: T;

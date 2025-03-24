@@ -5,9 +5,10 @@ import { DataTableButton, DataTableColumn, DataTableColumnUrl, DataTableConfig }
 import { Pagination, PaginationFactory } from '../../models/pagination';
 
 @Component({
-  selector: 'admin-data-table',
-  templateUrl: './admin-data-table.component.html',
-  styleUrls: ['../../admin-shared.css', './admin-data-table.component.css']
+    selector: 'admin-data-table',
+    templateUrl: './admin-data-table.component.html',
+    styleUrls: ['../../admin-shared.css', './admin-data-table.component.css'],
+    standalone: false
 })
 export class AdminDataTableComponent implements OnChanges {
   @Input() dataLoaded!: boolean;

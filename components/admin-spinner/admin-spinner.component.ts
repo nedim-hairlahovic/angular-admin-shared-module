@@ -1,9 +1,10 @@
 import { Component, Input, OnInit } from '@angular/core';
 
 @Component({
-  selector: 'admin-spinner',
-  templateUrl: './admin-spinner.component.html',
-  styleUrls: ['./admin-spinner.component.css']
+    selector: 'admin-spinner',
+    templateUrl: './admin-spinner.component.html',
+    styleUrls: ['./admin-spinner.component.css'],
+    standalone: false
 })
 export class AdminSpinnerComponent implements OnInit {
   @Input() message: string = 'Učitavanje...';

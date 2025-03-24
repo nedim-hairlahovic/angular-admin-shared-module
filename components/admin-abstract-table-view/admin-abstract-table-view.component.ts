@@ -6,7 +6,8 @@ import { ApiResource } from '../../models/api-resource';
 import { DataCrudService } from '../../services/data.service';
 
 @Component({
-  template: '',
+    template: '',
+    standalone: false
 })
 export abstract class AdminAbstractTableViewComponent<T extends ApiResource> implements OnInit {
   dataTableConfig!: DataTableConfig;

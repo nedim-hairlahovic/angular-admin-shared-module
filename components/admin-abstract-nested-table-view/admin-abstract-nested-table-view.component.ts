@@ -5,7 +5,8 @@ import { DataTableConfig } from '../../models/data-table';
 import { NestedDataService } from '../../services/nested-data.service';
 
 @Component({
-  template: ''
+    template: '',
+    standalone: false
 })
 export abstract class AdminAbstractNestedTableViewComponent<T> implements OnInit {
   @Input() parentId!: number;

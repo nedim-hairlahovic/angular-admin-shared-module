@@ -6,9 +6,10 @@ import { ApiResource } from '../../models/api-resource';
 import { DataCrudService } from '../../services/data.service';
 
 @Component({
-  selector: 'admin-searchable-select',
-  templateUrl: './admin-searchable-select.component.html',
-  styleUrls: ['./admin-searchable-select.component.css']
+    selector: 'admin-searchable-select',
+    templateUrl: './admin-searchable-select.component.html',
+    styleUrls: ['./admin-searchable-select.component.css'],
+    standalone: false
 })
 export class AdminSearchableSelectComponent<T extends ApiResource> implements OnChanges {
   @Input() inputName!: string;

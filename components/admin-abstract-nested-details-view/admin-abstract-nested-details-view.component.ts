@@ -7,7 +7,8 @@ import { DetailsViewRow } from '../../models/details-view';
 import { CardButton } from '../../models/data-card';
 
 @Component({
-  template: ''
+    template: '',
+    standalone: false
 })
 export abstract class AdminAbstractNestedDetailsViewComponent<T extends ApiResource> implements OnInit {
   item?: T;

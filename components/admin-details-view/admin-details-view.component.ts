@@ -4,9 +4,10 @@ import { DetailsViewRow } from '../../models/details-view';
 import { CardButton } from '../../models/data-card';
 
 @Component({
-  selector: 'admin-details-view',
-  templateUrl: './admin-details-view.component.html',
-  styleUrls: ['../../admin-shared.css']
+    selector: 'admin-details-view',
+    templateUrl: './admin-details-view.component.html',
+    styleUrls: ['../../admin-shared.css'],
+    standalone: false
 })
 export class AdminDetailsViewComponent {
   @Input() id!: any;

@@ -6,7 +6,8 @@ import { ApiResource } from '../../models/api-resource';
 import { NestedDataService } from '../../services/nested-data.service';
 
 @Component({
-  template: ''
+    template: '',
+    standalone: false
 })
 export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource> implements OnInit {
   pageTitle: string = this.getTitle(null);

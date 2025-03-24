@@ -27,9 +27,10 @@ import { GenericValidator } from '../../validators/generic-validator';
 import { ApiResource } from '../../models/api-resource';
 
 @Component({
-  selector: 'admin-data-form',
-  templateUrl: './admin-data-form.component.html',
-  styleUrls: ['../../admin-shared.css']
+    selector: 'admin-data-form',
+    templateUrl: './admin-data-form.component.html',
+    styleUrls: ['../../admin-shared.css'],
+    standalone: false
 })
 export class AdminDataFormComponent<T extends ApiResource> implements OnInit, OnChanges, AfterViewInit {
   @ViewChildren(FormControlName, { read: ElementRef })
