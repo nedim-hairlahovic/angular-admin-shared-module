@@ -1,0 +1,24 @@
+<div class="row align-items-center mb-4">
+    <div class="col-md">
+        <h2 class="mb-0 d-flex align-items-center page-title">
+            {{ pageTitle }}
+        </h2>
+    </div>
+</div>
+
+<div class="admin-tabs">
+    <ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item" *ngFor="let tab of tabs; let i = index" role="presentation">
+            <button class="nav-link" [class.active]="i === selectedIndex" type="button" role="tab"
+                (click)="onTabClick(i)">
+                {{ tab.label }}
+            </button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-4" *ngIf="tabs.length">
+        <ng-template #dynamicComponentHost></ng-template>
+    </div>
+</div>
+
+<ng-content select="[after-tabs]"></ng-content>
