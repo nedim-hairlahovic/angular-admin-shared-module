@@ -6,7 +6,7 @@
     </div>
 </div>
 
-<div class="admin-tabs">
+<div class="admin-tabs" *ngIf="tabs">
     <ul class="nav nav-tabs" role="tablist">
         <li class="nav-item" *ngFor="let tab of tabs; let i = index" role="presentation">
             <button class="nav-link" [class.active]="i === selectedIndex" type="button" role="tab"
