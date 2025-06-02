@@ -53,6 +53,7 @@ export class AdminDataFormComponent<T extends ApiResource>
   readonly SEARCHABLE_SELECT: DataFormElementType =
     DataFormElementType.SearchableSelect;
   readonly TEXTAREA: DataFormElementType = DataFormElementType.TextArea;
+  readonly TIME: DataFormElementType = DataFormElementType.Time;
 
   private genericValidator!: GenericValidator;
 
