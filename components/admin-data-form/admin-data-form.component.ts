@@ -9,30 +9,29 @@ import {
   Output,
   SimpleChanges,
   ViewChildren,
-} from '@angular/core';
+} from "@angular/core";
 import {
   FormArray,
   FormBuilder,
   FormControl,
   FormControlName,
   FormGroup,
-} from '@angular/forms';
-import { debounceTime, fromEvent, merge, Observable } from 'rxjs';
+} from "@angular/forms";
+import { debounceTime, fromEvent, merge, Observable } from "rxjs";
 
-import {
-  DataFormConfig,
-  DataFormElementType,
-} from '../../models/data-form';
-import { GenericValidator } from '../../validators/generic-validator';
-import { ApiResource } from '../../models/api-resource';
+import { DataFormConfig, DataFormElementType } from "../../models/data-form";
+import { GenericValidator } from "../../validators/generic-validator";
+import { ApiResource } from "../../models/api-resource";
 
 @Component({
-    selector: 'admin-data-form',
-    templateUrl: './admin-data-form.component.html',
-    styleUrls: ['../../admin-shared.css'],
-    standalone: false
+  selector: "admin-data-form",
+  templateUrl: "./admin-data-form.component.html",
+  styleUrls: ["../../admin-shared.css"],
+  standalone: false,
 })
-export class AdminDataFormComponent<T extends ApiResource> implements OnInit, OnChanges, AfterViewInit {
+export class AdminDataFormComponent<T extends ApiResource>
+  implements OnInit, OnChanges, AfterViewInit
+{
   @ViewChildren(FormControlName, { read: ElementRef })
   formInputElements: ElementRef[] = [];
 
@@ -43,7 +42,7 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
   @Output() btnSaveEvent = new EventEmitter<any>();
   @Output() btnBackEvent = new EventEmitter<any>();
 
-  mode: 'ADD' | 'EDIT' = 'ADD';
+  mode: "ADD" | "EDIT" = "ADD";
   dataForm!: FormGroup;
   displayMessage: { [key: string]: string } = {};
 
@@ -51,16 +50,21 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
   readonly DATE: DataFormElementType = DataFormElementType.Date;
   readonly NUMBER: DataFormElementType = DataFormElementType.Number;
   readonly SELECT: DataFormElementType = DataFormElementType.Select;
-  readonly SEARCHABLE_SELECT: DataFormElementType = DataFormElementType.SearchableSelect;
+  readonly SEARCHABLE_SELECT: DataFormElementType =
+    DataFormElementType.SearchableSelect;
   readonly TEXTAREA: DataFormElementType = DataFormElementType.TextArea;
 
   private genericValidator!: GenericValidator;
 
-  constructor(private fb: FormBuilder) { }
+  constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    if (this.config.data && this.config.data.id !== null && this.config.data.id !== 0) {
-      this.mode = 'EDIT';
+    if (
+      this.config.data &&
+      this.config.data.id !== null &&
+      this.config.data.id !== 0
+    ) {
+      this.mode = "EDIT";
     }
 
     this.genericValidator = new GenericValidator(
@@ -71,7 +75,7 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes['config']?.firstChange) {
+    if (!changes["config"]?.firstChange) {
       this.updateDataForm();
     }
   }
@@ -80,7 +84,7 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
     // Watch for the blur event from any input element on the form.
     // This is required because the valueChanges does not provide notification on blur
     const controlBlurs: Observable<any>[] = this.formInputElements.map(
-      (formControl: ElementRef) => fromEvent(formControl.nativeElement, 'blur')
+      (formControl: ElementRef) => fromEvent(formControl.nativeElement, "blur")
     );
 
     // Merge the blur event observable with the valueChanges observable
@@ -88,7 +92,9 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
     merge(this.dataForm.valueChanges, ...controlBlurs)
       .pipe(debounceTime(200))
       .subscribe((value) => {
-        this.displayMessage = this.genericValidator.processMessages(this.dataForm);
+        this.displayMessage = this.genericValidator.processMessages(
+          this.dataForm
+        );
       });
   }
 
@@ -96,7 +102,10 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
     this.dataForm = this.fb.group({});
     for (const element of this.config.elements) {
       if (!element.array) {
-        const formControl = new FormControl('', element.validators);
+        const formControl = new FormControl(
+          { value: "", disabled: element.disabled ? element.disabled : false },
+          element.validators
+        );
         this.dataForm.addControl(element.name, formControl);
       } else {
         this.dataForm.addControl(element.name, this.fb.array([]));
@@ -106,7 +115,7 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
 
   updateDataForm(): void {
     // If the mode is 'EDIT', populate the form with existing data
-    if (this.mode === 'EDIT') {
+    if (this.mode === "EDIT") {
       let values = {} as any;
 
       for (const element of this.config.elements) {
@@ -123,7 +132,7 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
       }
 
       this.dataForm.patchValue(values);
-    } else if (this.mode === 'ADD') {
+    } else if (this.mode === "ADD") {
       // If the mode is 'ADD', initialize the form with default values if exists
       let values = {} as any;
 
@@ -147,9 +156,11 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
 
   addInputToFormArray(controlName: string): void {
     const formArray = this.getFormArray(controlName);
-    const config = this.config.elements.find((e: any) => e.name === controlName);
+    const config = this.config.elements.find(
+      (e: any) => e.name === controlName
+    );
     if (config) {
-      formArray.push(new FormControl('', config.validators));
+      formArray.push(new FormControl("", config.validators));
     }
   }
 
@@ -180,8 +191,8 @@ export class AdminDataFormComponent<T extends ApiResource> implements OnInit, On
     if (Array.isArray(formElement.value)) {
       // If the form element is an array, you can push the new value to the array
       const updatedValue = [...formElement.value, event.value]
-        .filter((x) => x !== '')
-        .map(x => +x)
+        .filter((x) => x !== "")
+        .map((x) => +x)
         .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
       formElement.setValue(updatedValue);
     } else {
