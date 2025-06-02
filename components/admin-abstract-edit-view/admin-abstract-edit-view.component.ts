@@ -1,34 +1,40 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 
-import { DataFormConfig, DataFormSelectOption } from '../../models/data-form';
-import { ApiResource } from '../../models/api-resource';
-import { DataCrudService } from '../../services/data.service';
+import { DataFormConfig, DataFormSelectOption } from "../../models/data-form";
+import { ApiResource } from "../../models/api-resource";
+import { DataCrudService } from "../../services/data.service";
 
 @Component({
-    template: '',
-    standalone: false
+  template: "",
+  standalone: false,
 })
-export abstract class AdminAbstractEditViewComponent<T extends ApiResource> implements OnInit {
+export abstract class AdminAbstractEditViewComponent<T extends ApiResource>
+  implements OnInit
+{
   pageTitle: string = this.getTitle(null);
   formConfig!: DataFormConfig<T>;
   errorMessage!: string;
   urlId!: string | null;
-  mode: 'ADD' | 'EDIT' = 'ADD';
+  mode: "ADD" | "EDIT" = "ADD";
   dataLoaded: boolean = false;
   processingRequest!: boolean;
 
-  constructor(private dataService: DataCrudService<T>, private route: ActivatedRoute, private router: Router) { }
+  constructor(
+    private dataService: DataCrudService<T>,
+    protected route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   abstract getTitle(item: T | null): string;
   abstract getAndUpdateRelatedFormData(): void;
 
   ngOnInit(): void {
     this.pageTitle = this.getTitle(null);
-    this.route.paramMap.subscribe(params => {
-      const id = params.get('id');
+    this.route.paramMap.subscribe((params) => {
+      const id = params.get("id");
       this.urlId = id;
-      this.mode = this.urlId === '0' ? 'ADD' : 'EDIT';
+      this.mode = this.urlId === "0" ? "ADD" : "EDIT";
       this.getItem(id);
 
       this.updateDefaultValuesFromQueryParams();
@@ -39,8 +45,8 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource> impl
     this.dataLoaded = false;
     this.dataService.getSingleItem(id).subscribe({
       next: (item: T) => this.updateFormData(item),
-      error: err => console.log(err)
-    })
+      error: (err) => console.log(err),
+    });
     this.getAndUpdateRelatedFormData();
   }
 
@@ -59,7 +65,10 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource> impl
   updateFormData(item: T): void {
     this.pageTitle = this.getTitle(item);
     this.formConfig.title = this.pageTitle;
-    this.formConfig = { ...this.formConfig, data: this.convertToRequestObject(item) };
+    this.formConfig = {
+      ...this.formConfig,
+      data: this.convertToRequestObject(item),
+    };
     this.dataLoaded = true;
   }
 
@@ -67,16 +76,23 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource> impl
     return item;
   }
 
-  updateSelectValues(selectValues: any[], controlName: string) {
+  updateSelectValues(
+    selectValues: any[],
+    controlName: string,
+    value: string = "value",
+    label: string = "label"
+  ) {
     const selectOptions = [] as DataFormSelectOption[];
     for (const selectValue of selectValues) {
       selectOptions.push({
-        value: selectValue.value.toString(),
-        label: selectValue.label,
+        value: selectValue[value],
+        label: selectValue[label],
       } as DataFormSelectOption);
     }
 
-    const targetSelectInput = this.formConfig.elements.find((x: any) => x.id === controlName);
+    const targetSelectInput = this.formConfig.elements.find(
+      (x: any) => x.id === controlName
+    );
     if (targetSelectInput) {
       targetSelectInput.values = selectOptions;
     }
@@ -85,33 +101,30 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource> impl
   onSave(item: T): void {
     this.processingRequest = true;
 
-    if (this.mode === 'ADD') {
-      this.dataService.createItem(item)
-        .subscribe({
-          next: () => this.onSaveComplete(),
-          error: err => this.handleError(err)
-        })
-    } else if (this.mode === 'EDIT') {
-      this.dataService.updateItem(item.id.toString(), item)
-        .subscribe({
-          next: () => this.onSaveComplete(),
-          error: err => this.handleError(err)
-        })
+    if (this.mode === "ADD") {
+      this.dataService.createItem(item).subscribe({
+        next: () => this.onSaveComplete(),
+        error: (err) => this.handleError(err),
+      });
+    } else if (this.mode === "EDIT") {
+      this.dataService.updateItem(item.id.toString(), item).subscribe({
+        next: () => this.onSaveComplete(),
+        error: (err) => this.handleError(err),
+      });
     }
   }
 
   onSaveComplete(): void {
-    this.processingRequest = false
+    this.processingRequest = false;
     this.router.navigate([this.formConfig.baseUrl]);
   }
 
   handleError(err: any): void {
     this.processingRequest = false;
-    this.errorMessage = err.error.message
+    this.errorMessage = err.error.message;
   }
 
   onBack(): void {
     this.router.navigate([this.formConfig.baseUrl]);
   }
-
 }
