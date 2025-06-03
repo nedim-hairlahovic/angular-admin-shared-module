@@ -54,6 +54,7 @@ export class AdminDataFormComponent<T extends ApiResource>
     DataFormElementType.SearchableSelect;
   readonly TEXTAREA: DataFormElementType = DataFormElementType.TextArea;
   readonly TIME: DataFormElementType = DataFormElementType.Time;
+  readonly CHECKBOX: DataFormElementType = DataFormElementType.Checkbox;
 
   private genericValidator!: GenericValidator;
 

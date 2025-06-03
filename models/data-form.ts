@@ -38,4 +38,5 @@ export enum DataFormElementType {
   SearchableSelect,
   TextArea,
   Time,
+  Checkbox,
 }

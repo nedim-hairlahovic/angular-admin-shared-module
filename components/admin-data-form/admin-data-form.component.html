@@ -96,6 +96,16 @@
                                 </div>
                             </ng-container>
 
+                            <ng-container *ngIf="input.type === CHECKBOX">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" value="" id="{{ input.id }}"
+                                        formControlName="{{ input.name }}">
+                                    <label class="form-check-label" for="{{ input.id }}">
+                                        {{ input.label }}
+                                    </label>
+                                </div>
+                            </ng-container>
+
                         </ng-container>
 
                         <!-- Array Types -->
