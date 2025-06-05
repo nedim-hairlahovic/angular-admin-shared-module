@@ -135,12 +135,22 @@ export class AdminDataFormComponent<T extends ApiResource>
 
       this.dataForm.patchValue(values);
     } else if (this.mode === "ADD") {
-      // If the mode is 'ADD', initialize the form with default values if exists
       let values = {} as any;
 
       for (const element of this.config.elements) {
-        if (!element.array && element.defaultValue) {
+        // Skip array elements, as default values are not applied to them here
+        if (element.array) {
+          return;
+        }
+
+        // Use default value if specified in the element definition
+        if (element.defaultValue) {
           values[element.name] = element.defaultValue;
+        }
+
+        // Override with provided data value if available
+        if (this.config.data[element.name]) {
+          values[element.name] = this.config.data[element.name];
         }
       }
 
