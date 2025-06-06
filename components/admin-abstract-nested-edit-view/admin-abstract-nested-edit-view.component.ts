@@ -1,25 +1,32 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 
-import { DataFormConfig, DataFormSelectOption } from '../../models/data-form';
-import { ApiResource } from '../../models/api-resource';
-import { NestedDataService } from '../../services/nested-data.service';
+import { DataFormConfig, DataFormSelectOption } from "../../models/data-form";
+import { ApiResource } from "../../models/api-resource";
+import { NestedDataService } from "../../services/nested-data.service";
 
 @Component({
-    template: '',
-    standalone: false
+  template: "",
+  standalone: false,
 })
-export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource> implements OnInit {
+export abstract class AdminAbstractNestedEditViewComponent<
+  T extends ApiResource
+> implements OnInit
+{
   pageTitle: string = this.getTitle(null);
   formConfig!: DataFormConfig<T>;
   errorMessage!: string;
   parentId!: string | null;
   childId!: string | null;
-  mode: 'ADD' | 'EDIT' = 'ADD';
+  mode: "ADD" | "EDIT" = "ADD";
   dataLoaded: boolean = false;
   processingRequest!: boolean;
 
-  constructor(private dataService: NestedDataService<T>, private route: ActivatedRoute, private router: Router) { }
+  constructor(
+    private dataService: NestedDataService<T>,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   abstract getFormConfig(): DataFormConfig<T>;
   abstract getTitle(item: T | null): string;
@@ -29,28 +36,28 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
 
   ngOnInit(): void {
     this.pageTitle = this.getTitle(null);
-    this.route.paramMap.subscribe(params => {
+    this.route.paramMap.subscribe((params) => {
       this.parentId = params.get(this.getParentIdKey());
       this.childId = params.get(this.getChildIdKey());
-      this.mode = this.childId === '0' ? 'ADD' : 'EDIT';
+      this.mode = this.childId === "0" ? "ADD" : "EDIT";
       this.getItem();
 
       this.formConfig = this.getFormConfig();
       this.updateDefaultValuesFromQueryParams();
-      this.getAndUpdateRelatedFormData()
+      this.getAndUpdateRelatedFormData();
     });
   }
 
   getParentIdKey(): string {
-    return 'id';
+    return "id";
   }
 
   getItem(): void {
     this.dataLoaded = false;
     this.dataService.getSingleItem(this.parentId, this.childId).subscribe({
       next: (item: T) => this.updateFormData(item),
-      error: err => console.log(err)
-    })
+      error: (err) => console.log(err),
+    });
     this.getAndUpdateRelatedFormData();
   }
 
@@ -71,15 +78,21 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
 
     if (this.formConfig) {
       this.formConfig.title = this.pageTitle;
-      this.formConfig = { ...this.formConfig, data: this.convertToRequestObject(item) };
+      this.formConfig = {
+        ...this.formConfig,
+        data: this.convertToRequestObject(item),
+      };
     }
 
     this.dataLoaded = true;
   }
 
-  updateSelectValues(selectValues: any[], controlName: string,
-    value: string = 'value',
-    label: string = 'label') {
+  updateSelectValues(
+    selectValues: any[],
+    controlName: string,
+    value: string = "value",
+    label: string = "label"
+  ) {
     const selectOptions = [] as DataFormSelectOption[];
     for (const selectValue of selectValues) {
       selectOptions.push({
@@ -88,7 +101,9 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
       } as DataFormSelectOption);
     }
 
-    const targetSelectInput = this.formConfig?.elements.find((x: any) => x.id === controlName);
+    const targetSelectInput = this.formConfig?.elements.find(
+      (x: any) => x.id === controlName
+    );
     if (targetSelectInput) {
       targetSelectInput.values = selectOptions;
     }
@@ -97,33 +112,38 @@ export abstract class AdminAbstractNestedEditViewComponent<T extends ApiResource
   onSave(item: T): void {
     this.processingRequest = true;
 
-    if (this.mode === 'ADD') {
-      this.dataService.createItem(this.parentId, item)
-        .subscribe({
-          next: () => this.onSaveComplete(),
-          error: err => this.handleError(err)
-        })
-    } else if (this.mode === 'EDIT') {
-      this.dataService.updateItem(this.parentId, this.childId, item)
-        .subscribe({
-          next: () => this.onSaveComplete(),
-          error: err => this.handleError(err)
-        })
+    if (this.mode === "ADD") {
+      this.dataService.createItem(this.parentId, item).subscribe({
+        next: () => this.onSaveComplete(),
+        error: (err) => this.handleError(err),
+      });
+    } else if (this.mode === "EDIT") {
+      this.dataService.updateItem(this.parentId, this.childId, item).subscribe({
+        next: () => this.onSaveComplete(),
+        error: (err) => this.handleError(err),
+      });
     }
   }
 
   onSaveComplete(): void {
-    this.processingRequest = false
-    this.router.navigate([this.formConfig.baseUrl]);
+    this.processingRequest = false;
+    this.router.navigate([this.formConfig.baseUrl.url], {
+      fragment: this.formConfig.baseUrl.fragment,
+      queryParamsHandling: "preserve",
+      replaceUrl: true,
+    });
   }
 
   handleError(err: any): void {
     this.processingRequest = false;
-    this.errorMessage = err.error.message
+    this.errorMessage = err.error.message;
   }
 
   onBack(): void {
-    this.router.navigate([this.formConfig.baseUrl]);
+    this.router.navigate([this.formConfig.baseUrl.url], {
+      fragment: this.formConfig.baseUrl.fragment,
+      queryParamsHandling: "preserve",
+      replaceUrl: true,
+    });
   }
-
 }

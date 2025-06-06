@@ -116,7 +116,11 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource>
 
   onSaveComplete(): void {
     this.processingRequest = false;
-    this.router.navigate([this.formConfig.baseUrl]);
+    this.router.navigate([this.formConfig.baseUrl.url], {
+      fragment: this.formConfig.baseUrl.fragment,
+      queryParamsHandling: "preserve",
+      replaceUrl: true,
+    });
   }
 
   handleError(err: any): void {
@@ -125,6 +129,10 @@ export abstract class AdminAbstractEditViewComponent<T extends ApiResource>
   }
 
   onBack(): void {
-    this.router.navigate([this.formConfig.baseUrl]);
+    this.router.navigate([this.formConfig.baseUrl.url], {
+      fragment: this.formConfig.baseUrl.fragment,
+      queryParamsHandling: "preserve",
+      replaceUrl: true,
+    });
   }
 }

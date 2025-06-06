@@ -20,10 +20,10 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
 
   constructor(
     private dataService: DataCrudService<T>,
-    private route: ActivatedRoute,
-    private router: Router
+    route: ActivatedRoute,
+    router: Router
   ) {
-    super();
+    super(route, router);
   }
 
   abstract getTitle(): string;

@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { AdminTabConfig } from "../../models/tabbed-view";
 import { CardButton } from "../../models/data-card";
+import { ActivatedRoute, Router } from "@angular/router";
 
 @Directive()
 export default abstract class AdminAbstractTabbedDetailsViewBase {
@@ -38,15 +39,29 @@ export default abstract class AdminAbstractTabbedDetailsViewBase {
   abstract navigateBack(): void;
   abstract navigateToEdit(): void;
 
-  constructor() {}
+  constructor(protected route: ActivatedRoute, protected router: Router) {}
 
   protected abstract ngOnInit(): void;
 
   protected showTabs() {
     this.initTabs();
+    this.setActiveTab();
 
     setTimeout(() => {
       this.loadTabComponent(this.tabs[this.selectedIndex]);
+    });
+  }
+
+  protected setActiveTab(): void {
+    this.route.fragment.subscribe((fragment) => {
+      if (fragment) {
+        const tabIndex = this.tabs.findIndex(
+          (tab) => tab.id.toLowerCase() === fragment.toLowerCase()
+        );
+        if (tabIndex !== -1) {
+          this.selectedIndex = tabIndex;
+        }
+      }
     });
   }
 
@@ -79,6 +94,17 @@ export default abstract class AdminAbstractTabbedDetailsViewBase {
   protected onTabClick(index: number): void {
     this.selectedIndex = index;
     this.loadTabComponent(this.tabs[index]);
+    this.updateUrlFragment(this.tabs[index]);
+  }
+
+  protected updateUrlFragment(tab: AdminTabConfig): void {
+    const fragment = tab.id.toLowerCase();
+
+    this.router.navigate([], {
+      fragment,
+      queryParamsHandling: "preserve",
+      replaceUrl: true,
+    });
   }
 
   protected getButtons(): CardButton[] {

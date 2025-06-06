@@ -2,6 +2,7 @@ import { ValidatorFn } from "@angular/forms";
 
 import { ApiResource } from "./api-resource";
 import { DataCrudService } from "../services/data.service";
+import { UrlConfig } from "./url-config";
 
 export interface DataFormConfig<T extends ApiResource> {
   title: string;
@@ -9,7 +10,7 @@ export interface DataFormConfig<T extends ApiResource> {
   elements: DataFormElement<T>[];
   validationMessages: { [key: string]: { [key: string]: string } };
   errorMessage?: string;
-  baseUrl: string;
+  baseUrl: UrlConfig;
 }
 
 export interface DataFormElement<T extends ApiResource> {

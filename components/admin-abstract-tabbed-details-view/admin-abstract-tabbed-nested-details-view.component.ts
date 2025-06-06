@@ -22,10 +22,10 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
 
   constructor(
     private dataService: NestedDataService<T>,
-    private route: ActivatedRoute,
-    private router: Router
+    route: ActivatedRoute,
+    router: Router
   ) {
-    super();
+    super(route, router);
   }
 
   abstract getTitle(item: T | null): string;
