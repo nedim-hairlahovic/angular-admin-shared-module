@@ -1,22 +1,28 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { ApiResource } from "../../models/api-resource";
-import { DataCrudService } from "../../services/data.service";
+import { NestedDataService } from "../../services/nested-data.service";
 import AdminAbstractEditViewBase from "./admin-abstract-edit-view-base";
 
 @Component({
   template: "",
   standalone: false,
 })
-export abstract class AdminAbstractEditViewComponent<
-  T extends ApiResource,
-  R
-> extends AdminAbstractEditViewBase<T, R> {
-  itemId!: string | null;
+export abstract class AdminAbstractNestedEditViewComponent<
+    T extends ApiResource,
+    R
+  >
+  extends AdminAbstractEditViewBase<T, R>
+  implements OnInit
+{
+  parentId!: string | null;
+  childId!: string | null;
+
+  abstract getChildIdKey(): string;
 
   constructor(
-    private dataService: DataCrudService<T>,
+    private dataService: NestedDataService<T>,
     route: ActivatedRoute,
     router: Router
   ) {
@@ -24,16 +30,21 @@ export abstract class AdminAbstractEditViewComponent<
   }
 
   override extractIds(params: any): void {
-    this.itemId = params.get("id");
+    this.parentId = params.get(this.getParentIdKey());
+    this.childId = params.get(this.getChildIdKey());
   }
 
   override getEditMode(): "ADD" | "EDIT" {
-    return this.itemId === "0" ? "ADD" : "EDIT";
+    return this.childId === "0" ? "ADD" : "EDIT";
+  }
+
+  protected getParentIdKey(): string {
+    return "id";
   }
 
   override getItem(): void {
     this.dataLoaded = false;
-    this.dataService.getSingleItem(this.itemId).subscribe({
+    this.dataService.getSingleItem(this.parentId, this.childId).subscribe({
       next: (item: T) => this.updateFormData(item),
       error: (err) => console.log(err),
     });
@@ -44,12 +55,12 @@ export abstract class AdminAbstractEditViewComponent<
     this.processingRequest = true;
 
     if (this.mode === "ADD") {
-      this.dataService.createItem(item).subscribe({
+      this.dataService.createItem(this.parentId, item).subscribe({
         next: () => this.onSaveComplete(),
         error: (err) => this.handleError(err),
       });
     } else if (this.mode === "EDIT") {
-      this.dataService.updateItem(this.itemId, item).subscribe({
+      this.dataService.updateItem(this.parentId, this.childId, item).subscribe({
         next: () => this.onSaveComplete(),
         error: (err) => this.handleError(err),
       });

@@ -149,7 +149,7 @@ export class AdminDataFormComponent<T extends ApiResource>
         }
 
         // Override with provided data value if available
-        if (this.config.data[element.name]) {
+        if (this.config.data && this.config.data[element.name]) {
           values[element.name] = this.config.data[element.name];
         }
       }
