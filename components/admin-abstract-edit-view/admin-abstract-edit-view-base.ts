@@ -1,67 +1,51 @@
-import { Component, OnInit } from "@angular/core";
+import { Directive } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { DataFormConfig, DataFormSelectOption } from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
-import { NestedDataService } from "../../services/nested-data.service";
 
-@Component({
-  template: "",
-  standalone: false,
-})
-export abstract class AdminAbstractNestedEditViewComponent<
-  T extends ApiResource
-> implements OnInit
-{
-  pageTitle: string = this.getTitle(null);
-  formConfig!: DataFormConfig<T>;
-  errorMessage!: string;
-  parentId!: string | null;
-  childId!: string | null;
+@Directive()
+export default abstract class AdminAbstractEditViewBase<
+  T extends ApiResource,
+  R
+> {
+  protected pageTitle: string = this.getTitle(null);
+  protected formConfig!: DataFormConfig<T>;
+  protected errorMessage!: string;
+
   mode: "ADD" | "EDIT" = "ADD";
   dataLoaded: boolean = false;
   processingRequest!: boolean;
 
-  constructor(
-    private dataService: NestedDataService<T>,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
-
-  abstract getFormConfig(): DataFormConfig<T>;
   abstract getTitle(item: T | null): string;
-  abstract getChildIdKey(): string;
-  abstract getAndUpdateRelatedFormData(): void;
-  abstract convertToRequestObject(item: T): any;
+  abstract convertToRequestObject(item: T): R;
+  abstract extractIds(params: any): void;
+  abstract getEditMode(): "ADD" | "EDIT";
+  abstract getItem(): void;
+  abstract getFormConfig(): DataFormConfig<T>;
 
-  ngOnInit(): void {
+  constructor(protected route: ActivatedRoute, protected router: Router) {}
+
+  public ngOnInit(): void {
     this.pageTitle = this.getTitle(null);
+
     this.route.paramMap.subscribe((params) => {
-      this.parentId = params.get(this.getParentIdKey());
-      this.childId = params.get(this.getChildIdKey());
-      this.mode = this.childId === "0" ? "ADD" : "EDIT";
+      this.extractIds(params);
+      this.mode = this.getEditMode();
+
       this.getItem();
 
       this.formConfig = this.getFormConfig();
-      this.updateDefaultValuesFromQueryParams();
-      this.getAndUpdateRelatedFormData();
+      this.postItemInit();
     });
   }
 
-  getParentIdKey(): string {
-    return "id";
-  }
-
-  getItem(): void {
-    this.dataLoaded = false;
-    this.dataService.getSingleItem(this.parentId, this.childId).subscribe({
-      next: (item: T) => this.updateFormData(item),
-      error: (err) => console.log(err),
-    });
+  protected postItemInit(): void {
+    this.updateDefaultValuesFromQueryParams();
     this.getAndUpdateRelatedFormData();
   }
 
-  updateDefaultValuesFromQueryParams(): void {
+  protected updateDefaultValuesFromQueryParams(): void {
     // Subscribe to query params and update default values in form configuration
     this.route.queryParamMap.subscribe((params) => {
       this.formConfig.elements.forEach((element) => {
@@ -73,7 +57,10 @@ export abstract class AdminAbstractNestedEditViewComponent<
     });
   }
 
-  updateFormData(item: T): void {
+  // Fetches and sets related form data (e.g. options for select inputs)
+  protected getAndUpdateRelatedFormData(): void {}
+
+  protected updateFormData(item: T): void {
     this.pageTitle = this.getTitle(item);
 
     if (this.formConfig) {
@@ -87,7 +74,7 @@ export abstract class AdminAbstractNestedEditViewComponent<
     this.dataLoaded = true;
   }
 
-  updateSelectValues(
+  protected updateSelectValues(
     selectValues: any[],
     controlName: string,
     value: string = "value",
@@ -109,23 +96,7 @@ export abstract class AdminAbstractNestedEditViewComponent<
     }
   }
 
-  onSave(item: T): void {
-    this.processingRequest = true;
-
-    if (this.mode === "ADD") {
-      this.dataService.createItem(this.parentId, item).subscribe({
-        next: () => this.onSaveComplete(),
-        error: (err) => this.handleError(err),
-      });
-    } else if (this.mode === "EDIT") {
-      this.dataService.updateItem(this.parentId, this.childId, item).subscribe({
-        next: () => this.onSaveComplete(),
-        error: (err) => this.handleError(err),
-      });
-    }
-  }
-
-  onSaveComplete(): void {
+  protected onSaveComplete(): void {
     this.processingRequest = false;
     this.router.navigate([this.formConfig.baseUrl.url], {
       fragment: this.formConfig.baseUrl.fragment,
@@ -134,12 +105,12 @@ export abstract class AdminAbstractNestedEditViewComponent<
     });
   }
 
-  handleError(err: any): void {
+  protected handleError(err: any): void {
     this.processingRequest = false;
     this.errorMessage = err.error.message;
   }
 
-  onBack(): void {
+  protected onBack(): void {
     this.router.navigate([this.formConfig.baseUrl.url], {
       fragment: this.formConfig.baseUrl.fragment,
       queryParamsHandling: "preserve",
