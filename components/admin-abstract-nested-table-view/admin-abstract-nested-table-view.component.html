@@ -3,5 +3,6 @@
     <strong>Error: </strong>{{ errorMessage }}
 </div>
 
-<admin-data-table [dataLoaded]="dataLoaded" [config]="dataTableConfig" (fetchDataEvent)="fetchData()" (deleteItemEvent)="deleteItem($event)">
+<admin-data-table [dataLoaded]="dataLoaded" [config]="dataTableConfig" (fetchDataEvent)="fetchData()"
+    (deleteItemEvent)="deleteItem($event)">
 </admin-data-table>

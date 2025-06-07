@@ -6,9 +6,11 @@
 
         <div class="row mb-3" *ngIf="config.search">
             <div class="col-5">
-                <form [formGroup]="searchForm" class="d-none d-sm-inline-block form-inline table-search" (ngSubmit)="onSearch()">
+                <form [formGroup]="searchForm" class="d-none d-sm-inline-block form-inline table-search"
+                    (ngSubmit)="onSearch()">
                     <div class="input-group">
-                        <input type="text " class="form-control bg-light " placeholder="{{config.search.placeholder}}" aria-label="Search " aria-describedby="basic-addon2 " formControlName="keyword">
+                        <input type="text " class="form-control bg-light " placeholder="{{config.search.placeholder}}"
+                            aria-label="Search " aria-describedby="basic-addon2 " formControlName="keyword">
                         <div class="input-group-append ">
                             <button class="btn btn-primary " type="submit ">
                                 <i class="fa fa-search fa-xs "></i>
@@ -23,13 +25,16 @@
             <table class="table table-bordered " id="dataTable " width="100% " cellspacing="0 ">
                 <thead>
                     <tr>
-                        <th *ngFor="let item of config.columns " [ngStyle]="{ 'width': getHeaderStyle(item.header) } " class="{{ item.className }} ">
+                        <th *ngFor="let item of config.columns " [ngStyle]="{ 'width': getHeaderStyle(item.header) } "
+                            class="{{ item.className }} ">
                             {{ item.header }}
                             <div class="sort-icons " *ngIf="item.sortable ">
-                                <button class="btn up " [class.active]="isSortActive(item.value, 'ASC') " (click)="onSortChange(item.value, 'ASC') ">
+                                <button class="btn up " [class.active]="isSortActive(item.value, 'ASC') "
+                                    (click)="onSortChange(item.value, 'ASC') ">
                                     <i class="fa fa-caret-up " aria-hidden="true "></i>
                                 </button>
-                                <button class="btn down " [class.active]="isSortActive(item.value, 'DESC') " (click)="onSortChange(item.value, 'DESC') ">
+                                <button class="btn down " [class.active]="isSortActive(item.value, 'DESC') "
+                                    (click)="onSortChange(item.value, 'DESC') ">
                                     <i class="fa fa-caret-down " aria-hidden="true "></i>
                                 </button>
                             </div>
@@ -53,7 +58,8 @@
                                 </span>
 
                                 <ng-container *ngIf="column.value==='actions' ">
-                                    <a type="button" class="btn btn-outline-primary " style="margin-right: 5px " [routerLink]="[config.baseUrl, findDeepByPath(row, idKey), 'edit'] ">
+                                    <a type="button" class="btn btn-outline-primary " style="margin-right: 5px "
+                                        [routerLink]="[config.baseUrl.url, findDeepByPath(row, idKey), 'edit'] ">
                                         <i class="fa fa-pencil "></i> Uredi
                                     </a>
                                     <a type="button" class="btn btn-outline-danger " (click)="handleDelete(row) ">
@@ -71,38 +77,39 @@
 
         <div class="row align-items-center my-3" *ngIf="this.pagination && rows">
             <div class="col">
-                Showing {{ ((currentPage - 1) * pageSize) + (totalElements > 0 ? 1 : 0) }} 
-                to {{ currentPage * pageSize < totalElements ? currentPage * pageSize : totalElements }} of {{ totalElements }} entries 
-            </div>
-            <div class="col">
-                <nav class="pull-right" *ngIf="pages.length > 1">
-                    <ul class="pagination mb-0">
-                        <li class="page-item" [class.disabled]="currentPage <= 1">
-                            <button class="page-link" (click)="onPageChange(currentPage - 1)" aria-label="Previous">
-                                <span aria-hidden="true">&laquo;</span>
-                            </button>
-                        </li>
-                        <li *ngFor="let i of pages" class="page-item" [class.active]="+i === currentPage" [class.disabled]="i === '...'">
-                            <button class="page-link" (click)="onPageChange(+i)">{{ i }}</button>
-                        </li>
-                        <li class="page-item" [class.disabled]="currentPage >= pages.length">
-                            <button class="page-link" (click)="onPageChange(currentPage + 1)" aria-label="Next">
-                                <span aria-hidden="true">&raquo;</span>
-                            </button>
-                        </li>
-                    </ul>
-                </nav>
+                Showing {{ ((currentPage - 1) * pageSize) + (totalElements > 0 ? 1 : 0) }}
+                to {{ currentPage * pageSize < totalElements ? currentPage * pageSize : totalElements }} of {{
+                    totalElements }} entries </div>
+                    <div class="col">
+                        <nav class="pull-right" *ngIf="pages.length > 1">
+                            <ul class="pagination mb-0">
+                                <li class="page-item" [class.disabled]="currentPage <= 1">
+                                    <button class="page-link" (click)="onPageChange(currentPage - 1)"
+                                        aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </button>
+                                </li>
+                                <li *ngFor="let i of pages" class="page-item" [class.active]="+i === currentPage"
+                                    [class.disabled]="i === '...'">
+                                    <button class="page-link" (click)="onPageChange(+i)">{{ i }}</button>
+                                </li>
+                                <li class="page-item" [class.disabled]="currentPage >= pages.length">
+                                    <button class="page-link" (click)="onPageChange(currentPage + 1)" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </button>
+                                </li>
+                            </ul>
+                        </nav>
+                    </div>
             </div>
         </div>
-        
+
+        <div class="card-footer">
+            <a *ngIf="config.addButton?.enabled" class="btn btn-primary" [routerLink]="[config.addButton?.url]">
+                <i class="fa fa-plus"></i> Dodaj
+            </a>
+            <a *ngIf="config.editButton?.enabled" class="btn btn-primary" [routerLink]="[config.editButton?.url]">
+                <i class="fa fa-pencil"></i> Uredi
+            </a>
+        </div>
     </div>
-    
-    <div class="card-footer">
-        <a *ngIf="config.addButton?.enabled" class="btn btn-primary" [routerLink]="[config.addButton?.url]">
-            <i class="fa fa-plus"></i> Dodaj
-        </a>
-        <a *ngIf="config.editButton?.enabled" class="btn btn-primary" [routerLink]="[config.editButton?.url]">
-            <i class="fa fa-pencil"></i> Uredi
-        </a>
-    </div>
-</div>

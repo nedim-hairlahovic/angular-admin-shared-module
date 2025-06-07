@@ -1,14 +1,26 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { FormControl, FormGroup } from '@angular/forms';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
+import { FormControl, FormGroup } from "@angular/forms";
 
-import { DataTableButton, DataTableColumn, DataTableColumnUrl, DataTableConfig } from '../../models/data-table';
-import { Pagination, PaginationFactory } from '../../models/pagination';
+import {
+  DataTableButton,
+  DataTableColumn,
+  DataTableColumnUrl,
+  DataTableConfig,
+} from "../../models/data-table";
+import { Pagination, PaginationFactory } from "../../models/pagination";
 
 @Component({
-    selector: 'admin-data-table',
-    templateUrl: './admin-data-table.component.html',
-    styleUrls: ['../../admin-shared.css', './admin-data-table.component.css'],
-    standalone: false
+  selector: "admin-data-table",
+  templateUrl: "./admin-data-table.component.html",
+  styleUrls: ["../../admin-shared.css", "./admin-data-table.component.css"],
+  standalone: false,
 })
 export class AdminDataTableComponent implements OnChanges {
   @Input() dataLoaded!: boolean;
@@ -24,27 +36,27 @@ export class AdminDataTableComponent implements OnChanges {
   pages: string[] = [];
   sortBy?: string;
   totalElements!: number;
-  sortOrder?: 'ASC' | 'DESC';
+  sortOrder?: "ASC" | "DESC";
 
   readonly minSearchLength: number = 3;
   searchForm: FormGroup = new FormGroup({
-    keyword: new FormControl('')
+    keyword: new FormControl(""),
   });
 
-  idKey: string = 'id';
+  idKey: string = "id";
 
-  constructor() { }
+  constructor() {}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.setPagination();
 
-    if (changes['config'] && changes['config'].isFirstChange()) {
+    if (changes["config"] && changes["config"].isFirstChange()) {
       if (this.searchValue?.length > 0) {
         this.searchForm.setValue({
-          keyword: this.searchValue
+          keyword: this.searchValue,
         });
       }
-      
+
       this.sortBy = this.config.defaultSort?.field;
       this.sortOrder = this.config.defaultSort?.order;
       this.emitFetchDataEvent();
@@ -61,7 +73,7 @@ export class AdminDataTableComponent implements OnChanges {
     if (this.config.addButton === null || this.config.addButton === undefined) {
       this.config.addButton = {
         enabled: true,
-        url: this.config.baseUrl + '/0/edit'
+        url: this.config.baseUrl.url + "/0/edit",
       } as DataTableButton;
     }
   }
@@ -74,7 +86,9 @@ export class AdminDataTableComponent implements OnChanges {
 
     // If pagination configuration is provided, create the appropriate Pagination instance
     if (this.config.pagination !== undefined) {
-      this.pagination = PaginationFactory.createPagination(this.config.pagination)
+      this.pagination = PaginationFactory.createPagination(
+        this.config.pagination
+      );
     }
   }
 
@@ -83,12 +97,25 @@ export class AdminDataTableComponent implements OnChanges {
       return this.config.data;
     }
 
-    this.currentPage = this.findDeepByPath(this.config.data, this.pagination.getCurrentPageKey());
-    const numberOfPages = Number(this.findDeepByPath(this.config.data, this.pagination.getTotalPagesKey()));
+    this.currentPage = this.findDeepByPath(
+      this.config.data,
+      this.pagination.getCurrentPageKey()
+    );
+    const numberOfPages = Number(
+      this.findDeepByPath(this.config.data, this.pagination.getTotalPagesKey())
+    );
     this.pages = this.getPages(numberOfPages);
-    this.totalElements = Number(this.findDeepByPath(this.config.data, this.pagination.getTotalElementsKey()));
+    this.totalElements = Number(
+      this.findDeepByPath(
+        this.config.data,
+        this.pagination.getTotalElementsKey()
+      )
+    );
 
-    return this.findDeepByPath(this.config.data, this.pagination.getContentKey())
+    return this.findDeepByPath(
+      this.config.data,
+      this.pagination.getContentKey()
+    );
   }
 
   getPages(totalPages: number): string[] {
@@ -96,31 +123,40 @@ export class AdminDataTableComponent implements OnChanges {
 
     // Generate an array of page numbers with ellipsis ('...') for gaps beyond the visible page range
     return [...Array(totalPages).keys()]
-      .filter(page => (page < this.currentPage + visiblePages && page >= this.currentPage - visiblePages - 1) || page === 0 || page === totalPages - 1)
-      .map(page => {
+      .filter(
+        (page) =>
+          (page < this.currentPage + visiblePages &&
+            page >= this.currentPage - visiblePages - 1) ||
+          page === 0 ||
+          page === totalPages - 1
+      )
+      .map((page) => {
         // Insert ellipsis if the page is at the boundary of the visible range
-        if (page === this.currentPage + visiblePages - 1 || page === this.currentPage - visiblePages - 1) {
-          return '...';
+        if (
+          page === this.currentPage + visiblePages - 1 ||
+          page === this.currentPage - visiblePages - 1
+        ) {
+          return "...";
         }
         // Otherwise, return the page number as a string (1-based index)
-        return (page + 1).toString()
+        return (page + 1).toString();
       });
   }
 
   getHeaderStyle(header: string): string {
-    if (header === 'ID') {
-      return '5%';
+    if (header === "ID") {
+      return "5%";
     }
 
-    if (header === 'Akcije') {
-      return '25%';
+    if (header === "Akcije") {
+      return "25%";
     }
 
-    return 'auto';
+    return "auto";
   }
 
   getText(row: any, columnValue: string) {
-    if (columnValue.includes('.')) {
+    if (columnValue.includes(".")) {
       return this.findDeepByPath(row, columnValue);
     }
 
@@ -129,7 +165,7 @@ export class AdminDataTableComponent implements OnChanges {
 
   getColumnText(row: any, column: DataTableColumn) {
     if (column.values === undefined || column.templateString === undefined) {
-      return column.value ? this.getText(row, column.value) : '';
+      return column.value ? this.getText(row, column.value) : "";
     }
 
     let text = column.templateString;
@@ -161,11 +197,17 @@ export class AdminDataTableComponent implements OnChanges {
     if (this.pagination == null) {
       return;
     }
-    
-    const requestParams = this.pagination?.getRequestParams(this.currentPage, this.pageSize, this.sortBy, this.sortOrder);
 
-    if (this.config.search && this.searchForm.get('keyword')?.value) {
-      requestParams[this.config.search.key] = this.searchForm.get('keyword')?.value;
+    const requestParams = this.pagination?.getRequestParams(
+      this.currentPage,
+      this.pageSize,
+      this.sortBy,
+      this.sortOrder
+    );
+
+    if (this.config.search && this.searchForm.get("keyword")?.value) {
+      requestParams[this.config.search.key] =
+        this.searchForm.get("keyword")?.value;
     }
 
     this.fetchDataEvent.emit(requestParams);
@@ -176,7 +218,7 @@ export class AdminDataTableComponent implements OnChanges {
     this.emitFetchDataEvent();
   }
 
-  onSortChange(field: string | undefined, sortOrder: 'ASC' | 'DESC'): void {
+  onSortChange(field: string | undefined, sortOrder: "ASC" | "DESC"): void {
     if (field) {
       this.sortBy = field;
       this.sortOrder = sortOrder;
@@ -185,27 +227,29 @@ export class AdminDataTableComponent implements OnChanges {
     }
   }
 
-  isSortActive(field: string | undefined, sortOrder: 'ASC' | 'DESC'): boolean {
+  isSortActive(field: string | undefined, sortOrder: "ASC" | "DESC"): boolean {
     return this.sortBy === field && this.sortOrder === sortOrder;
   }
 
   onSearch(): void {
     this.currentPage = 1;
-    const searchKeywordLength = this.searchForm.get('keyword')?.value.length;
-    if (searchKeywordLength < 1 || searchKeywordLength >= this.minSearchLength) {
+    const searchKeywordLength = this.searchForm.get("keyword")?.value.length;
+    if (
+      searchKeywordLength < 1 ||
+      searchKeywordLength >= this.minSearchLength
+    ) {
       this.emitFetchDataEvent();
     }
   }
 
   findDeepByPath(obj: any | any[], path: any) {
-    for (var i = 0, path = path.split('.'), len = path.length; i < len; i++) {
+    for (var i = 0, path = path.split("."), len = path.length; i < len; i++) {
       if (obj == null) {
-        return '';
+        return "";
       }
       obj = obj[path[i]];
-    };
+    }
 
     return obj;
   }
-
 }
