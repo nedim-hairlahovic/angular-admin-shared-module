@@ -9,7 +9,6 @@ import {
 import { FormControl, FormGroup } from "@angular/forms";
 
 import {
-  DataTableButton,
   DataTableColumn,
   DataTableColumnUrl,
   DataTableConfig,
@@ -22,12 +21,14 @@ import { Pagination, PaginationFactory } from "../../models/pagination";
   styleUrls: ["../../admin-shared.css", "./admin-data-table.component.css"],
   standalone: false,
 })
-export class AdminDataTableComponent implements OnChanges {
+export class AdminDataTableComponent<T> implements OnChanges {
   @Input() dataLoaded!: boolean;
-  @Input() config!: DataTableConfig;
+  @Input() config!: DataTableConfig<T>;
   @Input() searchValue!: string;
+
   @Output() deleteItemEvent = new EventEmitter<any>();
   @Output() fetchDataEvent = new EventEmitter<any>();
+  @Output() btnClickEvent = new EventEmitter<any>();
 
   readonly pageSize: number = 10;
   rows: any[] = [];
@@ -69,13 +70,6 @@ export class AdminDataTableComponent implements OnChanges {
     if (this.config.idKey) {
       this.idKey = this.config.idKey;
     }
-
-    if (this.config.addButton === null || this.config.addButton === undefined) {
-      this.config.addButton = {
-        enabled: true,
-        url: this.config.baseUrl.url + "/0/edit",
-      } as DataTableButton;
-    }
   }
 
   setPagination(): void {
@@ -92,9 +86,9 @@ export class AdminDataTableComponent implements OnChanges {
     }
   }
 
-  getRows(): any[] {
+  getRows(): T[] {
     if (!this.pagination) {
-      return this.config.data;
+      return this.config.data as T[];
     }
 
     this.currentPage = this.findDeepByPath(
@@ -251,5 +245,9 @@ export class AdminDataTableComponent implements OnChanges {
     }
 
     return obj;
+  }
+
+  handleBtnClick(actionName: string) {
+    this.btnClickEvent.emit(actionName);
   }
 }

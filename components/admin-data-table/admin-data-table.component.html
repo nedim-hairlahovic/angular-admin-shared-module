@@ -105,11 +105,10 @@
         </div>
 
         <div class="card-footer">
-            <a *ngIf="config.addButton?.enabled" class="btn btn-primary" [routerLink]="[config.addButton?.url]">
-                <i class="fa fa-plus"></i> Dodaj
-            </a>
-            <a *ngIf="config.editButton?.enabled" class="btn btn-primary" [routerLink]="[config.editButton?.url]">
-                <i class="fa fa-pencil"></i> Uredi
-            </a>
+            <button *ngFor="let button of config.buttons" (click)="handleBtnClick(button.actionName)" class="btn mr-3"
+                [ngClass]="button.class">
+                <i *ngIf="button.icon" [class]="button.icon" class="mr-2" style="font-size: 15px;"></i>
+                <span class="text">{{ button.label }}</span>
+            </button>
         </div>
     </div>

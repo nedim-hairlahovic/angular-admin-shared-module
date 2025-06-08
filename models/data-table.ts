@@ -1,16 +1,17 @@
+import { CardButton } from "./data-card";
+import { Page } from "./page";
 import { UrlConfig } from "./url-config";
 
-export interface DataTableConfig {
+export interface DataTableConfig<T> {
   title: string;
-  data: any[] | any;
+  data: T[] | Page<T>;
   columns: DataTableColumn[];
   baseUrl: UrlConfig;
   pagination?: DataTablePaginationType;
   defaultSort?: DataTableColumnSort;
   search?: DataTableSearch;
   idKey?: string;
-  addButton?: DataTableButton;
-  editButton?: DataTableButton;
+  buttons?: CardButton[];
 }
 
 export interface DataTableColumn {
@@ -26,11 +27,6 @@ export interface DataTableColumn {
 export interface DataTableColumnUrl {
   path: string;
   value?: string;
-}
-
-export interface DataTableButton {
-  enabled: boolean;
-  url: string;
 }
 
 export enum DataTablePaginationType {
