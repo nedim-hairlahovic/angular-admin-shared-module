@@ -37,7 +37,6 @@ export abstract class AdminAbstractEditViewComponent<
       next: (item: T) => this.updateFormData(item),
       error: (err) => console.log(err),
     });
-    this.getAndUpdateRelatedFormData();
   }
 
   onSave(item: T): void {

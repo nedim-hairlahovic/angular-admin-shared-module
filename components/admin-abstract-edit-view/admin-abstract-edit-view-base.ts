@@ -32,10 +32,10 @@ export default abstract class AdminAbstractEditViewBase<
     this.route.paramMap.subscribe((params) => {
       this.extractIds(params);
       this.mode = this.getEditMode();
+      this.formConfig = this.getFormConfig();
 
       this.getItem();
 
-      this.formConfig = this.getFormConfig();
       this.postItemInit();
     });
   }
