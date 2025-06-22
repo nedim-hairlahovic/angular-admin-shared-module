@@ -16,8 +16,8 @@
 
                     <div class="mb-3" *ngFor="let input of config.elements">
 
-                        <!-- Classic types -->
-                        <ng-container *ngIf="!input.array">
+                        <!-- Single Controls -->
+                        <ng-container *ngIf="input.mode === undefined || input.mode === DataFormControlMode.Control">
 
                             <ng-container *ngIf="input.type === TEXT">
                                 <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
@@ -109,15 +109,23 @@
                         </ng-container>
 
                         <!-- Array Types -->
-                        <ng-container *ngIf="input.array">
+                        <ng-container *ngIf="input.mode === DataFormControlMode.Array">
                             <div formArrayName="{{ input.name }}">
                                 <div class="mb-2">{{ input.label }}</div>
                                 <div class="row form-group mb-2"
                                     *ngFor="let el of this.getFormArray(input.name).controls; let i=index">
 
                                     <div class="col-md-11">
+                                        <ng-container *ngIf="input.type === TEXT">
+                                            <input type="text" class="form-control" [id]="i" [formControlName]="i"
+                                                [ngClass]="{'is-invalid': displayMessage[input.name + i]}"
+                                                autocomplete="off">
+                                            <div class="invalid-feedback">
+                                                {{ displayMessage[input.name + i] }}
+                                            </div>
+                                        </ng-container>
+
                                         <ng-container *ngIf="input.type === SELECT">
-                                            <!-- <label for="{{ input.id }}" class="form-label" [attr.for]="i">{{ input.label }}</label> -->
                                             <select class="form-select" [id]="i" [formControlName]="i"
                                                 [ngClass]="{'is-invalid': displayMessage[input.name + i]}">
                                                 <option value="">Odaberite opciju</option>
@@ -131,7 +139,6 @@
                                         </ng-container>
 
                                         <ng-container *ngIf="input.type === SEARCHABLE_SELECT">
-                                            <!-- <label for="{{ input.id }}" class="form-label">{{ input.label }}</label> -->
                                             <input type="hidden" class="form-control" [id]="i" [formControlName]="i"
                                                 [ngClass]="{'is-invalid': displayMessage[input.name]}">
                                             <admin-searchable-select [inputName]="input.name + i"
@@ -141,11 +148,10 @@
                                                 {{ displayMessage[input.name] }}
                                             </div>
                                         </ng-container>
-
                                     </div>
 
-                                    <div class="col-md-1">
-                                        <button class="btn btn-outline-danger btn-sm" type="button" title="Obrisi"
+                                    <div class="col-md-1 d-flex align-items-center">
+                                        <button class="btn btn-outline-danger btn-sm" type="button" title="Obriši"
                                             (click)="deleteInputFromFormArray(input.name, i)">
                                             <i class="fa fa-trash"></i>
                                         </button>

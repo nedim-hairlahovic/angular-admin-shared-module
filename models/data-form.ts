@@ -15,15 +15,21 @@ export interface DataFormConfig<T extends ApiResource> {
 
 export interface DataFormElement<T extends ApiResource> {
   type: DataFormElementType;
+  mode?: DataFormControlMode;
   id: string;
   name: string;
   label: string;
   validators?: ValidatorFn[];
   values?: DataFormSelectOption[];
-  array?: boolean;
   dataService?: DataCrudService<T>;
   defaultValue?: any;
   disabled?: boolean;
+}
+
+export enum DataFormControlMode {
+  Control = "Control",
+  Array = "Array",
+  Group = "Group",
 }
 
 export interface DataFormSelectOption {

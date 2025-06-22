@@ -19,7 +19,11 @@ import {
 } from "@angular/forms";
 import { debounceTime, fromEvent, merge, Observable } from "rxjs";
 
-import { DataFormConfig, DataFormElementType } from "../../models/data-form";
+import {
+  DataFormConfig,
+  DataFormControlMode,
+  DataFormElementType,
+} from "../../models/data-form";
 import { GenericValidator } from "../../validators/generic-validator";
 import { ApiResource } from "../../models/api-resource";
 
@@ -57,6 +61,8 @@ export class AdminDataFormComponent<T extends ApiResource>
   readonly CHECKBOX: DataFormElementType = DataFormElementType.Checkbox;
 
   private genericValidator!: GenericValidator;
+
+  DataFormControlMode = DataFormControlMode;
 
   constructor(private fb: FormBuilder) {}
 
@@ -103,13 +109,15 @@ export class AdminDataFormComponent<T extends ApiResource>
   initDataForm(): void {
     this.dataForm = this.fb.group({});
     for (const element of this.config.elements) {
-      if (!element.array) {
+      const mode = element.mode ?? DataFormControlMode.Control;
+
+      if (mode === DataFormControlMode.Control) {
         const formControl = new FormControl(
           { value: "", disabled: element.disabled ? element.disabled : false },
           element.validators
         );
         this.dataForm.addControl(element.name, formControl);
-      } else {
+      } else if (mode === DataFormControlMode.Array) {
         this.dataForm.addControl(element.name, this.fb.array([]));
       }
     }
@@ -121,9 +129,11 @@ export class AdminDataFormComponent<T extends ApiResource>
       let values = {} as any;
 
       for (const element of this.config.elements) {
-        if (!element.array) {
+        const mode = element.mode ?? DataFormControlMode.Control;
+
+        if (mode === DataFormControlMode.Control) {
           values[element.name] = this.config.data[element.name];
-        } else {
+        } else if (mode === DataFormControlMode.Array) {
           const formArray = this.fb.array([]);
           for (const singleData of this.config.data[element.name]) {
             formArray.push(new FormControl(singleData, element.validators));
@@ -138,11 +148,6 @@ export class AdminDataFormComponent<T extends ApiResource>
       let values = {} as any;
 
       for (const element of this.config.elements) {
-        // Skip array elements, as default values are not applied to them here
-        if (element.array) {
-          return;
-        }
-
         // Use default value if specified in the element definition
         if (element.defaultValue) {
           values[element.name] = element.defaultValue;
@@ -155,6 +160,7 @@ export class AdminDataFormComponent<T extends ApiResource>
       }
 
       this.dataForm.patchValue(values);
+      this.patchFormArrayValues(values);
     }
   }
 
@@ -215,5 +221,25 @@ export class AdminDataFormComponent<T extends ApiResource>
     formElement.markAsTouched();
     formElement.markAsDirty();
     formElement.updateValueAndValidity();
+  }
+
+  patchFormArrayValues(values: any): void {
+    for (const element of this.config.elements) {
+      const mode = element.mode ?? DataFormControlMode.Control;
+
+      if (mode === DataFormControlMode.Array) {
+        const arrayValue = values[element.name] ?? [];
+
+        const formArray = this.dataForm.get(element.name) as FormArray;
+
+        if (formArray && formArray instanceof FormArray) {
+          formArray.clear();
+
+          for (const item of arrayValue) {
+            formArray.push(new FormControl(item, element.validators));
+          }
+        }
+      }
+    }
   }
 }
