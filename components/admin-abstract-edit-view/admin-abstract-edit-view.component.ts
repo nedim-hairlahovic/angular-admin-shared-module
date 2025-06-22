@@ -41,6 +41,7 @@ export abstract class AdminAbstractEditViewComponent<
 
   onSave(item: T): void {
     this.processingRequest = true;
+    this.sanitizeRequestObject(item);
 
     if (this.mode === "ADD") {
       this.dataService.createItem(item).subscribe({
@@ -54,4 +55,6 @@ export abstract class AdminAbstractEditViewComponent<
       });
     }
   }
+
+  protected sanitizeRequestObject(item: T): void {}
 }
