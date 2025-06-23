@@ -21,7 +21,7 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
   childId!: string | null;
 
   constructor(
-    private dataService: NestedDataService<T>,
+    private dataService: NestedDataService<T, any>,
     route: ActivatedRoute,
     router: Router
   ) {

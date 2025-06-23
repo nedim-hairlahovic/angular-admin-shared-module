@@ -16,7 +16,7 @@ export abstract class AdminAbstractEditViewComponent<
   itemId!: string | null;
 
   constructor(
-    private dataService: DataCrudService<T>,
+    private dataService: DataCrudService<T, R>,
     route: ActivatedRoute,
     router: Router
   ) {
@@ -39,22 +39,22 @@ export abstract class AdminAbstractEditViewComponent<
     });
   }
 
-  onSave(item: T): void {
+  onSave(requestDto: R): void {
     this.processingRequest = true;
-    this.sanitizeRequestObject(item);
+    this.sanitizeRequestObject(requestDto);
 
     if (this.mode === "ADD") {
-      this.dataService.createItem(item).subscribe({
+      this.dataService.createItem(requestDto).subscribe({
         next: () => this.onSaveComplete(),
         error: (err) => this.handleError(err),
       });
     } else if (this.mode === "EDIT") {
-      this.dataService.updateItem(this.itemId, item).subscribe({
+      this.dataService.updateItem(this.itemId, requestDto).subscribe({
         next: () => this.onSaveComplete(),
         error: (err) => this.handleError(err),
       });
     }
   }
 
-  protected sanitizeRequestObject(item: T): void {}
+  protected sanitizeRequestObject(requestDto: R): void {}
 }

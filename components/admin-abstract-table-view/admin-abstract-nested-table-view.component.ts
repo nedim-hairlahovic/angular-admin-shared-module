@@ -21,7 +21,7 @@ export abstract class AdminAbstractNestedTableViewComponent<
   abstract getDeletePrompt(): string;
   abstract getBackUrl(): UrlConfig;
 
-  constructor(private dataService: NestedDataService<T>, router: Router) {
+  constructor(private dataService: NestedDataService<T, any>, router: Router) {
     super(router);
   }
 

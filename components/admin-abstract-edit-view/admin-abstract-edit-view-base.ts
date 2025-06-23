@@ -10,7 +10,7 @@ export default abstract class AdminAbstractEditViewBase<
   R
 > {
   protected pageTitle: string = this.getTitle(null);
-  protected formConfig!: DataFormConfig<T>;
+  protected formConfig!: DataFormConfig<T, R>;
   protected errorMessage!: string;
 
   mode: "ADD" | "EDIT" = "ADD";
@@ -22,7 +22,7 @@ export default abstract class AdminAbstractEditViewBase<
   abstract extractIds(params: any): void;
   abstract getEditMode(): "ADD" | "EDIT";
   abstract getItem(): void;
-  abstract getFormConfig(): DataFormConfig<T>;
+  abstract getFormConfig(): DataFormConfig<T, R>;
 
   constructor(protected route: ActivatedRoute, protected router: Router) {}
 

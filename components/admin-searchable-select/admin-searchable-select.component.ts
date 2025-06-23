@@ -1,19 +1,28 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges } from '@angular/core';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
+import { Subject, debounceTime, distinctUntilChanged } from "rxjs";
 
-import { SearchableSelectItem } from '../../models/searchable-select-item';
-import { ApiResource } from '../../models/api-resource';
-import { DataCrudService } from '../../services/data.service';
+import { SearchableSelectItem } from "../../models/searchable-select-item";
+import { ApiResource } from "../../models/api-resource";
+import { DataCrudService } from "../../services/data.service";
 
 @Component({
-    selector: 'admin-searchable-select',
-    templateUrl: './admin-searchable-select.component.html',
-    styleUrls: ['./admin-searchable-select.component.css'],
-    standalone: false
+  selector: "admin-searchable-select",
+  templateUrl: "./admin-searchable-select.component.html",
+  styleUrls: ["./admin-searchable-select.component.css"],
+  standalone: false,
 })
-export class AdminSearchableSelectComponent<T extends ApiResource> implements OnChanges {
+export class AdminSearchableSelectComponent<T extends ApiResource>
+  implements OnChanges
+{
   @Input() inputName!: string;
-  @Input() dataService!: DataCrudService<T>;
+  @Input() dataService!: DataCrudService<T, any>;
   @Input() initialValue: any;
   @Output() onSelectEvent = new EventEmitter<any>();
 
@@ -26,10 +35,12 @@ export class AdminSearchableSelectComponent<T extends ApiResource> implements On
   selectedValue!: SearchableSelectItem | null;
 
   constructor() {
-    this.searchTerms.pipe(
-      debounceTime(1000), // 1000 ms delay
-      distinctUntilChanged()
-    ).subscribe(term => this.executeSearch(term));
+    this.searchTerms
+      .pipe(
+        debounceTime(1000), // 1000 ms delay
+        distinctUntilChanged()
+      )
+      .subscribe((term) => this.executeSearch(term));
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -40,7 +51,7 @@ export class AdminSearchableSelectComponent<T extends ApiResource> implements On
         next: (item: T) => {
           this.onItemSelect(this.dataService.convertToSearchableItem(item));
         },
-        error: err => console.log(err)
+        error: (err) => console.log(err),
       });
     }
   }
@@ -55,17 +66,19 @@ export class AdminSearchableSelectComponent<T extends ApiResource> implements On
     if (query && query.length >= 3) {
       this.dataService.getAllItems(query).subscribe({
         next: (data: any[]) => {
-          this.searchResults = data.map(item => this.dataService.convertToSearchableItem(item));
-          this.searching = false
+          this.searchResults = data.map((item) =>
+            this.dataService.convertToSearchableItem(item)
+          );
+          this.searching = false;
         },
-        error: err => {
-          console.log(err)
-          this.searching = false
-        }
+        error: (err) => {
+          console.log(err);
+          this.searching = false;
+        },
       });
     } else {
       this.searchResults = [];
-      this.searching = false
+      this.searching = false;
     }
   }
 
@@ -73,12 +86,12 @@ export class AdminSearchableSelectComponent<T extends ApiResource> implements On
     this.selectedValue = item;
     this.isValueSelected = true;
     this.isDropdownOpen = false;
-    this.onSelectEvent.emit({ inputName: this.inputName, value: item.value })
+    this.onSelectEvent.emit({ inputName: this.inputName, value: item.value });
   }
 
   clearSelectedValue(): void {
     this.resetValues();
-    this.onSelectEvent.emit({ inputName: this.inputName, value: null })
+    this.onSelectEvent.emit({ inputName: this.inputName, value: null });
   }
 
   clearInput() {

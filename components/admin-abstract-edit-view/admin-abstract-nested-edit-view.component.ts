@@ -22,7 +22,7 @@ export abstract class AdminAbstractNestedEditViewComponent<
   abstract getChildIdKey(): string;
 
   constructor(
-    private dataService: NestedDataService<T>,
+    private dataService: NestedDataService<T, R>,
     route: ActivatedRoute,
     router: Router
   ) {
@@ -51,19 +51,21 @@ export abstract class AdminAbstractNestedEditViewComponent<
     this.getAndUpdateRelatedFormData();
   }
 
-  onSave(item: T): void {
+  onSave(requestDto: R): void {
     this.processingRequest = true;
 
     if (this.mode === "ADD") {
-      this.dataService.createItem(this.parentId, item).subscribe({
+      this.dataService.createItem(this.parentId, requestDto).subscribe({
         next: () => this.onSaveComplete(),
         error: (err) => this.handleError(err),
       });
     } else if (this.mode === "EDIT") {
-      this.dataService.updateItem(this.parentId, this.childId, item).subscribe({
-        next: () => this.onSaveComplete(),
-        error: (err) => this.handleError(err),
-      });
+      this.dataService
+        .updateItem(this.parentId, this.childId, requestDto)
+        .subscribe({
+          next: () => this.onSaveComplete(),
+          error: (err) => this.handleError(err),
+        });
     }
   }
 }

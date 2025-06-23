@@ -4,24 +4,24 @@ import { ApiResource } from "./api-resource";
 import { DataCrudService } from "../services/data.service";
 import { UrlConfig } from "./url-config";
 
-export interface DataFormConfig<T extends ApiResource> {
+export interface DataFormConfig<T extends ApiResource, R> {
   title: string;
   data?: any;
-  elements: DataFormElement<T>[];
+  elements: DataFormElement<T, R>[];
   validationMessages: { [key: string]: { [key: string]: string } };
   errorMessage?: string;
   baseUrl: UrlConfig;
 }
 
-export interface DataFormElement<T extends ApiResource> {
+export interface DataFormElement<T extends ApiResource, R> {
   type: DataFormElementType;
-  mode?: DataFormControlMode;
+  mode: DataFormControlMode;
   id: string;
   name: string;
   label: string;
   validators?: ValidatorFn[];
   values?: DataFormSelectOption[];
-  dataService?: DataCrudService<T>;
+  dataService?: DataCrudService<T, R>;
   defaultValue?: any;
   disabled?: boolean;
 }

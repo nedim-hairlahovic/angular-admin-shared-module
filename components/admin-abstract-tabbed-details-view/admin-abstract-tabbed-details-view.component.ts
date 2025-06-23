@@ -19,7 +19,7 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
   errorMessage!: string;
 
   constructor(
-    private dataService: DataCrudService<T>,
+    private dataService: DataCrudService<T, any>,
     route: ActivatedRoute,
     router: Router
   ) {

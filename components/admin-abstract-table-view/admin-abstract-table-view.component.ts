@@ -17,7 +17,7 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
   abstract getItemTitle(item: T): string;
 
   constructor(
-    private dataService: DataCrudService<T>,
+    private dataService: DataCrudService<T, any>,
     router: Router,
     private route: ActivatedRoute
   ) {

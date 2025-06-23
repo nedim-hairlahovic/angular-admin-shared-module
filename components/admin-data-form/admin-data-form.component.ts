@@ -33,17 +33,17 @@ import { ApiResource } from "../../models/api-resource";
   styleUrls: ["../../admin-shared.css"],
   standalone: false,
 })
-export class AdminDataFormComponent<T extends ApiResource>
+export class AdminDataFormComponent<T extends ApiResource, R>
   implements OnInit, OnChanges, AfterViewInit
 {
   @ViewChildren(FormControlName, { read: ElementRef })
   formInputElements: ElementRef[] = [];
 
-  @Input() config!: DataFormConfig<T>;
+  @Input() config!: DataFormConfig<T, R>;
   @Input() errorMessage!: string;
   @Input() formProcessing!: boolean;
 
-  @Output() btnSaveEvent = new EventEmitter<any>();
+  @Output() btnSaveEvent = new EventEmitter<R>();
   @Output() btnBackEvent = new EventEmitter<any>();
 
   mode: "ADD" | "EDIT" = "ADD";
