@@ -5,6 +5,7 @@ import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
 import { DetailsViewRow } from "../../models/details-view";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
+import { UrlConfig } from "../../models/url-config";
 
 @Component({
   template: "",
@@ -31,8 +32,8 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
   abstract getTitle(item: T | null): string;
   abstract getChildIdKey(): string;
   abstract getDetailsData(): DetailsViewRow[];
-  abstract getOnBackUrl(): string;
-  abstract getOnEditUrl(): string;
+  abstract getOnBackUrl(): UrlConfig;
+  abstract getOnEditUrl(): UrlConfig;
 
   ngOnInit(): void {
     this.pageTitle = this.getTitle(null);
@@ -54,15 +55,25 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
     });
   }
 
+  getParentIdKey(): string {
+    return "id";
+  }
+
   override navigateBack(): void {
-    this.router.navigate([this.getOnBackUrl()]);
+    const urlConfig = this.getOnBackUrl();
+    this.router.navigate([urlConfig.url], {
+      fragment: urlConfig.fragment,
+      queryParamsHandling: "preserve",
+      replaceUrl: true,
+    });
   }
 
   override navigateToEdit(): void {
-    this.router.navigate([this.getOnEditUrl()]);
-  }
-
-  getParentIdKey(): string {
-    return "id";
+    const urlConfig = this.getOnEditUrl();
+    this.router.navigate([urlConfig.url], {
+      fragment: urlConfig.fragment,
+      queryParamsHandling: "preserve",
+      replaceUrl: true,
+    });
   }
 }

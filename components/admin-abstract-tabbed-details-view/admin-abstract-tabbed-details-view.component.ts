@@ -5,6 +5,7 @@ import { ApiResource } from "../../models/api-resource";
 import { DetailsViewRow } from "../../models/details-view";
 import { DataCrudService } from "../../services/data.service";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
+import { UrlConfig } from "../../models/url-config";
 
 @Component({
   template: "",
@@ -28,7 +29,7 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
 
   abstract getTitle(): string;
   abstract getDetailsData(): DetailsViewRow[];
-  abstract getBaseUrl(): string;
+  abstract getBaseUrl(): UrlConfig;
 
   ngOnInit(): void {
     this.pageTitle = this.getTitle();
