@@ -9,10 +9,10 @@
                 <form [formGroup]="searchForm" class="d-none d-sm-inline-block form-inline table-search"
                     (ngSubmit)="onSearch()">
                     <div class="input-group">
-                        <input type="text " class="form-control bg-light " placeholder="{{config.search.placeholder}}"
-                            aria-label="Search " aria-describedby="basic-addon2 " formControlName="keyword">
+                        <input type="text " class="form-control bg-light" placeholder="{{config.search.placeholder}}"
+                            aria-label="Search " aria-describedby="basic-addon2" formControlName="keyword">
                         <div class="input-group-append ">
-                            <button class="btn btn-primary " type="submit ">
+                            <button class="btn btn-primary " type="submit">
                                 <i class="fa fa-search fa-xs "></i>
                             </button>
                         </div>
@@ -22,20 +22,20 @@
         </div>
 
         <div class="table-responsive">
-            <table class="table table-bordered " id="dataTable " width="100% " cellspacing="0 ">
+            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th *ngFor="let item of config.columns " [ngStyle]="{ 'width': getHeaderStyle(item.header) } "
-                            class="{{ item.className }} ">
+                        <th *ngFor="let item of config.columns" [ngStyle]="{ 'width': getHeaderStyle(item.header) }"
+                            class="{{ item.className }}">
                             {{ item.header }}
-                            <div class="sort-icons " *ngIf="item.sortable ">
-                                <button class="btn up " [class.active]="isSortActive(item.value, 'ASC') "
-                                    (click)="onSortChange(item.value, 'ASC') ">
-                                    <i class="fa fa-caret-up " aria-hidden="true "></i>
+                            <div class="sort-icons" *ngIf="item.sortable">
+                                <button class="btn up" [class.active]="isSortActive(item.value, 'ASC')"
+                                    (click)="onSortChange(item.value, 'ASC')">
+                                    <i class="fa fa-caret-up" aria-hidden="true"></i>
                                 </button>
-                                <button class="btn down " [class.active]="isSortActive(item.value, 'DESC') "
-                                    (click)="onSortChange(item.value, 'DESC') ">
-                                    <i class="fa fa-caret-down " aria-hidden="true "></i>
+                                <button class="btn down" [class.active]="isSortActive(item.value, 'DESC')"
+                                    (click)="onSortChange(item.value, 'DESC')">
+                                    <i class="fa fa-caret-down " aria-hidden="true"></i>
                                 </button>
                             </div>
                         </th>
@@ -44,25 +44,29 @@
                 <tbody>
                     <!-- <ng-container *ngIf="dataLoaded "> -->
                     <tr *ngFor="let row of rows">
-                        <td *ngFor="let column of config.columns " class="align-middle {{ column.className }} ">
+                        <td *ngFor="let column of config.columns" class="align-middle {{ column.className }}">
 
-                            <ng-container *ngIf="column.url ">
+                            <ng-container *ngIf="column.url">
                                 <a [routerLink]="getRouterLink(row, column.url)">
                                     {{ getColumnText(row, column) }}
                                 </a>
                             </ng-container>
 
-                            <ng-container *ngIf="!column.url ">
-                                <span *ngIf="column.value !=='actions' ">
+                            <ng-container *ngIf="column.pipe">
+                                {{ applyPipe(row[column.value], column.pipe) }}
+                            </ng-container>
+
+                            <ng-container *ngIf="!column.url && !column.pipe">
+                                <span *ngIf="column.value !=='actions'">
                                     {{ getColumnText(row, column) }}
                                 </span>
 
-                                <ng-container *ngIf="column.value==='actions' ">
-                                    <a type="button" class="btn btn-outline-primary " style="margin-right: 5px "
+                                <ng-container *ngIf="column.value==='actions'">
+                                    <a type="button" class="btn btn-outline-primary" style="margin-right: 5px"
                                         [routerLink]="[config.baseUrl.url, findDeepByPath(row, idKey), 'edit'] ">
                                         <i class="fa fa-pencil "></i> Uredi
                                     </a>
-                                    <a type="button" class="btn btn-outline-danger " (click)="handleDelete(row) ">
+                                    <a type="button" class="btn btn-outline-danger" (click)="handleDelete(row)">
                                         <i class="fa fa-trash "></i> Obriši
                                     </a>
                                 </ng-container>

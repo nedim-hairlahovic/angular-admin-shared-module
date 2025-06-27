@@ -1,3 +1,5 @@
+import { PipeTransform } from "@angular/core";
+
 import { CardButton } from "./data-card";
 import { Page } from "./page";
 import { UrlConfig } from "./url-config";
@@ -22,6 +24,10 @@ export interface DataTableColumn {
   className?: string;
   url?: DataTableColumnUrl;
   sortable?: boolean;
+  pipe?: {
+    instance: PipeTransform;
+    args?: any[];
+  };
 }
 
 export interface DataTableColumnUrl {

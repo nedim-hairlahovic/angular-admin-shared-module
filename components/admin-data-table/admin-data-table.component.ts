@@ -4,6 +4,7 @@ import {
   Input,
   OnChanges,
   Output,
+  PipeTransform,
   SimpleChanges,
 } from "@angular/core";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -181,6 +182,10 @@ export class AdminDataTableComponent<T> implements OnChanges {
     }
 
     return link;
+  }
+
+  applyPipe(value: any, pipe?: { instance: PipeTransform; args?: any[] }): any {
+    return pipe ? pipe.instance.transform(value, ...(pipe.args ?? [])) : value;
   }
 
   handleDelete(row: any) {
