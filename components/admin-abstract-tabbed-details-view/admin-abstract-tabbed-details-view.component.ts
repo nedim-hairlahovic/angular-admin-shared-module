@@ -53,11 +53,11 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
   }
 
   override navigateBack(): void {
-    this.router.navigate([this.getBaseUrl()]);
+    this.router.navigate([this.getBaseUrl().url]);
   }
 
   override navigateToEdit(): void {
-    const editUrl = `${this.getBaseUrl()}/${this.item?.id}/edit`;
+    const editUrl = `${this.getBaseUrl().url}/${this.item?.id}/edit`;
     this.router.navigate([editUrl]);
   }
 }
