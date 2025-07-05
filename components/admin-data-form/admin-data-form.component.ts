@@ -82,9 +82,19 @@ export class AdminDataFormComponent<T extends ApiResource, R>
     this.updateDataForm();
   }
 
+  private previousConfigData: any;
+
   ngOnChanges(changes: SimpleChanges): void {
-    if (!changes["config"]?.firstChange) {
-      this.updateDataForm();
+    // Only update the form if the actual config.data reference has changed
+    // (avoid unnecessary form resets caused by unrelated Input changes like formProcessing)
+    if (changes["config"] && !changes["config"].firstChange) {
+      const currentData = this.config?.data;
+      const previousData = this.previousConfigData;
+
+      if (currentData !== previousData) {
+        this.updateDataForm();
+        this.previousConfigData = currentData;
+      }
     }
   }
 
