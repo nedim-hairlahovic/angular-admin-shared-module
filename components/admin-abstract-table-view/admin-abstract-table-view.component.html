@@ -4,5 +4,6 @@
 </div>
 
 <admin-data-table [dataLoaded]="dataLoaded" [config]="dataTableConfig" [searchValue]="searchValue"
-    (fetchDataEvent)="fetchData($event)" (deleteItemEvent)="deleteItem($event)" (btnClickEvent)="onBtnClick($event)">
+    (fetchDataEvent)="fetchData($event)" (actionClickEvent)="handleTableAction($event)"
+    (btnClickEvent)="onBtnClick($event)">
 </admin-data-table>

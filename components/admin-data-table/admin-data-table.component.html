@@ -61,14 +61,20 @@
                                     {{ getColumnText(row, column) }}
                                 </span>
 
-                                <ng-container *ngIf="column.value==='actions'">
-                                    <a type="button" class="btn btn-outline-primary" style="margin-right: 5px"
-                                        [routerLink]="[config.baseUrl.url, findDeepByPath(row, idKey), 'edit'] ">
-                                        <i class="fa fa-pencil "></i> Uredi
-                                    </a>
-                                    <a type="button" class="btn btn-outline-danger" (click)="handleDelete(row)">
-                                        <i class="fa fa-trash "></i> Obriši
-                                    </a>
+                                <ng-container *ngIf="column.value === 'actions'">
+                                    <ng-container *ngFor="let action of column.actions">
+                                        <a *ngIf="action.type === 'link'" [routerLink]="action.routerLink(row)"
+                                            class="btn btn-sm btn-outline-{{ action.color || 'secondary' }}"
+                                            style="margin-right: 5px">
+                                            <i *ngIf="action.icon" [class]="action.icon"></i> {{ action.label }}
+                                        </a>
+
+                                        <button *ngIf="action.type === 'button'"
+                                            class="btn btn-sm btn-outline-{{ action.color || 'secondary' }}"
+                                            style="margin-right: 5px" (click)="handleActionClick(action, row)">
+                                            <i *ngIf="action.icon" [class]="action.icon"></i> {{ action.label }}
+                                        </button>
+                                    </ng-container>
                                 </ng-container>
 
                             </ng-container>

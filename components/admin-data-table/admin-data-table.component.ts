@@ -10,6 +10,7 @@ import {
 import { FormControl, FormGroup } from "@angular/forms";
 
 import {
+  DataTableAction,
   DataTableColumn,
   DataTableColumnUrl,
   DataTableConfig,
@@ -27,8 +28,8 @@ export class AdminDataTableComponent<T> implements OnChanges {
   @Input() config!: DataTableConfig<T>;
   @Input() searchValue!: string;
 
-  @Output() deleteItemEvent = new EventEmitter<any>();
   @Output() fetchDataEvent = new EventEmitter<any>();
+  @Output() actionClickEvent = new EventEmitter<any>();
   @Output() btnClickEvent = new EventEmitter<any>();
 
   readonly pageSize: number = 10;
@@ -44,8 +45,6 @@ export class AdminDataTableComponent<T> implements OnChanges {
   searchForm: FormGroup = new FormGroup({
     keyword: new FormControl(""),
   });
-
-  idKey: string = "id";
 
   constructor() {}
 
@@ -66,10 +65,6 @@ export class AdminDataTableComponent<T> implements OnChanges {
 
     if (this.dataLoaded) {
       this.rows = this.getRows();
-    }
-
-    if (this.config.idKey) {
-      this.idKey = this.config.idKey;
     }
   }
 
@@ -188,8 +183,8 @@ export class AdminDataTableComponent<T> implements OnChanges {
     return pipe ? pipe.instance.transform(value, ...(pipe.args ?? [])) : value;
   }
 
-  handleDelete(row: any) {
-    this.deleteItemEvent.emit(row);
+  handleActionClick<T>(action: DataTableAction, row: T): void {
+    this.actionClickEvent.emit({ action, row });
   }
 
   emitFetchDataEvent(): void {

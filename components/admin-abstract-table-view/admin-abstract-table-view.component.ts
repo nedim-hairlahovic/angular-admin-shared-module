@@ -32,6 +32,13 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
     if (!this.dataTableConfig.buttons) {
       this.dataTableConfig.buttons = this.DEFAULT_BUTTONS;
     }
+
+    const actionsColumn = this.dataTableConfig.columns.find(
+      (c) => c.value === "actions"
+    );
+    if (actionsColumn && !actionsColumn.actions) {
+      actionsColumn.actions = this.getDefaultTableItemActions();
+    }
   }
 
   override fetchData(requestParams?: any): void {

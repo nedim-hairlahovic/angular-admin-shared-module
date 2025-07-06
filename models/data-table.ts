@@ -28,6 +28,7 @@ export interface DataTableColumn {
     instance: PipeTransform;
     args?: any[];
   };
+  actions?: DataTableAction[];
 }
 
 export interface DataTableColumnUrl {
@@ -47,4 +48,14 @@ export interface DataTableColumnSort {
 export interface DataTableSearch {
   key: string;
   placeholder: string;
+}
+
+export interface DataTableAction {
+  name: string;
+  label: string;
+  icon?: string;
+  color?: string;
+  type?: "link" | "button";
+  routerLink?: (row: any) => any[];
+  click?: (row: any) => void;
 }
