@@ -70,6 +70,7 @@ export class AdminDataFormComponent<T extends ApiResource, R>
     if (
       this.config.data &&
       this.config.data.id !== null &&
+      this.config.data.id !== undefined &&
       this.config.data.id !== 0
     ) {
       this.mode = "EDIT";
