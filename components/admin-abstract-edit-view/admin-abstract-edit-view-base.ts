@@ -1,5 +1,5 @@
 import { Directive } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
 import { DataFormConfig, DataFormSelectOption } from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
@@ -29,7 +29,7 @@ export default abstract class AdminAbstractEditViewBase<
   public ngOnInit(): void {
     this.pageTitle = this.getTitle(null);
 
-    this.route.paramMap.subscribe((params) => {
+    this.route.paramMap.subscribe((params: ParamMap) => {
       this.extractIds(params);
       this.mode = this.getEditMode();
       this.formConfig = this.getFormConfig();

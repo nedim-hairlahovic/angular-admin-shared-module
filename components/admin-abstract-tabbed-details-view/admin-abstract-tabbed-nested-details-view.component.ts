@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
 import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
@@ -11,18 +11,19 @@ import { UrlConfig } from "../../models/url-config";
   template: "",
 })
 export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
-    T extends ApiResource
+    T extends ApiResource,
+    ID = number
   >
   extends AdminAbstractTabbedDetailsViewBase
   implements OnInit
 {
   item?: T;
   errorMessage!: string;
-  parentId!: string | null;
+  parentId!: ID;
   childId!: string | null;
 
   constructor(
-    private dataService: NestedDataService<T, any>,
+    private dataService: NestedDataService<T, any, ID>,
     route: ActivatedRoute,
     router: Router
   ) {
@@ -37,8 +38,8 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
 
   ngOnInit(): void {
     this.pageTitle = this.getTitle(null);
-    this.route.paramMap.subscribe((params) => {
-      this.parentId = params.get(this.getParentIdKey());
+    this.route.paramMap.subscribe((params: ParamMap) => {
+      this.parentId = this.resolveParentId(params);
       this.childId = params.get(this.getChildIdKey());
       this.getItem();
     });
@@ -53,6 +54,16 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
       },
       error: (err) => console.log(err),
     });
+  }
+
+  protected resolveParentId(params: ParamMap): ID {
+    const raw = params.get(this.getParentIdKey());
+    if (raw === null) return {} as ID;
+
+    if (/^\d+$/.test(raw)) {
+      return Number.parseInt(raw) as ID;
+    }
+    return {} as ID;
   }
 
   getParentIdKey(): string {

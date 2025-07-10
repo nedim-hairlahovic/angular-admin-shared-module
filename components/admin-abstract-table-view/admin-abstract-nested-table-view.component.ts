@@ -11,17 +11,21 @@ import AdminAbstractTableViewBase from "./admin-abstract-table-view-base";
   standalone: false,
 })
 export abstract class AdminAbstractNestedTableViewComponent<
-    T extends ApiResource
+    T extends ApiResource,
+    ID = number
   >
   extends AdminAbstractTableViewBase<T>
   implements OnInit
 {
-  @Input() parentId!: number;
+  @Input() parentId!: ID;
 
   abstract getDeletePrompt(): string;
   abstract getBackUrl(): UrlConfig;
 
-  constructor(private dataService: NestedDataService<T, any>, router: Router) {
+  constructor(
+    private dataService: NestedDataService<T, any, ID>,
+    router: Router
+  ) {
     super(router);
   }
 
