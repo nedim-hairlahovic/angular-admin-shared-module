@@ -3,6 +3,7 @@ import { PipeTransform } from "@angular/core";
 import { CardButton } from "./data-card";
 import { Page } from "./page";
 import { UrlConfig } from "./url-config";
+import { Params } from "@angular/router";
 
 export interface DataTableConfig<T> {
   title: string;
@@ -57,5 +58,6 @@ export interface DataTableAction {
   color?: string;
   type?: "link" | "button";
   routerLink?: (row: any) => any[];
+  queryParams?: (row: any) => Params;
   click?: (row: any) => void;
 }
