@@ -68,7 +68,7 @@ export default abstract class AdminAbstractTableViewBase<T> {
   }
 
   protected getDefaultTableItemActions(): DataTableAction[] {
-    const idKey = this.dataTableConfig.idKey ?? "id";
+    const idKey = this.dataTableConfig?.idKey ?? "id";
     const baseUrl = this.dataTableConfig?.baseUrl?.url ?? "";
 
     return [
