@@ -63,15 +63,7 @@
 
                                 <ng-container *ngIf="column.value === 'actions'">
                                     <ng-container *ngFor="let action of column.actions">
-                                        <a *ngIf="action.type === 'link'" [routerLink]="action.routerLink(row)"
-                                            [queryParams]="action.queryParams?.(row)"
-                                            class="btn btn-sm btn-outline-{{ action.color || 'secondary' }}"
-                                            style="margin-right: 5px">
-                                            <i *ngIf="action.icon" [class]="action.icon"></i> {{ action.label }}
-                                        </a>
-
-                                        <button *ngIf="action.type === 'button'"
-                                            class="btn btn-sm btn-outline-{{ action.color || 'secondary' }}"
+                                        <button class="btn btn-sm btn-outline-{{ action.color || 'secondary' }}"
                                             style="margin-right: 5px" (click)="handleActionClick(action, row)">
                                             <i *ngIf="action.icon" [class]="action.icon"></i> {{ action.label }}
                                         </button>

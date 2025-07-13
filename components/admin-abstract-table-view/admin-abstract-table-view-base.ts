@@ -22,6 +22,23 @@ export default abstract class AdminAbstractTableViewBase<T> {
     },
   ];
 
+  protected readonly DEFAULT_ACTIONS: DataTableAction[] = [
+    {
+      name: "edit",
+      label: "Uredi",
+      icon: "fa fa-pencil",
+      color: "primary",
+      click: (row) => this.navigateToEditPage(row),
+    },
+    {
+      name: "delete",
+      label: "Obriši",
+      icon: "fa fa-trash",
+      color: "danger",
+      click: (row) => this.deleteItem(row),
+    },
+  ];
+
   protected abstract initDataTableConfig(): DataTableConfig<T>;
   protected abstract initializeDataTableConfigDefaults(): void;
   protected abstract fetchData(event?: any): void;
@@ -58,6 +75,15 @@ export default abstract class AdminAbstractTableViewBase<T> {
     this.router.navigate([this.dataTableConfig.baseUrl.url + "/0/edit"]);
   }
 
+  navigateToEditPage(item: T): void {
+    const idKey = this.dataTableConfig?.idKey ?? "id";
+    const baseUrl = this.dataTableConfig?.baseUrl?.url ?? "";
+
+    this.router.navigate([
+      baseUrl + "/" + this.findDeepByPath(item, idKey) + "/edit",
+    ]);
+  }
+
   protected handleTableAction(event: {
     action: DataTableAction;
     row: any;
@@ -65,34 +91,6 @@ export default abstract class AdminAbstractTableViewBase<T> {
     if (event.action.click) {
       event.action.click(event.row);
     }
-  }
-
-  protected getDefaultTableItemActions(): DataTableAction[] {
-    const idKey = this.dataTableConfig?.idKey ?? "id";
-    const baseUrl = this.dataTableConfig?.baseUrl?.url ?? "";
-
-    return [
-      {
-        name: "edit",
-        label: "Uredi",
-        icon: "fa fa-pencil",
-        color: "primary",
-        type: "link",
-        routerLink: (row: any) => [
-          baseUrl,
-          this.findDeepByPath(row, idKey),
-          "edit",
-        ],
-      },
-      {
-        name: "delete",
-        label: "Obriši",
-        icon: "fa fa-trash",
-        color: "danger",
-        type: "button",
-        click: (row) => this.deleteItem(row),
-      },
-    ];
   }
 
   protected findDeepByPath(obj: any, path: string): any {

@@ -37,7 +37,7 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
       (c) => c.value === "actions"
     );
     if (actionsColumn && !actionsColumn.actions) {
-      actionsColumn.actions = this.getDefaultTableItemActions();
+      actionsColumn.actions = this.DEFAULT_ACTIONS;
     }
   }
 

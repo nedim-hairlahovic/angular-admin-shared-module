@@ -38,7 +38,7 @@ export abstract class AdminAbstractNestedTableViewComponent<
       (c) => c.value === "actions"
     );
     if (actionsColumn && !actionsColumn.actions) {
-      actionsColumn.actions = this.getDefaultTableItemActions();
+      actionsColumn.actions = this.DEFAULT_ACTIONS;
     }
   }
 

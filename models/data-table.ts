@@ -56,8 +56,5 @@ export interface DataTableAction {
   label: string;
   icon?: string;
   color?: string;
-  type?: "link" | "button";
-  routerLink?: (row: any) => any[];
-  queryParams?: (row: any) => Params;
   click?: (row: any) => void;
 }
