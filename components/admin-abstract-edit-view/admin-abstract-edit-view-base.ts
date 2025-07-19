@@ -3,6 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
 import { DataFormConfig, DataFormSelectOption } from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
+import { UrlConfig } from "../../models/url-config";
 
 @Directive()
 export default abstract class AdminAbstractEditViewBase<
@@ -16,6 +17,7 @@ export default abstract class AdminAbstractEditViewBase<
   mode: "ADD" | "EDIT" = "ADD";
   dataLoaded: boolean = false;
   processingRequest!: boolean;
+  baseUrl!: UrlConfig;
 
   abstract getTitle(item: T | null): string;
   abstract convertToRequestObject(item: T): R;
@@ -37,6 +39,7 @@ export default abstract class AdminAbstractEditViewBase<
       this.getItem();
 
       this.postItemInit();
+      this.baseUrl = this.getBaseUrl();
     });
   }
 
@@ -96,11 +99,35 @@ export default abstract class AdminAbstractEditViewBase<
     }
   }
 
+  protected getBaseUrl(): UrlConfig {
+    let result: UrlConfig = this.formConfig.baseUrl;
+
+    this.route.queryParamMap.subscribe((queryParams) => {
+      const backRaw = queryParams.get("back");
+      if (backRaw) {
+        const back = decodeURIComponent(backRaw);
+        const [url, fragment] = back.split("#");
+        result = {
+          url,
+          fragment: fragment || undefined,
+        };
+      }
+    });
+
+    return result;
+  }
+
   protected onSaveComplete(): void {
     this.processingRequest = false;
-    this.router.navigate([this.formConfig.baseUrl.url], {
-      fragment: this.formConfig.baseUrl.fragment,
-      queryParamsHandling: "preserve",
+    this.router.navigate([this.baseUrl.url], {
+      fragment: this.baseUrl.fragment,
+      replaceUrl: true,
+    });
+  }
+
+  protected onBack(): void {
+    this.router.navigate([this.baseUrl.url], {
+      fragment: this.baseUrl.fragment,
       replaceUrl: true,
     });
   }
@@ -108,13 +135,5 @@ export default abstract class AdminAbstractEditViewBase<
   protected handleError(err: any): void {
     this.processingRequest = false;
     this.errorMessage = err.error.message;
-  }
-
-  protected onBack(): void {
-    this.router.navigate([this.formConfig.baseUrl.url], {
-      fragment: this.formConfig.baseUrl.fragment,
-      queryParamsHandling: "preserve",
-      replaceUrl: true,
-    });
   }
 }
