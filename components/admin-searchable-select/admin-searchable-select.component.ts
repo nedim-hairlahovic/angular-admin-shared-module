@@ -24,6 +24,7 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
   @Input() inputName!: string;
   @Input() dataService!: DataCrudService<T, any>;
   @Input() initialValue: any;
+  @Input() resetTrigger: boolean = false;
   @Output() onSelectEvent = new EventEmitter<any>();
 
   isValueSelected: boolean = false;
@@ -53,6 +54,11 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
         },
         error: (err) => console.log(err),
       });
+    }
+
+    // When parent sets resetTrigger to true, clear the select
+    if (changes["resetTrigger"] && changes["resetTrigger"].currentValue) {
+      this.clearSelectedValue();
     }
   }
 
