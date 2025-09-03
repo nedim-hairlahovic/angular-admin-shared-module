@@ -76,6 +76,11 @@
                     <!-- </ng-container> -->
                 </tbody>
             </table>
+            <div class="row">
+                <div class="col-12">
+                    <ng-content select="[after-table-content]"></ng-content>
+                </div>
+            </div>
         </div>
 
         <div class="row align-items-center my-3" *ngIf="this.pagination && rows">
