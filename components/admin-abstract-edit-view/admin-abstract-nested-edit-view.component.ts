@@ -4,6 +4,9 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
 import AdminAbstractEditViewBase from "./admin-abstract-edit-view-base";
+import { BaseCrudService } from "../../services/base-crud.service";
+import { map, switchMap } from "rxjs";
+import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Component({
   template: "",
@@ -12,7 +15,8 @@ import AdminAbstractEditViewBase from "./admin-abstract-edit-view-base";
 export abstract class AdminAbstractNestedEditViewComponent<
     T extends ApiResource,
     R,
-    ID = number
+    ID = number,
+    P extends ApiResource = any
   >
   extends AdminAbstractEditViewBase<T, R>
   implements OnInit
@@ -23,6 +27,7 @@ export abstract class AdminAbstractNestedEditViewComponent<
   abstract getChildIdKey(): string;
 
   constructor(
+    private parentDataService: BaseCrudService<P>,
     private dataService: NestedDataService<T, R, ID>,
     route: ActivatedRoute,
     router: Router
@@ -55,11 +60,33 @@ export abstract class AdminAbstractNestedEditViewComponent<
 
   override getItem(): void {
     this.dataLoaded = false;
-    this.dataService.getSingleItem(this.parentId, this.childId).subscribe({
-      next: (item: T) => this.updateFormData(item),
-      error: (err) => console.log(err),
-    });
-    this.getAndUpdateRelatedFormData();
+
+    this.parentDataService
+      .getSingleItem(...this.normalizeId(this.parentId))
+      .pipe(
+        switchMap((parent: P) =>
+          this.dataService
+            .getSingleItem(this.parentId, this.childId)
+            .pipe(map((child: T) => ({ parent, child })))
+        )
+      )
+      .subscribe({
+        next: ({ parent, child }) => {
+          this.updateFormData(child);
+          this.breadcrumbs = this.initBreadcrumbs(parent, child);
+        },
+        error: (err) => console.log(err),
+      });
+  }
+
+  private normalizeId(id: any): any[] {
+    if (typeof id === "object") {
+      // If the ID is a composite object, convert its property values into an array.
+      // Example: { part1: 10, part2: "A" } → [10, "A"]
+      return Object.values(id);
+    }
+    // If the ID is a simple value, wrap it in an array so it can be spread into getSingleItem(...ids).
+    return [id];
   }
 
   onSave(requestDto: R): void {
@@ -78,5 +105,28 @@ export abstract class AdminAbstractNestedEditViewComponent<
           error: (err) => this.handleError(err),
         });
     }
+  }
+
+  protected initBreadcrumbs(parent: P, child: T): BreadcrumbItem[] {
+    return [];
+  }
+
+  protected buildBreadcrumbs<T extends { id?: number | string }>(
+    entity: T,
+    baseTitle: string,
+    baseUrl: string,
+    getEntityLabel: (entity: T) => string,
+    section: { title: string; fragment: string }
+  ): BreadcrumbItem[] {
+    return [
+      { title: baseTitle, url: baseUrl },
+      { title: getEntityLabel(entity), url: `${baseUrl}${entity.id}` },
+      {
+        title: section.title,
+        url: `${baseUrl}${entity.id}`,
+        fragment: section.fragment,
+      },
+      { title: this.editTitle, active: true },
+    ];
   }
 }

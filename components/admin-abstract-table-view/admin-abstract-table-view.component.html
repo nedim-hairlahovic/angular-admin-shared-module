@@ -1,3 +1,5 @@
+<admin-breadcrumbs *ngIf="breadcrumbs.length > 0" [items]="breadcrumbs"></admin-breadcrumbs>
+
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage">
     <i class="fa fa-exclamation-triangle pe-2"></i>
     <strong>Error: </strong>{{ errorMessage }}

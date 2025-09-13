@@ -5,6 +5,7 @@ import { DetailsViewRow } from "../../models/details-view";
 import { ApiResource } from "../../models/api-resource";
 import { DataCrudService } from "../../services/data.service";
 import { CardButton } from "../../models/data-card";
+import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Component({
   template: "",
@@ -13,7 +14,9 @@ import { CardButton } from "../../models/data-card";
 export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
   implements OnInit
 {
-  item?: T;
+  item!: T;
+
+  protected breadcrumbs!: BreadcrumbItem[];
 
   constructor(
     private dataService: DataCrudService<T, any>,
@@ -53,7 +56,10 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
 
   getItem(id: any): void {
     this.dataService.getSingleItem(id).subscribe({
-      next: (_item: T) => (this.item = _item),
+      next: (_item: T) => {
+        this.item = _item;
+        this.breadcrumbs = this.initBreadcrumbs();
+      },
       error: (err) => console.log(err),
     });
   }
@@ -80,5 +86,9 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
   navigateToEdit(): void {
     const editUrl = `${this.getBaseUrl()}/${this.item?.id}/edit`;
     this.router.navigate([editUrl]);
+  }
+
+  protected initBreadcrumbs(): BreadcrumbItem[] {
+    return [];
   }
 }

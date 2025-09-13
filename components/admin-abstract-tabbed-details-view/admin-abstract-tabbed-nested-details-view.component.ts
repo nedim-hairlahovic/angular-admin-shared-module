@@ -6,6 +6,7 @@ import { NestedDataService } from "../../services/nested-data.service";
 import { DetailsViewRow } from "../../models/details-view";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
 import { UrlConfig } from "../../models/url-config";
+import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Component({
   template: "",
@@ -51,6 +52,7 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
         this.item = _item;
         this.pageTitle = this.getTitle(this.item);
         this.showTabs();
+        this.breadcrumbs = this.initBreadcrumbs(_item);
       },
       error: (err) => console.log(err),
     });
@@ -86,5 +88,9 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
       queryParamsHandling: "preserve",
       replaceUrl: true,
     });
+  }
+
+  protected initBreadcrumbs(item: T): BreadcrumbItem[] {
+    return [];
   }
 }

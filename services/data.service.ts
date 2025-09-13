@@ -1,25 +1,28 @@
-import { HttpClient, HttpHeaders, HttpParams } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable, of } from "rxjs";
 
-import { environment } from "src/environments/environment";
 import { Page } from "../models/page";
 import { ApiResource } from "../models/api-resource";
 import { SearchableSelectItem } from "../models/searchable-select-item";
+import { BaseCrudService } from "./base-crud.service";
 
 @Injectable({
   providedIn: "root",
 })
-export abstract class DataCrudService<T extends ApiResource, R> {
-  private readonly baseUrl = `${environment.backendUrl}/api/v1/admin`;
-  private readonly httpHeaders = new HttpHeaders({
-    "Content-Type": "application/json",
-  });
-
-  constructor(private http: HttpClient) {}
+export abstract class DataCrudService<
+  T extends ApiResource,
+  R
+> extends BaseCrudService<T> {
+  constructor(protected override http: HttpClient) {
+    super(http);
+  }
 
   abstract getUrlPath(): string;
-  abstract initializeItem(): T;
+
+  protected buildItemUrl(id: any): string {
+    return `${this.baseUrl}${this.getUrlPath()}/${id}`;
+  }
 
   getCommonUrl(): string {
     return `${this.baseUrl}${this.getUrlPath()}`;
@@ -37,15 +40,6 @@ export abstract class DataCrudService<T extends ApiResource, R> {
 
   getPagedItems(params?: HttpParams): Observable<Page<T>> {
     return this.http.get<Page<T>>(this.getCommonUrl(), { params });
-  }
-
-  getSingleItem(id: any): Observable<T> {
-    if (id === 0 || id === "0") {
-      return of(this.initializeItem());
-    }
-
-    const url = `${this.getCommonUrl()}/${id}`;
-    return this.http.get<T>(url);
   }
 
   createItem(request: R): Observable<T> {

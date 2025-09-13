@@ -6,6 +6,7 @@ import { DetailsViewRow } from "../../models/details-view";
 import { DataCrudService } from "../../services/data.service";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
 import { UrlConfig } from "../../models/url-config";
+import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Component({
   template: "",
@@ -16,7 +17,7 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
   extends AdminAbstractTabbedDetailsViewBase
   implements OnInit
 {
-  item?: T;
+  item!: T;
   errorMessage!: string;
 
   constructor(
@@ -47,6 +48,7 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
         this.item = _item;
         this.pageTitle = this.getTitle();
         this.showTabs();
+        this.breadcrumbs = this.initBreadcrumbs();
       },
       error: (err) => console.log(err),
     });
@@ -59,5 +61,9 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
   override navigateToEdit(): void {
     const editUrl = `${this.getBaseUrl().url}/${this.item?.id}/edit`;
     this.router.navigate([editUrl]);
+  }
+
+  protected initBreadcrumbs(): BreadcrumbItem[] {
+    return [];
   }
 }

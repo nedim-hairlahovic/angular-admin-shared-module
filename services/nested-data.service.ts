@@ -1,35 +1,30 @@
-import { HttpClient, HttpHeaders } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Observable } from "rxjs";
 
-import { environment } from "src/environments/environment";
+import { BaseCrudService } from "./base-crud.service";
 
 @Injectable({
   providedIn: "root",
 })
-export abstract class NestedDataService<T, R, ID = number> {
-  protected readonly baseUrl = `${environment.backendUrl}/api/v1/admin`;
-  private readonly httpHeaders = new HttpHeaders({
-    "Content-Type": "application/json",
-  });
+export abstract class NestedDataService<
+  T,
+  R,
+  ID = number
+> extends BaseCrudService<T> {
+  constructor(protected override http: HttpClient) {
+    super(http);
+  }
 
-  constructor(protected http: HttpClient) {}
-
-  abstract initializeItem(): T;
   abstract getCommonUrl(parentId: ID): string;
+
+  protected buildItemUrl(parentId: ID, childId: any): string {
+    return `${this.getCommonUrl(parentId)}/${childId}`;
+  }
 
   getItems(parentId: ID): Observable<T[]> {
     const url = this.getCommonUrl(parentId);
     return this.http.get<T[]>(url);
-  }
-
-  getSingleItem(parentId: ID, childId: any): Observable<T> {
-    if (childId === 0 || childId === "0") {
-      return of(this.initializeItem());
-    }
-
-    const url = `${this.getCommonUrl(parentId)}/${childId}`;
-    return this.http.get<T>(url);
   }
 
   createItem(parentId: ID, request: R): Observable<T> {

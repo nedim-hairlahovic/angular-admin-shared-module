@@ -5,9 +5,11 @@ import {
   ViewChild,
   ViewContainerRef,
 } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
+
 import { AdminTabConfig } from "../../models/tabbed-view";
 import { CardButton } from "../../models/data-card";
-import { ActivatedRoute, Router } from "@angular/router";
+import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Directive()
 export default abstract class AdminAbstractTabbedDetailsViewBase {
@@ -17,6 +19,8 @@ export default abstract class AdminAbstractTabbedDetailsViewBase {
 
   @ViewChild("dynamicComponentHost", { read: ViewContainerRef })
   protected hostRef!: ViewContainerRef;
+
+  protected breadcrumbs!: BreadcrumbItem[];
 
   protected DEFAULT_BUTTONS: CardButton[] = [
     {

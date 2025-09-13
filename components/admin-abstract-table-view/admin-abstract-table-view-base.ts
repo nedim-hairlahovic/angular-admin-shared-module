@@ -4,6 +4,7 @@ import { Router } from "@angular/router";
 import { DataTableAction, DataTableConfig } from "../../models/data-table";
 import { CardButton } from "../../models/data-card";
 import { UrlConfig } from "../../models/url-config";
+import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Directive()
 export default abstract class AdminAbstractTableViewBase<T> {
@@ -11,6 +12,7 @@ export default abstract class AdminAbstractTableViewBase<T> {
   dataLoaded: boolean = false;
   errorMessage!: string;
   searchValue!: string | null;
+  protected breadcrumbs!: BreadcrumbItem[];
 
   protected readonly DEFAULT_BUTTONS: CardButton[] = [
     {
@@ -48,6 +50,7 @@ export default abstract class AdminAbstractTableViewBase<T> {
 
   ngOnInit(): void {
     this.dataTableConfig = this.initDataTableConfig();
+    this.breadcrumbs = this.initBreadcrumbs();
     this.initializeDataTableConfigDefaults();
     this.fetchData();
   }
@@ -95,5 +98,9 @@ export default abstract class AdminAbstractTableViewBase<T> {
 
   protected findDeepByPath(obj: any, path: string): any {
     return path.split(".").reduce((o, key) => (o ? o[key] : null), obj);
+  }
+
+  protected initBreadcrumbs(): BreadcrumbItem[] {
+    return [];
   }
 }

@@ -15,6 +15,7 @@ import { AdminDetailsViewComponent } from "./components/admin-details-view/admin
 import { AdminSearchableSelectComponent } from "./components/admin-searchable-select/admin-searchable-select.component";
 import { AdminSpinnerComponent } from "./components/admin-spinner/admin-spinner.component";
 import { AdminTabbedDetailsViewTemplateComponent } from "./components/admin-abstract-tabbed-details-view/admin-tabbed-details-view-template.component";
+import { AdminBreadcrumbsComponent } from "./components/admin-breadcrumbs/admin-breadcrumbs.component";
 
 @NgModule({
   declarations: [
@@ -25,6 +26,7 @@ import { AdminTabbedDetailsViewTemplateComponent } from "./components/admin-abst
     AdminSearchableSelectComponent,
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
+    AdminBreadcrumbsComponent,
   ],
   exports: [
     AdminDataTableComponent,
@@ -33,6 +35,7 @@ import { AdminTabbedDetailsViewTemplateComponent } from "./components/admin-abst
     AdminSearchableSelectComponent,
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
+    AdminBreadcrumbsComponent,
   ],
   imports: [
     BrowserModule,

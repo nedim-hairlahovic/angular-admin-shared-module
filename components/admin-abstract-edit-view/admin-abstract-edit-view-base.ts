@@ -4,6 +4,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { DataFormConfig, DataFormSelectOption } from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
 import { UrlConfig } from "../../models/url-config";
+import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Directive()
 export default abstract class AdminAbstractEditViewBase<
@@ -18,6 +19,8 @@ export default abstract class AdminAbstractEditViewBase<
   dataLoaded: boolean = false;
   processingRequest!: boolean;
   baseUrl!: UrlConfig;
+
+  protected breadcrumbs!: BreadcrumbItem[];
 
   abstract getTitle(item: T | null): string;
   abstract convertToRequestObject(item: T): R;
@@ -135,5 +138,26 @@ export default abstract class AdminAbstractEditViewBase<
   protected handleError(err: any): void {
     this.processingRequest = false;
     this.errorMessage = err.error.message;
+  }
+
+  protected get editTitle(): string {
+    return this.mode === "ADD" ? "Dodaj" : "Uredi";
+  }
+
+  protected buildEditBreadcrumbs(
+    baseCrumbs: BreadcrumbItem[]
+  ): BreadcrumbItem[] {
+    // clone to avoid mutating original
+    const breadcrumbs = [...baseCrumbs];
+
+    if (this.mode === "ADD") {
+      // In ADD mode: remove the last item (detail breadcrumb)
+      breadcrumbs.pop();
+    }
+
+    // Always add the final breadcrumb (e.g. "Uredi" or "Dodaj")
+    breadcrumbs.push({ title: this.editTitle, active: true });
+
+    return breadcrumbs;
   }
 }

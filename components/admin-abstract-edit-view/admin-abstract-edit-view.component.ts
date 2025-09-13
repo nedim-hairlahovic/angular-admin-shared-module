@@ -4,6 +4,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { ApiResource } from "../../models/api-resource";
 import { DataCrudService } from "../../services/data.service";
 import AdminAbstractEditViewBase from "./admin-abstract-edit-view-base";
+import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Component({
   template: "",
@@ -34,7 +35,10 @@ export abstract class AdminAbstractEditViewComponent<
   override getItem(): void {
     this.dataLoaded = false;
     this.dataService.getSingleItem(this.itemId).subscribe({
-      next: (item: T) => this.updateFormData(item),
+      next: (item: T) => {
+        this.updateFormData(item);
+        this.breadcrumbs = this.initBreadcrumbs(item);
+      },
       error: (err) => console.log(err),
     });
   }
@@ -57,4 +61,8 @@ export abstract class AdminAbstractEditViewComponent<
   }
 
   protected sanitizeRequestObject(requestDto: R): void {}
+
+  protected initBreadcrumbs(item: T): BreadcrumbItem[] {
+    return [];
+  }
 }
