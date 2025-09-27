@@ -30,6 +30,9 @@ export interface DataTableColumn {
     args?: any[];
   };
   actions?: DataTableAction[];
+  badge?: {
+    [key: string]: string; // mapping value → bootstrap class (success, danger, warning, etc.)
+  };
 }
 
 export interface DataTableColumnUrl {

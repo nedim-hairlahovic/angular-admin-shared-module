@@ -56,8 +56,14 @@
                                 {{ applyPipe(row[column.value], column.pipe) }}
                             </ng-container>
 
-                            <ng-container *ngIf="!column.url && !column.pipe">
-                                <span *ngIf="column.value !=='actions'">
+                            <ng-container *ngIf="column.badge">
+                                <span class="badge" [ngClass]="'badge-' + (column.badge[row[column.value]] || 'light')">
+                                    {{ row[column.value] }}
+                                </span>
+                            </ng-container>
+
+                            <ng-container *ngIf="!column.url && !column.pipe && !column.badge">
+                                <span *ngIf=" column.value !=='actions'">
                                     {{ getColumnText(row, column) }}
                                 </span>
 
