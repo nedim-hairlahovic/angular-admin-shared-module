@@ -9,8 +9,7 @@ export interface DataFormConfig<T extends ApiResource, R> {
   data?: any;
   elements: DataFormElement<T, R>[];
   validationMessages: { [key: string]: { [key: string]: string } };
-  errorMessage?: string;
-  baseUrl: UrlConfig;
+  routeConfig?: DataFormRouteConfig<T>;
 }
 
 export interface DataFormElement<T extends ApiResource, R> {
@@ -46,4 +45,9 @@ export enum DataFormElementType {
   TextArea,
   Time,
   Checkbox,
+}
+
+export interface DataFormRouteConfig<T> {
+  onSave: (item?: T) => UrlConfig;
+  onNotFound: UrlConfig;
 }

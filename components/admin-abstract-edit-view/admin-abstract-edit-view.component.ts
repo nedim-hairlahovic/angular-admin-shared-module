@@ -14,7 +14,7 @@ export abstract class AdminAbstractEditViewComponent<
   T extends ApiResource,
   R
 > extends AdminAbstractEditViewBase<T, R> {
-  itemId!: string | null;
+  itemId!: string;
 
   constructor(
     private dataService: DataCrudService<T, R>,
@@ -39,7 +39,13 @@ export abstract class AdminAbstractEditViewComponent<
         this.updateFormData(item);
         this.breadcrumbs = this.initBreadcrumbs(item);
       },
-      error: (err) => console.log(err),
+      error: (err) => {
+        if (err.status === 404) {
+          this.onNotFoundError();
+        }
+
+        this.handleError(err);
+      },
     });
   }
 
@@ -49,12 +55,12 @@ export abstract class AdminAbstractEditViewComponent<
 
     if (this.mode === "ADD") {
       this.dataService.createItem(requestDto).subscribe({
-        next: () => this.onSaveComplete(),
+        next: (saved: T) => this.onSaveComplete(saved),
         error: (err) => this.handleError(err),
       });
     } else if (this.mode === "EDIT") {
       this.dataService.updateItem(this.itemId, requestDto).subscribe({
-        next: () => this.onSaveComplete(),
+        next: (saved: T) => this.onSaveComplete(saved),
         error: (err) => this.handleError(err),
       });
     }

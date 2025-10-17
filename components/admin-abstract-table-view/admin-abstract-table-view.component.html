@@ -1,11 +1,17 @@
 <admin-breadcrumbs *ngIf="breadcrumbs.length > 0" [items]="breadcrumbs"></admin-breadcrumbs>
 
+<div class="page-header" *ngIf="config.title">
+    <h2 class="page-title">
+        {{ config.title }}
+    </h2>
+</div>
+
 <div class="alert alert-danger" role="alert" *ngIf="errorMessage">
     <i class="fa fa-exclamation-triangle pe-2"></i>
     <strong>Error: </strong>{{ errorMessage }}
 </div>
 
-<admin-data-table [dataLoaded]="dataLoaded" [config]="dataTableConfig" [searchValue]="searchValue"
+<admin-data-table [dataLoaded]="dataLoaded" [config]="config" [data]="data" [searchValue]="searchValue"
     (fetchDataEvent)="fetchData($event)" (actionClickEvent)="handleTableAction($event)"
     (btnClickEvent)="onBtnClick($event)">
 </admin-data-table>

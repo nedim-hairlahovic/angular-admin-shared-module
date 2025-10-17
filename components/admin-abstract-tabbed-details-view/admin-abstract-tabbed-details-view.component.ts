@@ -2,11 +2,11 @@ import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { ApiResource } from "../../models/api-resource";
-import { DetailsViewRow } from "../../models/details-view";
 import { DataCrudService } from "../../services/data.service";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
-import { UrlConfig } from "../../models/url-config";
 import { BreadcrumbItem } from "../../models/breadcrumb";
+import { DetailsViewConfigRouteConfig } from "../../models/details-view";
+import { UrlConfig } from "../../models/url-config";
 
 @Component({
   template: "",
@@ -14,12 +14,9 @@ import { BreadcrumbItem } from "../../models/breadcrumb";
 export abstract class AdminAbstractTabbedDetailsViewComponent<
     T extends ApiResource
   >
-  extends AdminAbstractTabbedDetailsViewBase
+  extends AdminAbstractTabbedDetailsViewBase<T>
   implements OnInit
 {
-  item!: T;
-  errorMessage!: string;
-
   constructor(
     private dataService: DataCrudService<T, any>,
     route: ActivatedRoute,
@@ -28,15 +25,11 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
     super(route, router);
   }
 
-  abstract getTitle(): string;
-  abstract getDetailsData(): DetailsViewRow[];
-  abstract getBaseUrl(): UrlConfig;
-
   ngOnInit(): void {
-    this.pageTitle = this.getTitle();
     this.route.paramMap.subscribe((params) => {
       const id = params.get("id");
       if (id) {
+        this.routeConfig = this.getRouteConfig();
         this.getItem(id);
       }
     });
@@ -50,20 +43,33 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
         this.showTabs();
         this.breadcrumbs = this.initBreadcrumbs();
       },
-      error: (err) => console.log(err),
+      error: (err) => {
+        if (err.status >= 400 && err.status < 500) {
+          this.onNotFoundError();
+          return;
+        }
+
+        console.log(err.error.message);
+      },
     });
-  }
-
-  override navigateBack(): void {
-    this.router.navigate([this.getBaseUrl().url]);
-  }
-
-  override navigateToEdit(): void {
-    const editUrl = `${this.getBaseUrl().url}/${this.item?.id}/edit`;
-    this.router.navigate([editUrl]);
   }
 
   protected initBreadcrumbs(): BreadcrumbItem[] {
     return [];
+  }
+
+  protected initRouteConfig(
+    baseConfig: UrlConfig
+  ): DetailsViewConfigRouteConfig<T> {
+    return {
+      edit: (item: T) => ({
+        url: `/${baseConfig.url}/${item.id}/edit`,
+        fragment: baseConfig.fragment,
+      }),
+      onNotFound: {
+        url: baseConfig.url,
+        fragment: baseConfig.fragment,
+      },
+    };
   }
 }

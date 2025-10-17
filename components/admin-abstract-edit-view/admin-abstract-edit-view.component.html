@@ -1,14 +1,11 @@
-<div class="container-fluid">
+<admin-breadcrumbs *ngIf="breadcrumbs?.length > 0" [items]="breadcrumbs"></admin-breadcrumbs>
 
-    <admin-breadcrumbs *ngIf="breadcrumbs?.length > 0" [items]="breadcrumbs"></admin-breadcrumbs>
-
-    <!-- Page Heading -->
-    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-        <h1 class="h3 mb-0 text-gray-800">{{ pageTitle }}</h1>
-    </div>
-
-    <admin-data-form *ngIf="dataLoaded" [config]="formConfig" [errorMessage]="errorMessage"
-        [formProcessing]="processingRequest" (btnSaveEvent)="onSave($event)" (btnBackEvent)="onBack()">
-    </admin-data-form>
-
+<div class="page-header" *ngIf="formConfig">
+    <h2 class="page-title">
+        {{ pageTitle }}
+    </h2>
 </div>
+
+<admin-data-form *ngIf="dataLoaded" [config]="formConfig" [errorMessage]="errorMessage"
+    [formProcessing]="processingRequest" (btnSaveEvent)="onSave($event)">
+</admin-data-form>

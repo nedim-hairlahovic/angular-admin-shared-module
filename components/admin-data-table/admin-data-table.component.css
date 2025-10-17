@@ -1,41 +1,54 @@
-.table.table-bordered thead th {
-    position: relative;
+.table th,
+.table td {
+    padding: 0.75rem;
 }
 
-.table.table-bordered thead th .sort-icons {
+.table th {
+    position: relative;
+    color: #374151;
+    font-weight: 700;
+    /* background-color: #f9fafb; */
+}
+
+.table tbody td {
+    color: #444;
+    vertical-align: middle;
+}
+
+.table thead th .sort-icons {
     position: absolute;
     top: 0px;
     right: 0px;
     height: auto;
 }
 
-.table.table-bordered thead th .sort-icons .btn.up {
+.table thead th .sort-icons .btn.up {
     position: absolute;
     padding: 0;
-    top: 6px;
+    top: 10px;
     right: 5px;
     line-height: 0;
 }
 
-.table.table-bordered thead th .sort-icons .btn.down {
+.table thead th .sort-icons .btn.down {
     position: absolute;
     padding: 0;
-    top: 16px;
+    top: 20px;
     right: 5px;
     line-height: 0;
 }
 
-.table.table-bordered thead th .sort-icons .btn:active,
-.table.table-bordered thead th .sort-icons .btn:focus {
+.table thead th .sort-icons .btn:active,
+.table thead th .sort-icons .btn:focus {
     outline: none !important;
     box-shadow: none;
 }
 
-.table.table-bordered thead th .sort-icons .btn i {
+.table.table thead th .sort-icons .btn i {
     color: #ddd;
 }
 
-.table.table-bordered thead th .sort-icons .btn.active i {
+.table.table thead th .sort-icons .btn.active i {
     color: #333;
 }
 
@@ -63,4 +76,169 @@
 .input-group>.input-group-prepend:not(:first-child)>.input-group-text {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+}
+
+.btn-action {
+    color: #6b7280;
+    transition: all 0.2s ease;
+    border: 1px solid #858796;
+    border-color: transparent;
+    padding: .15rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+    margin-right: 5px;
+}
+
+.btn-action:last-child {
+    margin-right: 0;
+}
+
+.btn-action.primary:hover {
+    background-color: rgba(13, 110, 253, 0.1);
+    border-color: transparent;
+    color: #2653d4;
+}
+
+.btn-action.danger:hover {
+    background-color: rgba(220, 53, 69, 0.1);
+    border-color: transparent;
+    color: #e74a3b;
+}
+
+.btn-action.secondary:hover {
+    background-color: rgba(108, 117, 125, 0.1);
+    border-color: transparent;
+    color: #6c757d;
+}
+
+.btn-action.info:hover {
+    background-color: rgba(13, 202, 240, 0.1);
+    border-color: transparent;
+    color: #31b9d5;
+}
+
+.table-footer {
+    color: #6b7280;
+    font-size: 15px;
+}
+
+.pagination {
+    display: flex;
+    padding-left: 0;
+    list-style: none;
+    border-radius: 0.35rem;
+    color: #69707a;
+}
+
+.page-link {
+    position: relative;
+    display: block;
+    padding: 0.5rem 0.75rem;
+    margin-left: -1px;
+    line-height: 1.25;
+    color: #4e73df;
+    background-color: #fff;
+    border: 1px solid #dddfeb;
+}
+
+.page-link:hover {
+    z-index: 2;
+    color: #224abe;
+    text-decoration: none;
+    background-color: #eaecf4;
+    border-color: #dddfeb;
+}
+
+.page-link:focus {
+    z-index: 3;
+    outline: 0;
+    box-shadow: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+}
+
+.page-item:first-child .page-link {
+    margin-left: 0;
+    border-top-left-radius: 0.35rem;
+    border-bottom-left-radius: 0.35rem;
+}
+
+.page-item:last-child .page-link {
+    border-top-right-radius: 0.35rem;
+    border-bottom-right-radius: 0.35rem;
+}
+
+.page-item.active .page-link {
+    z-index: 3;
+    color: #fff;
+    background-color: #4e73df;
+    border-color: #4e73df;
+}
+
+.page-item.disabled .page-link {
+    color: #858796;
+    pointer-events: none;
+    cursor: auto;
+    background-color: #fff;
+    border-color: #dddfeb;
+}
+
+.pagination-lg .page-link {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.25rem;
+    line-height: 1.5;
+}
+
+.pagination-lg .page-item:first-child .page-link {
+    border-top-left-radius: 0.3rem;
+    border-bottom-left-radius: 0.3rem;
+}
+
+.pagination-lg .page-item:last-child .page-link {
+    border-top-right-radius: 0.3rem;
+    border-bottom-right-radius: 0.3rem;
+}
+
+.pagination-sm .page-link {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+}
+
+.pagination-sm .page-item:first-child .page-link {
+    border-top-left-radius: 0.2rem;
+    border-bottom-left-radius: 0.2rem;
+}
+
+.pagination-sm .page-item:last-child .page-link {
+    border-top-right-radius: 0.2rem;
+    border-bottom-right-radius: 0.2rem;
+}
+
+.clear-btn {
+    position: absolute;
+    top: 48%;
+    right: 50px;
+    transform: translateY(-50%);
+    border: none;
+    background: transparent;
+    color: #9ca3af;
+    cursor: pointer;
+    font-size: 13px;
+    line-height: 1;
+    padding: 0;
+    z-index: 3;
+}
+
+.clear-btn:hover {
+    color: #6b7280;
+}
+
+.input-group .form-control:focus {
+    z-index: 2;
+    position: relative;
+}
+
+.table.table-hover {
+    --bs-table-hover-bg: rgba(224, 229, 236, 0.25);
+    --bs-table-hover-color: inherit;
 }

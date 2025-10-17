@@ -10,10 +10,20 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { AdminTabConfig } from "../../models/tabbed-view";
 import { CardButton } from "../../models/data-card";
 import { BreadcrumbItem } from "../../models/breadcrumb";
+import {
+  DetailsViewConfigRouteConfig,
+  DetailsViewData,
+} from "../../models/details-view";
+import { ApiResource } from "../../models/api-resource";
 
 @Directive()
-export default abstract class AdminAbstractTabbedDetailsViewBase {
+export default abstract class AdminAbstractTabbedDetailsViewBase<
+  T extends ApiResource
+> {
+  protected item!: T;
+  protected errorMessage!: string;
   protected pageTitle!: string;
+  protected routeConfig!: DetailsViewConfigRouteConfig<T>;
   protected tabs!: AdminTabConfig[];
   protected selectedIndex = 0;
 
@@ -24,13 +34,6 @@ export default abstract class AdminAbstractTabbedDetailsViewBase {
 
   protected DEFAULT_BUTTONS: CardButton[] = [
     {
-      label: "Nazad",
-      icon: "fa fa-arrow-left",
-      class: "btn-secondary",
-      actionName: "back",
-      action: () => this.navigateBack(),
-    },
-    {
       label: "Uredi",
       icon: "fa fa-pencil",
       class: "btn-primary",
@@ -39,9 +42,10 @@ export default abstract class AdminAbstractTabbedDetailsViewBase {
     },
   ];
 
+  abstract getTitle(): string;
   abstract initTabs(): void;
-  abstract navigateBack(): void;
-  abstract navigateToEdit(): void;
+  abstract getDetailsData(): DetailsViewData;
+  abstract getRouteConfig(): DetailsViewConfigRouteConfig<T>;
 
   constructor(protected route: ActivatedRoute, protected router: Router) {}
 
@@ -120,5 +124,24 @@ export default abstract class AdminAbstractTabbedDetailsViewBase {
     if (button) {
       button.action();
     }
+  }
+
+  protected navigateToEdit(): void {
+    if (this.routeConfig?.edit) {
+      const urlConfig = this.routeConfig.edit(this.item);
+      this.router.navigate([urlConfig.url], {
+        fragment: urlConfig.fragment,
+      });
+    }
+  }
+
+  protected onNotFoundError(): void {
+    const urlConfig = this.routeConfig?.onNotFound;
+    if (!urlConfig) {
+      return;
+    }
+    this.router.navigate([urlConfig.url], {
+      fragment: urlConfig.fragment,
+    });
   }
 }

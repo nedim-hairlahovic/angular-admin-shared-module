@@ -1,53 +1,68 @@
 <div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">{{ config.title }}</h6>
-    </div>
+
     <div class="card-body">
 
-        <div class="row mb-3" *ngIf="config.search">
-            <div class="col-5">
-                <form [formGroup]="searchForm" class="d-none d-sm-inline-block form-inline table-search"
-                    (ngSubmit)="onSearch()">
-                    <div class="input-group">
-                        <input type="text " class="form-control bg-light" placeholder="{{config.search.placeholder}}"
-                            aria-label="Search " aria-describedby="basic-addon2" formControlName="keyword">
-                        <div class="input-group-append ">
-                            <button class="btn btn-primary " type="submit">
-                                <i class="fa fa-search fa-xs "></i>
+        <div class="row mb-3">
+            <div class="d-flex align-items-center justify-content-between">
+                <div class="flex-grow-1 d-flex align-items-center">
+                    <!-- Search form -->
+                    <form [formGroup]="searchForm" class="d-flex align-items-center table-search mb-2 mb-sm-0"
+                        (ngSubmit)="onSearch()">
+                        <div class="input-group position-relative">
+                            <input type="text" class="form-control bg-light"
+                                placeholder="{{ config.dataOptions?.search?.placeholder || 'Pretraga...' }}"
+                                aria-label="Search" formControlName="keyword" />
+                            <button *ngIf="searchForm.get('keyword')?.value" type="button" class="clear-btn"
+                                (click)="clearSearch()" aria-label="Clear search">
+                                <i class="fa fa-times"></i>
                             </button>
+                            <div class="input-group-append">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fa fa-search fa-xs"></i>
+                                </button>
+                            </div>
                         </div>
+                    </form>
+                    <!-- Action buttons -->
+                    <div class="ms-auto d-flex align-items-center gap-2">
+                        <button *ngFor="let button of config.buttons" (click)="handleBtnClick(button.actionName)"
+                            class="btn" [ngClass]="button.class">
+                            <i *ngIf="button.icon" [class]="button.icon" class="fa text-white-50 me-1"
+                                style="font-size: 14px;"></i>
+                            <span class="text">{{ button.label }}</span>
+                        </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
 
         <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
                 <thead>
                     <tr>
-                        <th *ngFor="let item of config.columns" [ngStyle]="{ 'width': getHeaderStyle(item.header) }"
+                        <th *ngFor="let item of config.columns" [ngStyle]="getHeaderStyle(item)"
                             class="{{ item.className }}">
                             {{ item.header }}
                             <div class="sort-icons" *ngIf="item.sortable">
                                 <button class="btn up" [class.active]="isSortActive(item.value, 'ASC')"
-                                    (click)="onSortChange(item.value, 'ASC')">
+                                    (click)="onSort(item.value, 'ASC')">
                                     <i class="fa fa-caret-up" aria-hidden="true"></i>
                                 </button>
                                 <button class="btn down" [class.active]="isSortActive(item.value, 'DESC')"
-                                    (click)="onSortChange(item.value, 'DESC')">
-                                    <i class="fa fa-caret-down " aria-hidden="true"></i>
+                                    (click)="onSort(item.value, 'ASC')">
+                                    <i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </button>
                             </div>
                         </th>
                     </tr>
                 </thead>
                 <tbody>
-                    <!-- <ng-container *ngIf="dataLoaded "> -->
                     <tr *ngFor="let row of rows">
-                        <td *ngFor="let column of config.columns" class="align-middle {{ column.className }}">
+                        <td *ngFor="let column of config.columns" class="align-middle {{ column.className }}"
+                            [ngStyle]="getHeaderStyle(column)">
 
-                            <ng-container *ngIf="column.url">
-                                <a [routerLink]="getRouterLink(row, column.url)">
+                            <ng-container *ngIf="column.link">
+                                <a [routerLink]="column.link(row)">
                                     {{ getColumnText(row, column) }}
                                 </a>
                             </ng-container>
@@ -62,16 +77,16 @@
                                 </span>
                             </ng-container>
 
-                            <ng-container *ngIf="!column.url && !column.pipe && !column.badge">
-                                <span *ngIf=" column.value !=='actions'">
+                            <ng-container *ngIf="!column.link && !column.pipe && !column.badge">
+                                <span *ngIf="column.value !== 'actions'">
                                     {{ getColumnText(row, column) }}
                                 </span>
 
                                 <ng-container *ngIf="column.value === 'actions'">
                                     <ng-container *ngFor="let action of column.actions">
-                                        <button class="btn btn-sm btn-outline-{{ action.color || 'secondary' }}"
-                                            style="margin-right: 5px" (click)="handleActionClick(action, row)">
-                                            <i *ngIf="action.icon" [class]="action.icon"></i> {{ action.label }}
+                                        <button class="btn btn-action {{ action.color || 'secondary' }}"
+                                            (click)="handleActionClick(action, row)" tooltip="{{ action.label }}">
+                                            <i *ngIf="action.icon" [class]="action.icon"></i>
                                         </button>
                                     </ng-container>
                                 </ng-container>
@@ -79,7 +94,6 @@
                             </ng-container>
                         </td>
                     </tr>
-                    <!-- </ng-container> -->
                 </tbody>
             </table>
             <div class="row">
@@ -89,40 +103,43 @@
             </div>
         </div>
 
-        <div class="row align-items-center my-3" *ngIf="this.pagination && rows">
+        <div class="row align-items-center table-footer" *ngIf="this.pagination && rows">
             <div class="col">
-                Showing {{ ((currentPage - 1) * pageSize) + (totalElements > 0 ? 1 : 0) }}
-                to {{ currentPage * pageSize < totalElements ? currentPage * pageSize : totalElements }} of {{
-                    totalElements }} entries </div>
-                    <div class="col">
-                        <nav class="pull-right" *ngIf="pages.length > 1">
-                            <ul class="pagination mb-0">
-                                <li class="page-item" [class.disabled]="currentPage <= 1">
-                                    <button class="page-link" (click)="onPageChange(currentPage - 1)"
-                                        aria-label="Previous">
-                                        <span aria-hidden="true">&laquo;</span>
-                                    </button>
-                                </li>
-                                <li *ngFor="let i of pages" class="page-item" [class.active]="+i === currentPage"
-                                    [class.disabled]="i === '...'">
-                                    <button class="page-link" (click)="onPageChange(+i)">{{ i }}</button>
-                                </li>
-                                <li class="page-item" [class.disabled]="currentPage >= pages.length">
-                                    <button class="page-link" (click)="onPageChange(currentPage + 1)" aria-label="Next">
-                                        <span aria-hidden="true">&raquo;</span>
-                                    </button>
-                                </li>
-                            </ul>
-                        </nav>
-                    </div>
+                <span>Prikazano {{ ((currentPage - 1) * pageSize) + (totalElements > 0 ? 1 : 0) }}
+                    - {{ currentPage * pageSize < totalElements ? currentPage * pageSize : totalElements }} od {{
+                        totalElements }} {{ getItemLabel(totalElements) }}</span>
+            </div>
+            <div class="col">
+                <nav class="pull-right" *ngIf="pages.length > 1">
+                    <ul class="pagination mb-0">
+                        <li class="page-item" [class.disabled]="currentPage <= 1">
+                            <button class="page-link" (click)="onPageChange(currentPage - 1)" aria-label="Previous">
+                                <span aria-hidden="true">&laquo;</span>
+                            </button>
+                        </li>
+                        <li *ngFor="let i of pages" class="page-item" [class.active]="+i === currentPage"
+                            [class.disabled]="i === '...'">
+                            <button class="page-link" (click)="onPageChange(+i)">{{ i }}</button>
+                        </li>
+                        <li class="page-item" [class.disabled]="currentPage >= pages.length">
+                            <button class="page-link" (click)="onPageChange(currentPage + 1)" aria-label="Next">
+                                <span aria-hidden="true">&raquo;</span>
+                            </button>
+                        </li>
+                    </ul>
+                </nav>
             </div>
         </div>
 
-        <div class="card-footer">
-            <button *ngFor="let button of config.buttons" (click)="handleBtnClick(button.actionName)" class="btn mr-3"
-                [ngClass]="button.class">
-                <i *ngIf="button.icon" [class]="button.icon" class="mr-2" style="font-size: 15px;"></i>
-                <span class="text">{{ button.label }}</span>
-            </button>
+        <div class="row align-items-center" *ngIf="!this.pagination && data">
+            <div class="col">
+                <span *ngIf="rows.length === data.length">
+                    Prikazano {{ rows.length }} {{ getItemLabel(rows.length) }}
+                </span>
+                <span *ngIf="rows.length !== data.length">
+                    Prikazano {{ rows.length }} od {{ data.length }} {{ getItemLabel(data.length) }} (filtrirano)
+                </span>
+            </div>
         </div>
     </div>
+</div>

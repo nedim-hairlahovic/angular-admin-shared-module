@@ -30,7 +30,7 @@ import { ApiResource } from "../../models/api-resource";
 @Component({
   selector: "admin-data-form",
   templateUrl: "./admin-data-form.component.html",
-  styleUrls: ["../../admin-shared.css"],
+  styleUrls: ["../../admin-shared.css", "./admin-data-form.component.css"],
   standalone: false,
 })
 export class AdminDataFormComponent<T extends ApiResource, R>
@@ -44,7 +44,6 @@ export class AdminDataFormComponent<T extends ApiResource, R>
   @Input() formProcessing!: boolean;
 
   @Output() btnSaveEvent = new EventEmitter<R>();
-  @Output() btnBackEvent = new EventEmitter<any>();
 
   mode: "ADD" | "EDIT" = "ADD";
   dataForm!: FormGroup;
@@ -205,10 +204,6 @@ export class AdminDataFormComponent<T extends ApiResource, R>
       const formData = { ...this.config.data, ...formValues };
       this.btnSaveEvent.emit(formData);
     }
-  }
-
-  onBack(): void {
-    this.btnBackEvent.emit(true);
   }
 
   onSearchableSelectChange(inputName: string, event: any) {

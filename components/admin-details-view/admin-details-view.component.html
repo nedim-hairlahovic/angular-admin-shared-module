@@ -1,29 +1,44 @@
-<div class="card shadow mb-4">
-    <div class="card-header py-3">
-        <h6 class="m-0 font-weight-bold text-primary">{{ title }}</h6>
-    </div>
+<div class="card shadow mb-4" *ngIf="data">
     <div class="card-body">
-        <div class="row" *ngFor="let row of rows">
-            <div class="col-2">
-                {{ row.label }}:
-            </div>
-            <div class="col-10">
-                <span *ngIf="row.linkBuilder; else valueTemplate">
-                    <a [href]="row.linkBuilder()" target="_blank">
-                        <i class="fa fa-external-link-square" style="font-size: 14px;"></i> {{ row.value || 'Link'}}
+
+        <div *ngIf="data.info"
+            class="entity-meta d-flex align-items-center justify-content-between flex-wrap mb-3 pb-3">
+            <span class="text-muted small">
+                ID: <strong style="color:#444">#{{ data.info.id }}</strong>
+            </span>
+
+            <div class="d-flex align-items-center justify-content-between gap-3">
+                <ng-container *ngIf="data.info.publicUrl">
+                    <a [href]="data.info.publicUrl" target="_blank">
+                        <i class="fa fa-external-link" aria-hidden="true"></i>
+                        Pogledaj na stranici
                     </a>
+                </ng-container>
+
+                <span class="subtle" *ngIf="data.info.lastUpdated">
+                    Posljednje izmjene: <strong>{{ data.info.lastUpdated }}</strong>
                 </span>
-                <ng-template #valueTemplate>
-                    <b>{{ row.value }}</b>
-                </ng-template>
             </div>
         </div>
-    </div>
-    <div class="card-footer">
-        <button *ngFor="let button of buttons" (click)="handleBtnClick(button.actionName)" class="btn mr-3" [ngClass]="button.class">
-            <i *ngIf="button.icon" [class]="button.icon" class="mr-2" style="font-size: 15px;"></i>
-            <span class="text">{{ button.label }}</span>
-        </button>
+
+        <div class="detail-grid" aria-live="polite">
+            <div class="field pb-3" *ngFor="let field of data.fields">
+                <div class="label text-muted">{{ field.label }}</div>
+                <div>
+                    <div class="value">{{ field.value || '-' }}</div>
+                    <div *ngIf="field.description" class="muted-note">{{ field.description }}</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="actions">
+            <button *ngFor="let button of buttons" (click)="handleBtnClick(button.actionName)" class="btn mr-3"
+                [ngClass]="button.class">
+                <i *ngIf="button.icon" [class]="button.icon" class="me-2" style="font-size: 15px;"></i>
+                <span class="text">{{ button.label }}</span>
+            </button>
+        </div>
+
     </div>
 </div>
 

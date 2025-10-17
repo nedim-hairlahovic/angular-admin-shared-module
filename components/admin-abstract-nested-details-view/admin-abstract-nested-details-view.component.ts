@@ -3,7 +3,7 @@ import { ActivatedRoute, Router } from "@angular/router";
 
 import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
-import { DetailsViewRow } from "../../models/details-view";
+import { DetailsViewField } from "../../models/details-view";
 import { CardButton } from "../../models/data-card";
 
 @Component({
@@ -28,7 +28,7 @@ export abstract class AdminAbstractNestedDetailsViewComponent<
 
   abstract getTitle(item: T | null): string;
   abstract getChildIdKey(): string;
-  abstract getDetailsData(): DetailsViewRow[];
+  abstract getDetailsData(): DetailsViewField[];
   abstract getOnBackUrl(): string;
   abstract getOnEditUrl(): string;
 

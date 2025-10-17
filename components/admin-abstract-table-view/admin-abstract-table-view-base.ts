@@ -1,23 +1,29 @@
 import { Directive } from "@angular/core";
 import { Router } from "@angular/router";
 
-import { DataTableAction, DataTableConfig } from "../../models/data-table";
+import {
+  DataTableAction,
+  DataTableConfig,
+  DataTableRouteConfig,
+} from "../../models/data-table";
 import { CardButton } from "../../models/data-card";
-import { UrlConfig } from "../../models/url-config";
 import { BreadcrumbItem } from "../../models/breadcrumb";
+import { Page } from "../../models/page";
 
 @Directive()
 export default abstract class AdminAbstractTableViewBase<T> {
-  dataTableConfig!: DataTableConfig<T>;
+  protected config!: DataTableConfig<T>;
+  protected data!: T[] | Page<T>;
   dataLoaded: boolean = false;
   errorMessage!: string;
   searchValue!: string | null;
+  tableState!: any;
   protected breadcrumbs!: BreadcrumbItem[];
 
   protected readonly DEFAULT_BUTTONS: CardButton[] = [
     {
       label: "Dodaj",
-      icon: "fa fa-plus",
+      icon: "fa-plus",
       class: "btn-primary",
       actionName: "add",
       action: () => this.navigateToAddPage(),
@@ -28,14 +34,14 @@ export default abstract class AdminAbstractTableViewBase<T> {
     {
       name: "edit",
       label: "Uredi",
-      icon: "fa fa-pencil",
+      icon: "fa fa-sm fa-pencil",
       color: "primary",
       click: (row) => this.navigateToEditPage(row),
     },
     {
       name: "delete",
       label: "Obriši",
-      icon: "fa fa-trash",
+      icon: "fa fa-sm fa-trash-o",
       color: "danger",
       click: (row) => this.deleteItem(row),
     },
@@ -49,42 +55,50 @@ export default abstract class AdminAbstractTableViewBase<T> {
   constructor(protected router: Router) {}
 
   ngOnInit(): void {
-    this.dataTableConfig = this.initDataTableConfig();
+    this.config = this.initDataTableConfig();
     this.breadcrumbs = this.initBreadcrumbs();
     this.initializeDataTableConfigDefaults();
     this.fetchData();
   }
 
-  onDelete(urlConfig: UrlConfig): void {
-    this.router.routeReuseStrategy.shouldReuseRoute = () => false;
-    this.router.onSameUrlNavigation = "reload";
-    this.router.navigate([urlConfig.url], {
-      fragment: urlConfig.fragment,
-      queryParamsHandling: "preserve",
-      replaceUrl: true,
-    });
+  initRouteConfig(basePath: string): DataTableRouteConfig<T> {
+    return {
+      add: { url: `/${basePath}/0/edit` },
+      edit: (item: T) => {
+        let idKey = this.config.idKey ?? "id";
+        const id = this.findDeepByPath(item, idKey);
+        return { url: `/${basePath}/${id}/edit` };
+      },
+    };
+  }
+
+  navigateToAddPage(): void {
+    if (this.config.routeConfig?.add) {
+      const urlConfig = this.config.routeConfig.add;
+      this.router.navigate([urlConfig.url], {
+        fragment: urlConfig.fragment,
+        queryParams: urlConfig.queryParams,
+      });
+    }
+  }
+
+  navigateToEditPage(item: T): void {
+    if (this.config.routeConfig?.edit) {
+      const urlConfig = this.config.routeConfig.edit(item);
+      this.router.navigate([urlConfig.url], {
+        fragment: urlConfig.fragment,
+        queryParams: urlConfig.queryParams,
+      });
+    }
   }
 
   onBtnClick(actionName: any): void {
-    const button = this.dataTableConfig?.buttons?.find(
+    const button = this.config.buttons?.find(
       (button) => button.actionName === actionName
     );
     if (button) {
       button.action();
     }
-  }
-
-  navigateToAddPage(): void {
-    this.router.navigate([this.dataTableConfig.baseUrl.url + "/0/edit"]);
-  }
-
-  navigateToEditPage(item: T): void {
-    const idKey = this.dataTableConfig?.idKey ?? "id";
-    const baseUrl = this.dataTableConfig?.baseUrl?.url ?? "";
-
-    this.router.navigate([
-      baseUrl + "/" + this.findDeepByPath(item, idKey) + "/edit",
-    ]);
   }
 
   protected handleTableAction(event: {

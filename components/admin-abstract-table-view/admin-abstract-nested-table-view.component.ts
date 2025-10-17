@@ -3,7 +3,6 @@ import { Router } from "@angular/router";
 
 import { NestedDataService } from "../../services/nested-data.service";
 import { ApiResource } from "../../models/api-resource";
-import { UrlConfig } from "../../models/url-config";
 import AdminAbstractTableViewBase from "./admin-abstract-table-view-base";
 
 @Component({
@@ -20,7 +19,6 @@ export abstract class AdminAbstractNestedTableViewComponent<
   @Input() parentId!: ID;
 
   abstract getDeletePrompt(): string;
-  abstract getBackUrl(): UrlConfig;
 
   constructor(
     private dataService: NestedDataService<T, any, ID>,
@@ -30,11 +28,11 @@ export abstract class AdminAbstractNestedTableViewComponent<
   }
 
   override initializeDataTableConfigDefaults(): void {
-    if (!this.dataTableConfig.buttons) {
-      this.dataTableConfig.buttons = this.DEFAULT_BUTTONS;
+    if (!this.config.buttons) {
+      this.config.buttons = this.DEFAULT_BUTTONS;
     }
 
-    const actionsColumn = this.dataTableConfig.columns.find(
+    const actionsColumn = this.config.columns.find(
       (c) => c.value === "actions"
     );
     if (actionsColumn && !actionsColumn.actions) {
@@ -46,7 +44,7 @@ export abstract class AdminAbstractNestedTableViewComponent<
     this.dataLoaded = false;
     this.dataService.getItems(this.parentId).subscribe({
       next: (data) => {
-        this.dataTableConfig.data = data;
+        this.data = data;
         this.dataLoaded = true;
       },
       error: (err) => console.log(err),
@@ -56,7 +54,7 @@ export abstract class AdminAbstractNestedTableViewComponent<
   override deleteItem(item: T): void {
     if (confirm(this.getDeletePrompt())) {
       this.dataService.deleteItem(this.parentId, item.id).subscribe({
-        next: () => this.onDelete(this.getBackUrl()),
+        next: () => this.fetchData(this.tableState),
         error: (err) => (this.errorMessage = err.error.message),
       });
     }

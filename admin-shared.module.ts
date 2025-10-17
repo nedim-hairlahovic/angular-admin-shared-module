@@ -16,10 +16,10 @@ import { AdminSearchableSelectComponent } from "./components/admin-searchable-se
 import { AdminSpinnerComponent } from "./components/admin-spinner/admin-spinner.component";
 import { AdminTabbedDetailsViewTemplateComponent } from "./components/admin-abstract-tabbed-details-view/admin-tabbed-details-view-template.component";
 import { AdminBreadcrumbsComponent } from "./components/admin-breadcrumbs/admin-breadcrumbs.component";
+import { TooltipDirective } from "./directives/tooltip.directive";
 
 @NgModule({
   declarations: [
-    ClickOutsideDirective,
     AdminDataTableComponent,
     AdminDataFormComponent,
     AdminDetailsViewComponent,
@@ -27,6 +27,8 @@ import { AdminBreadcrumbsComponent } from "./components/admin-breadcrumbs/admin-
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
     AdminBreadcrumbsComponent,
+    ClickOutsideDirective,
+    TooltipDirective,
   ],
   exports: [
     AdminDataTableComponent,

@@ -3,9 +3,7 @@ import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
 import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
-import { DetailsViewRow } from "../../models/details-view";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
-import { UrlConfig } from "../../models/url-config";
 import { BreadcrumbItem } from "../../models/breadcrumb";
 
 @Component({
@@ -15,11 +13,9 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
     T extends ApiResource,
     ID = number
   >
-  extends AdminAbstractTabbedDetailsViewBase
+  extends AdminAbstractTabbedDetailsViewBase<T>
   implements OnInit
 {
-  item?: T;
-  errorMessage!: string;
   parentId!: ID;
   childId!: string | null;
 
@@ -31,17 +27,13 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
     super(route, router);
   }
 
-  abstract getTitle(item: T | null): string;
   abstract getChildIdKey(): string;
-  abstract getDetailsData(): DetailsViewRow[];
-  abstract getOnBackUrl(): UrlConfig;
-  abstract getOnEditUrl(): UrlConfig;
 
   ngOnInit(): void {
-    this.pageTitle = this.getTitle(null);
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.parentId = this.resolveParentId(params);
       this.childId = params.get(this.getChildIdKey());
+      this.routeConfig = this.getRouteConfig();
       this.getItem();
     });
   }
@@ -50,11 +42,18 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
     this.dataService.getSingleItem(this.parentId, this.childId).subscribe({
       next: (_item: T) => {
         this.item = _item;
-        this.pageTitle = this.getTitle(this.item);
+        this.pageTitle = this.getTitle();
         this.showTabs();
         this.breadcrumbs = this.initBreadcrumbs(_item);
       },
-      error: (err) => console.log(err),
+      error: (err) => {
+        if (err.status >= 400 && err.status < 500) {
+          this.onNotFoundError();
+          return;
+        }
+
+        console.log(err.error.message);
+      },
     });
   }
 
@@ -70,24 +69,6 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
 
   getParentIdKey(): string {
     return "id";
-  }
-
-  override navigateBack(): void {
-    const urlConfig = this.getOnBackUrl();
-    this.router.navigate([urlConfig.url], {
-      fragment: urlConfig.fragment,
-      queryParamsHandling: "preserve",
-      replaceUrl: true,
-    });
-  }
-
-  override navigateToEdit(): void {
-    const urlConfig = this.getOnEditUrl();
-    this.router.navigate([urlConfig.url], {
-      fragment: urlConfig.fragment,
-      queryParamsHandling: "preserve",
-      replaceUrl: true,
-    });
   }
 
   protected initBreadcrumbs(item: T): BreadcrumbItem[] {

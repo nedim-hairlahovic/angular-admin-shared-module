@@ -1,29 +1,24 @@
 import { PipeTransform } from "@angular/core";
 
 import { CardButton } from "./data-card";
-import { Page } from "./page";
 import { UrlConfig } from "./url-config";
-import { Params } from "@angular/router";
 
 export interface DataTableConfig<T> {
-  title: string;
-  data: T[] | Page<T>;
-  columns: DataTableColumn[];
-  baseUrl: UrlConfig;
-  pagination?: DataTablePaginationType;
-  defaultSort?: DataTableColumnSort;
-  search?: DataTableSearch;
+  title?: string;
+  columns: DataTableColumn<T>[];
+  routeConfig?: DataTableRouteConfig<T>;
+  dataOptions?: DataTableDataOptions;
   idKey?: string;
   buttons?: CardButton[];
 }
 
-export interface DataTableColumn {
+export interface DataTableColumn<T> {
   header: string;
-  value?: string;
-  values?: string[];
-  templateString?: string;
+  value?: string; // property name in the row
+  valueFn?: (row: T) => string; // custom function for derived value
   className?: string;
-  url?: DataTableColumnUrl;
+  width?: string; // in percentages
+  link?: (row: T) => string;
   sortable?: boolean;
   pipe?: {
     instance: PipeTransform;
@@ -35,9 +30,15 @@ export interface DataTableColumn {
   };
 }
 
-export interface DataTableColumnUrl {
-  path: string;
-  value?: string;
+export interface DataTableRouteConfig<T> {
+  add?: UrlConfig;
+  edit?: (item: T) => UrlConfig;
+}
+
+export interface DataTableDataOptions {
+  pagination?: DataTablePaginationType;
+  search?: DataTableSearch;
+  defaultSort?: DataTableColumnSort;
 }
 
 export enum DataTablePaginationType {

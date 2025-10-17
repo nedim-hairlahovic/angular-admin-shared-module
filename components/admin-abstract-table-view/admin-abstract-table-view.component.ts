@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
-import { DataTablePaginationType } from "../../models/data-table";
 import { ApiResource } from "../../models/api-resource";
 import { DataCrudService } from "../../services/data.service";
 import AdminAbstractTableViewBase from "./admin-abstract-table-view-base";
@@ -25,15 +24,11 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
   }
 
   override initializeDataTableConfigDefaults(): void {
-    if (!this.dataTableConfig.pagination) {
-      this.dataTableConfig.pagination = DataTablePaginationType.SPRING;
+    if (!this.config.buttons) {
+      this.config.buttons = this.DEFAULT_BUTTONS;
     }
 
-    if (!this.dataTableConfig.buttons) {
-      this.dataTableConfig.buttons = this.DEFAULT_BUTTONS;
-    }
-
-    const actionsColumn = this.dataTableConfig.columns.find(
+    const actionsColumn = this.config.columns.find(
       (c) => c.value === "actions"
     );
     if (actionsColumn && !actionsColumn.actions) {
@@ -49,10 +44,12 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
         return;
       }
 
+      this.tableState = requestParams;
+
       this.dataLoaded = false;
       this.dataService.getPagedItems(requestParams).subscribe({
         next: (data) => {
-          this.dataTableConfig.data = data;
+          this.data = data;
           this.dataLoaded = true;
         },
         error: (err) => console.log(err),
@@ -65,7 +62,7 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
       confirm(`Da li želite obrisati ovaj podatak: ${this.getItemTitle(item)}?`)
     ) {
       this.dataService.deleteItem(item.id).subscribe({
-        next: () => this.onDelete(this.dataTableConfig.baseUrl),
+        next: () => this.fetchData(this.tableState),
         error: (err) => (this.errorMessage = err.error.message),
       });
     }

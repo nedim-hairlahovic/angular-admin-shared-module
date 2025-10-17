@@ -1,7 +1,11 @@
 import { Directive } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
-import { DataFormConfig, DataFormSelectOption } from "../../models/data-form";
+import {
+  DataFormConfig,
+  DataFormRouteConfig,
+  DataFormSelectOption,
+} from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
 import { UrlConfig } from "../../models/url-config";
 import { BreadcrumbItem } from "../../models/breadcrumb";
@@ -11,18 +15,17 @@ export default abstract class AdminAbstractEditViewBase<
   T extends ApiResource,
   R
 > {
-  protected pageTitle: string = this.getTitle(null);
+  protected pageTitle!: string;
   protected formConfig!: DataFormConfig<T, R>;
   protected errorMessage!: string;
 
   mode: "ADD" | "EDIT" = "ADD";
   dataLoaded: boolean = false;
   processingRequest!: boolean;
-  baseUrl!: UrlConfig;
 
   protected breadcrumbs!: BreadcrumbItem[];
 
-  abstract getTitle(item: T | null): string;
+  abstract getTitle(item: T): string;
   abstract convertToRequestObject(item: T): R;
   abstract extractIds(params: any): void;
   abstract getEditMode(): "ADD" | "EDIT";
@@ -32,8 +35,6 @@ export default abstract class AdminAbstractEditViewBase<
   constructor(protected route: ActivatedRoute, protected router: Router) {}
 
   public ngOnInit(): void {
-    this.pageTitle = this.getTitle(null);
-
     this.route.paramMap.subscribe((params: ParamMap) => {
       this.extractIds(params);
       this.mode = this.getEditMode();
@@ -42,8 +43,14 @@ export default abstract class AdminAbstractEditViewBase<
       this.getItem();
 
       this.postItemInit();
-      this.baseUrl = this.getBaseUrl();
     });
+  }
+
+  initRouteConfig(baseUrl: UrlConfig): DataFormRouteConfig<T> {
+    return {
+      onSave: (item?: T) => baseUrl,
+      onNotFound: baseUrl,
+    };
   }
 
   protected postItemInit(): void {
@@ -102,36 +109,50 @@ export default abstract class AdminAbstractEditViewBase<
     }
   }
 
-  protected getBaseUrl(): UrlConfig {
-    let result: UrlConfig = this.formConfig.baseUrl;
+  protected onSaveComplete(savedItem?: T): void {
+    const urlConfig = this.resolveOnSaveUrl(savedItem);
+    if (!urlConfig) return;
 
-    this.route.queryParamMap.subscribe((queryParams) => {
-      const backRaw = queryParams.get("back");
-      if (backRaw) {
-        const back = decodeURIComponent(backRaw);
-        const [url, fragment] = back.split("#");
-        result = {
-          url,
-          fragment: fragment || undefined,
-        };
-      }
-    });
-
-    return result;
-  }
-
-  protected onSaveComplete(): void {
     this.processingRequest = false;
-    this.router.navigate([this.baseUrl.url], {
-      fragment: this.baseUrl.fragment,
-      replaceUrl: true,
+    this.router.navigate([urlConfig.url], {
+      fragment: urlConfig.fragment,
     });
   }
 
-  protected onBack(): void {
-    this.router.navigate([this.baseUrl.url], {
-      fragment: this.baseUrl.fragment,
-      replaceUrl: true,
+  private resolveOnSaveUrl(savedItem?: T): UrlConfig | null {
+    const backUrl = this.getBackUrlFromQueryParams();
+    if (backUrl) return backUrl;
+
+    const urlConfig = this.formConfig.routeConfig?.onSave?.(savedItem);
+    if (!urlConfig) {
+      return null;
+    }
+
+    return urlConfig;
+  }
+
+  private getBackUrlFromQueryParams(): UrlConfig | null {
+    const backRaw = this.route.snapshot.queryParamMap.get("back");
+    if (!backRaw) return null;
+
+    try {
+      const back = decodeURIComponent(backRaw);
+      const [url, fragment] = back.split("#");
+      return { url, fragment: fragment || undefined };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  protected onNotFoundError(): void {
+    const urlConfig = this.formConfig.routeConfig?.onNotFound;
+    if (!urlConfig) {
+      return;
+    }
+
+    this.processingRequest = false;
+    this.router.navigate([urlConfig.url], {
+      fragment: urlConfig.fragment,
     });
   }
 
