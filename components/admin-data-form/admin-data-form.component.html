@@ -108,7 +108,7 @@
                         <!-- Array Types -->
                         <ng-container *ngIf="input.mode === DataFormControlMode.Array">
                             <div formArrayName="{{ input.name }}">
-                                <div class="mb-2">{{ input.label }}</div>
+                                <div class="form-label mb-2">{{ input.label }}</div>
                                 <div class="row form-group mb-2"
                                     *ngFor="let el of this.getFormArray(input.name).controls; let i=index">
 
