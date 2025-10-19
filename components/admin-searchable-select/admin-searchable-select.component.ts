@@ -1,12 +1,14 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
+  ViewChild,
 } from "@angular/core";
-import { Subject, debounceTime, distinctUntilChanged } from "rxjs";
+import { Subject, debounceTime, distinctUntilChanged, map } from "rxjs";
 
 import { SearchableSelectItem } from "../../models/searchable-select-item";
 import { ApiResource } from "../../models/api-resource";
@@ -27,6 +29,8 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
   @Input() resetTrigger: boolean = false;
   @Output() onSelectEvent = new EventEmitter<any>();
 
+  @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
+
   isValueSelected: boolean = false;
   isDropdownOpen: boolean = false;
   searching: boolean = false;
@@ -35,11 +39,18 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
   searchResults: SearchableSelectItem[] = [];
   selectedValue!: SearchableSelectItem | null;
 
+  focusedIndex: number = -1;
+  private dropdownSession = 0;
+
   constructor() {
     this.searchTerms
       .pipe(
-        debounceTime(1000), // 1000 ms delay
-        distinctUntilChanged()
+        debounceTime(1000),
+        map((term) => ({ term, session: this.dropdownSession })),
+        distinctUntilChanged(
+          (a, b) => a.term === b.term && a.session === b.session
+        ),
+        map((x) => x.term)
       )
       .subscribe((term) => this.executeSearch(term));
   }
@@ -62,7 +73,13 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
     }
   }
 
+  openDropdown(): void {
+    this.dropdownSession++;
+    this.isDropdownOpen = true;
+  }
+
   onSearch(term: string): void {
+    this.focusedIndex = -1;
     this.searchResults = [];
     this.searching = true;
     this.searchTerms.next(term);
@@ -78,7 +95,6 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
           this.searching = false;
         },
         error: (err) => {
-          console.log(err);
           this.searching = false;
         },
       });
@@ -95,12 +111,26 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
     this.onSelectEvent.emit({ inputName: this.inputName, value: item.value });
   }
 
+  onClear(): void {
+    this.clearSelectedValue();
+    this.dropdownSession++;
+    this.isValueSelected = false;
+
+    setTimeout(() => {
+      this.searchInput.nativeElement.focus();
+      this.searchInput.nativeElement.selectionStart =
+        this.searchInput.nativeElement.value.length;
+      this.isDropdownOpen = true;
+    });
+  }
+
   clearSelectedValue(): void {
     this.resetValues();
     this.onSelectEvent.emit({ inputName: this.inputName, value: null });
   }
 
   clearInput() {
+    this.isDropdownOpen = false;
     if (!this.isValueSelected) {
       this.resetValues();
     }
@@ -110,5 +140,59 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
     this.selectedValue = null;
     this.searchResults = [];
     this.isValueSelected = false;
+  }
+
+  onKeyDown(event: KeyboardEvent): void {
+    const resultsCount = this.searchResults.length;
+    if (!resultsCount) return;
+
+    switch (event.key) {
+      case "ArrowDown":
+        event.preventDefault();
+        this.focusedIndex = (this.focusedIndex + 1) % resultsCount;
+        this.scrollToFocused();
+        break;
+
+      case "ArrowUp":
+        event.preventDefault();
+
+        if (this.focusedIndex < 1) break;
+
+        this.focusedIndex =
+          (this.focusedIndex - 1 + resultsCount) % resultsCount;
+        this.scrollToFocused();
+        break;
+
+      case "Enter":
+        event.preventDefault();
+        if (this.focusedIndex >= 0 && this.focusedIndex < resultsCount) {
+          const selected = this.searchResults[this.focusedIndex];
+          this.onItemSelect(selected);
+        }
+        break;
+
+      case "Escape":
+        this.isDropdownOpen = false;
+        this.focusedIndex = -1;
+        break;
+    }
+  }
+
+  scrollToFocused(): void {
+    setTimeout(() => {
+      const list = document.querySelectorAll(
+        ".dropdown-menu .dropdown-item.clickable"
+      );
+      if (list[this.focusedIndex]) {
+        (list[this.focusedIndex] as HTMLElement).scrollIntoView({
+          block: "nearest",
+          behavior: "smooth",
+        });
+      }
+    });
+  }
+
+  onMouseEnter(i: number): void {
+    this.focusedIndex = i;
   }
 }

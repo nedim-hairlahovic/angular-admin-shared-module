@@ -7,7 +7,6 @@
     position: relative;
     color: #374151;
     font-weight: 700;
-    /* background-color: #f9fafb; */
 }
 
 .table tbody td {
@@ -76,46 +75,6 @@
 .input-group>.input-group-prepend:not(:first-child)>.input-group-text {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
-}
-
-.btn-action {
-    color: #6b7280;
-    transition: all 0.2s ease;
-    border: 1px solid #858796;
-    border-color: transparent;
-    padding: .15rem .5rem;
-    font-size: .875rem;
-    line-height: 1.5;
-    border-radius: .2rem;
-    margin-right: 5px;
-}
-
-.btn-action:last-child {
-    margin-right: 0;
-}
-
-.btn-action.primary:hover {
-    background-color: rgba(13, 110, 253, 0.1);
-    border-color: transparent;
-    color: #2653d4;
-}
-
-.btn-action.danger:hover {
-    background-color: rgba(220, 53, 69, 0.1);
-    border-color: transparent;
-    color: #e74a3b;
-}
-
-.btn-action.secondary:hover {
-    background-color: rgba(108, 117, 125, 0.1);
-    border-color: transparent;
-    color: #6c757d;
-}
-
-.btn-action.info:hover {
-    background-color: rgba(13, 202, 240, 0.1);
-    border-color: transparent;
-    color: #31b9d5;
 }
 
 .table-footer {

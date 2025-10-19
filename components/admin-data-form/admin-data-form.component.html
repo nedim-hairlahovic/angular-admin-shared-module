@@ -107,19 +107,16 @@
 
                         <!-- Array Types -->
                         <ng-container *ngIf="input.mode === DataFormControlMode.Array">
-                            <div formArrayName="{{ input.name }}">
-                                <div class="form-label mb-2">{{ input.label }}</div>
-                                <div class="row form-group mb-2"
-                                    *ngFor="let el of this.getFormArray(input.name).controls; let i=index">
+                            <div formArrayName="{{ input.name }}" class="form-array-section">
+                                <label class="form-label mb-2 fw-semibold">{{ input.label }}</label>
 
-                                    <div class="col-md-11">
+                                <div class="form-array-list">
+                                    <div class="form-array-item"
+                                        *ngFor="let el of getFormArray(input.name).controls; let i = index">
+
                                         <ng-container *ngIf="input.type === TEXT">
                                             <input type="text" class="form-control" [id]="i" [formControlName]="i"
-                                                [ngClass]="{'is-invalid': displayMessage[input.name + i]}"
-                                                autocomplete="off">
-                                            <div class="invalid-feedback">
-                                                {{ displayMessage[input.name + i] }}
-                                            </div>
+                                                autocomplete="off" />
                                         </ng-container>
 
                                         <ng-container *ngIf="input.type === SELECT">
@@ -130,9 +127,6 @@
                                                     {{ option.label }}
                                                 </option>
                                             </select>
-                                            <div class="invalid-feedback">
-                                                {{ displayMessage[input.name + i] }}
-                                            </div>
                                         </ng-container>
 
                                         <ng-container *ngIf="input.type === SEARCHABLE_SELECT">
@@ -141,32 +135,21 @@
                                             <admin-searchable-select [inputName]="input.name + i"
                                                 [dataService]="input.dataService" [initialValue]="el.value"
                                                 (onSelectEvent)="onSearchableSelectChange(input.name, $event)"></admin-searchable-select>
-                                            <div class="invalid-feedback">
-                                                {{ displayMessage[input.name] }}
-                                            </div>
                                         </ng-container>
-                                    </div>
 
-                                    <div class="col-md-1 d-flex align-items-center">
-                                        <button class="btn btn-outline-danger btn-sm" type="button" title="Obriši"
+                                        <button type="button" class="btn btn-action danger" tooltip="Obriši stavku"
                                             (click)="deleteInputFromFormArray(input.name, i)">
                                             <i class="fa fa-trash"></i>
                                         </button>
                                     </div>
+                                </div>
 
-                                </div>
-                                <div class="row">
-                                    <div class="col-md-2 mb-2">
-                                        <button class="btn btn-outline-success btn-sm" type="button"
-                                            (click)="addInputToFormArray(input.name)">
-                                            <i class="fa fa-plus"></i> Dodaj
-                                        </button>
-                                    </div>
-                                </div>
+                                <button type="button" class="btn btn-action success mt-1"
+                                    (click)="addInputToFormArray(input.name)">
+                                    <i class="fa fa-plus"></i> Dodaj stavku
+                                </button>
                             </div>
-
                         </ng-container>
-
                     </div>
 
                     <button type="submit" class="btn btn-primary" style="margin-right: 5px;"

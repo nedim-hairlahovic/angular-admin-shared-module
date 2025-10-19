@@ -1,0 +1,31 @@
+.form-array-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+}
+
+.form-array-item {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.form-array-item .form-control {
+    background-color: #fafafa;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-array-item .form-control:focus {
+    background-color: #fff;
+    border-color: #80bdff;
+    box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.15);
+}
+
+.form-array-item admin-searchable-select {
+    flex: 1;
+    display: flex;
+}
+
+.form-array-item admin-searchable-select ::ng-deep .dropdown {
+    width: 100%;
+}
