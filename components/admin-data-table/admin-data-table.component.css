@@ -67,6 +67,10 @@
     box-shadow: 0 0 0 0.1rem rgba(78, 115, 223, .25);
 }
 
+.table-search .input-group {
+    width: 350px;
+}
+
 .input-group>.input-group-append>.btn,
 .input-group>.input-group-append>.input-group-text,
 .input-group>.input-group-prepend:first-child>.btn:not(:first-child),
@@ -190,6 +194,15 @@
 
 .clear-btn:hover {
     color: #6b7280;
+}
+
+.clear-btn i {
+    font-weight: 100;
+    opacity: 0.6;
+}
+
+.clear-btn:hover i {
+    opacity: 0.9;
 }
 
 .input-group .form-control:focus {

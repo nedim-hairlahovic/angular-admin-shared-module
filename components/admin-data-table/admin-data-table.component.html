@@ -96,11 +96,6 @@
                     </tr>
                 </tbody>
             </table>
-            <div class="row">
-                <div class="col-12">
-                    <ng-content select="[after-table-content]"></ng-content>
-                </div>
-            </div>
         </div>
 
         <div class="row align-items-center table-footer" *ngIf="this.pagination && rows">
@@ -139,6 +134,12 @@
                 <span *ngIf="rows.length !== data.length">
                     Prikazano {{ rows.length }} od {{ data.length }} {{ getItemLabel(data.length) }} (filtrirano)
                 </span>
+            </div>
+        </div>
+
+        <div class="row mt-3">
+            <div class="col-12">
+                <ng-content select="[after-table-content]"></ng-content>
             </div>
         </div>
     </div>

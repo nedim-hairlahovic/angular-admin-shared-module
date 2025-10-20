@@ -40,6 +40,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
   pages: string[] = [];
   sortBy?: string;
   totalElements!: number;
+  sortField?: string;
   sortOrder?: "ASC" | "DESC";
 
   readonly minSearchLength: number = 3;
@@ -211,6 +212,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
 
   onSort(field: string | undefined, clicked: "ASC" | "DESC"): void {
     if (!field) return;
+    this.sortField = field;
 
     if (this.sortBy !== field) {
       // first click on this column → start with the clicked direction
@@ -224,7 +226,38 @@ export class AdminDataTableComponent<T> implements OnChanges {
       this.sortOrder = this.sortOrder === "ASC" ? "DESC" : "ASC";
     }
 
-    this.emitFetchDataEvent();
+    if (this.pagination) {
+      this.emitFetchDataEvent();
+    } else {
+      this.sortLocalRows(field, this.sortOrder);
+    }
+  }
+
+  private sortLocalRows(field?: string, direction?: "ASC" | "DESC"): void {
+    if (field === undefined || direction === undefined) {
+      return;
+    }
+
+    this.rows = [...this.rows].sort((a: any, b: any) => {
+      const valueA = a[field];
+      const valueB = b[field];
+
+      if (valueA == null && valueB != null) return direction === "ASC" ? -1 : 1;
+      if (valueA != null && valueB == null) return direction === "ASC" ? 1 : -1;
+      if (valueA == null && valueB == null) return 0;
+
+      if (typeof valueA === "string" && typeof valueB === "string") {
+        return direction === "ASC"
+          ? valueA.localeCompare(valueB)
+          : valueB.localeCompare(valueA);
+      }
+
+      if (typeof valueA === "number" && typeof valueB === "number") {
+        return direction === "ASC" ? valueA - valueB : valueB - valueA;
+      }
+
+      return 0;
+    });
   }
 
   isSortActive(field: string | undefined, sortOrder: "ASC" | "DESC"): boolean {
@@ -248,6 +281,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
       this.emitFetchDataEvent();
     } else {
       this.filterRows(searchValue, this.getRows());
+      this.sortLocalRows(this.sortField, this.sortOrder);
     }
   }
 
