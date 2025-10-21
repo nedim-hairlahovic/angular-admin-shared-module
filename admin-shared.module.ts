@@ -38,6 +38,7 @@ import { TooltipDirective } from "./directives/tooltip.directive";
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
     AdminBreadcrumbsComponent,
+    TooltipDirective,
   ],
   imports: [
     BrowserModule,
