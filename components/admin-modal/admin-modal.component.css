@@ -1,0 +1,16 @@
+.modal {
+    color: #858796;
+}
+
+.modal.show {
+    display: block;
+    background-color: rgba(0, 0, 0, 0.6);
+}
+
+.modal-title {
+    margin-bottom: 0;
+    line-height: 1.5;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: #363d47;
+}

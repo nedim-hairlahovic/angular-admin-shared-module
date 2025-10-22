@@ -17,12 +17,14 @@ import { AdminSpinnerComponent } from "./components/admin-spinner/admin-spinner.
 import { AdminTabbedDetailsViewTemplateComponent } from "./components/admin-abstract-tabbed-details-view/admin-tabbed-details-view-template.component";
 import { AdminBreadcrumbsComponent } from "./components/admin-breadcrumbs/admin-breadcrumbs.component";
 import { TooltipDirective } from "./directives/tooltip.directive";
+import { AdminModalComponent } from "./components/admin-modal/admin-modal.component";
 
 @NgModule({
   declarations: [
     AdminDataTableComponent,
     AdminDataFormComponent,
     AdminDetailsViewComponent,
+    AdminModalComponent,
     AdminSearchableSelectComponent,
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
@@ -34,6 +36,7 @@ import { TooltipDirective } from "./directives/tooltip.directive";
     AdminDataTableComponent,
     AdminDataFormComponent,
     AdminDetailsViewComponent,
+    AdminModalComponent,
     AdminSearchableSelectComponent,
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
