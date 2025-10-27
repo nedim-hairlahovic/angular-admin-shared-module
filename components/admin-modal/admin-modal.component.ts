@@ -8,13 +8,15 @@ import {
   SimpleChanges,
   TemplateRef,
   ViewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 
 @Component({
   selector: "admin-modal",
   templateUrl: "./admin-modal.component.html",
-  styleUrl: "./admin-modal.component.css",
+  styleUrls: ["../../admin-shared.css", "./admin-modal.component.css"],
   standalone: false,
+  encapsulation: ViewEncapsulation.None,
 })
 export class AdminModalComponent implements OnChanges {
   @ViewChild("modal", { static: true }) modalRef!: ElementRef;

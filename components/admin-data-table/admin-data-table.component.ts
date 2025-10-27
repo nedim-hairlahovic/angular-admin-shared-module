@@ -28,6 +28,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
   @Input() config!: DataTableConfig<T>;
   @Input() data!: T[] | Page<T>;
   @Input() searchValue!: string;
+  @Input() simpleTable: boolean = false;
 
   @Output() fetchDataEvent = new EventEmitter<any>();
   @Output() actionClickEvent = new EventEmitter<any>();
