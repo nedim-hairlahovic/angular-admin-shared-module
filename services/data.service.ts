@@ -53,6 +53,13 @@ export abstract class DataCrudService<
     return this.http.put<T>(url, request, { headers: this.httpHeaders });
   }
 
+  patchItem(id: any, request: Partial<R>): Observable<T> {
+    const url = `${this.getCommonUrl()}/${id}`;
+    return this.http.patch<T>(url, request, {
+      headers: this.httpHeaders,
+    });
+  }
+
   deleteItem(id: any): Observable<{}> {
     const url = `${this.getCommonUrl()}/${id}`;
     return this.http.delete<any>(url, { headers: this.httpHeaders });
