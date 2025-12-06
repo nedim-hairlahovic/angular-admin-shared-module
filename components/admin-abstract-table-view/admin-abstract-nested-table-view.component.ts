@@ -54,8 +54,11 @@ export abstract class AdminAbstractNestedTableViewComponent<
   override deleteItem(item: T): void {
     if (confirm(this.getDeletePrompt())) {
       this.dataService.deleteItem(this.parentId, item.id).subscribe({
-        next: () => this.fetchData(this.tableState),
-        error: (err) => (this.errorMessage = err.error.message),
+        next: () => {
+          this.toast.success(this.getDeleteSuccessMessage(item));
+          this.fetchData(this.tableState);
+        },
+        error: (err) => this.errorHandler.handleHttpError(err),
       });
     }
   }

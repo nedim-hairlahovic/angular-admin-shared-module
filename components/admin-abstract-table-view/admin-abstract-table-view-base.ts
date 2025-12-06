@@ -1,4 +1,4 @@
-import { Directive } from "@angular/core";
+import { Directive, inject } from "@angular/core";
 import { Router } from "@angular/router";
 
 import {
@@ -9,16 +9,20 @@ import {
 import { CardButton } from "../../models/data-card";
 import { BreadcrumbItem } from "../../models/breadcrumb";
 import { Page } from "../../models/page";
+import { AdminToastService } from "../../services/admin-toast.service";
+import { AdminErrorService } from "../../services/admin-error.service";
 
 @Directive()
 export default abstract class AdminAbstractTableViewBase<T> {
   protected config!: DataTableConfig<T>;
   protected data!: T[] | Page<T>;
   dataLoaded: boolean = false;
-  errorMessage!: string;
   searchValue!: string | null;
   tableState!: any;
   protected breadcrumbs!: BreadcrumbItem[];
+
+  protected readonly toast = inject(AdminToastService);
+  protected readonly errorHandler = inject(AdminErrorService);
 
   protected readonly DEFAULT_BUTTONS: CardButton[] = [
     {
@@ -51,6 +55,7 @@ export default abstract class AdminAbstractTableViewBase<T> {
   protected abstract initializeDataTableConfigDefaults(): void;
   protected abstract fetchData(event?: any): void;
   protected abstract deleteItem(item: T): void;
+  protected abstract getDeleteSuccessMessage(item: T): string;
 
   constructor(protected router: Router) {}
 

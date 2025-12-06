@@ -1,4 +1,4 @@
-import { Directive } from "@angular/core";
+import { Directive, inject } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 
 import {
@@ -9,6 +9,7 @@ import {
 import { ApiResource } from "../../models/api-resource";
 import { UrlConfig } from "../../models/url-config";
 import { BreadcrumbItem } from "../../models/breadcrumb";
+import { AdminToastService } from "../../services/admin-toast.service";
 
 @Directive()
 export default abstract class AdminAbstractEditViewBase<
@@ -31,6 +32,9 @@ export default abstract class AdminAbstractEditViewBase<
   abstract getEditMode(): "ADD" | "EDIT";
   abstract getItem(): void;
   abstract getFormConfig(): DataFormConfig<T, R>;
+  abstract getSaveSuccessMessage(item: T): string;
+
+  protected readonly toast = inject(AdminToastService);
 
   constructor(protected route: ActivatedRoute, protected router: Router) {}
 
@@ -109,7 +113,7 @@ export default abstract class AdminAbstractEditViewBase<
     }
   }
 
-  protected onSaveComplete(savedItem?: T): void {
+  protected onSaveComplete(savedItem: T): void {
     const urlConfig = this.resolveOnSaveUrl(savedItem);
     if (!urlConfig) return;
 
@@ -117,6 +121,8 @@ export default abstract class AdminAbstractEditViewBase<
     this.router.navigate([urlConfig.url], {
       fragment: urlConfig.fragment,
     });
+
+    this.toast.success(this.getSaveSuccessMessage(savedItem));
   }
 
   private resolveOnSaveUrl(savedItem?: T): UrlConfig | null {

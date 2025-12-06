@@ -62,8 +62,11 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
       confirm(`Da li želite obrisati ovaj podatak: ${this.getItemTitle(item)}?`)
     ) {
       this.dataService.deleteItem(item.id).subscribe({
-        next: () => this.fetchData(this.tableState),
-        error: (err) => (this.errorMessage = err.error.message),
+        next: () => {
+          this.toast.success(this.getDeleteSuccessMessage(item));
+          this.fetchData(this.tableState);
+        },
+        error: (err) => this.errorHandler.handleHttpError(err),
       });
     }
   }

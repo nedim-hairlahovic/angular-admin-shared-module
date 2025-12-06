@@ -1,0 +1,15 @@
+<div class="toast-container">
+    <div class="toast" *ngFor="let toast of toasts$ | async"
+        [ngClass]="[toast.type, toast.leaving ? 'toast-leaving' : '']">
+        <div class="toast-header">
+            <i class="me-1" [class]="getIconClass(toast.type)" aria-hidden="true"></i>
+            {{ toast.title }}
+            <button type="button" class="toast-close" aria-label="Close" (click)="onCloseClick($event, toast.id)">
+                &times;
+            </button>
+        </div>
+        <div class="toast-message">
+            {{ toast.message }}
+        </div>
+    </div>
+</div>

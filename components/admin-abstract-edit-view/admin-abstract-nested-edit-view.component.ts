@@ -94,14 +94,14 @@ export abstract class AdminAbstractNestedEditViewComponent<
 
     if (this.mode === "ADD") {
       this.dataService.createItem(this.parentId, requestDto).subscribe({
-        next: () => this.onSaveComplete(),
+        next: (saved: T) => this.onSaveComplete(saved),
         error: (err) => this.handleError(err),
       });
     } else if (this.mode === "EDIT") {
       this.dataService
         .updateItem(this.parentId, this.childId, requestDto)
         .subscribe({
-          next: () => this.onSaveComplete(),
+          next: (saved: T) => this.onSaveComplete(saved),
           error: (err) => this.handleError(err),
         });
     }

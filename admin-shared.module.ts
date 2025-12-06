@@ -18,6 +18,7 @@ import { AdminTabbedDetailsViewTemplateComponent } from "./components/admin-abst
 import { AdminBreadcrumbsComponent } from "./components/admin-breadcrumbs/admin-breadcrumbs.component";
 import { TooltipDirective } from "./directives/tooltip.directive";
 import { AdminModalComponent } from "./components/admin-modal/admin-modal.component";
+import { AdminToastContainerComponent } from "./components/admin-toast-container/admin-toast-container.component";
 
 @NgModule({
   declarations: [
@@ -29,6 +30,7 @@ import { AdminModalComponent } from "./components/admin-modal/admin-modal.compon
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
     AdminBreadcrumbsComponent,
+    AdminToastContainerComponent,
     ClickOutsideDirective,
     TooltipDirective,
   ],
@@ -41,6 +43,7 @@ import { AdminModalComponent } from "./components/admin-modal/admin-modal.compon
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
     AdminBreadcrumbsComponent,
+    AdminToastContainerComponent,
     TooltipDirective,
   ],
   imports: [
