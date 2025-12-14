@@ -6,6 +6,6 @@
     </h2>
 </div>
 
-<admin-data-form *ngIf="dataLoaded" [config]="formConfig" [errorMessage]="errorMessage"
-    [formProcessing]="processingRequest" (btnSaveEvent)="onSave($event)">
+<admin-data-form *ngIf="dataLoaded" [config]="formConfig" [formProcessing]="processingRequest"
+    [backendFieldErrors]="backendFieldErrors" (btnSaveEvent)="onSave($event)">
 </admin-data-form>

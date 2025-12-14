@@ -1,10 +1,11 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
 import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
 import { DetailsViewField } from "../../models/details-view";
 import { CardButton } from "../../models/data-card";
+import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
 
 @Component({
   template: "",
@@ -19,6 +20,8 @@ export abstract class AdminAbstractNestedDetailsViewComponent<
   errorMessage!: string;
   parentId!: string | null;
   childId!: string | null;
+
+  protected readonly errorHandler = inject(AdminErrorHandlerService);
 
   constructor(
     private dataService: NestedDataService<T, any>,
@@ -65,7 +68,7 @@ export abstract class AdminAbstractNestedDetailsViewComponent<
   getItem(): void {
     this.dataService.getSingleItem(this.parentId, this.childId).subscribe({
       next: (_item: T) => (this.item = _item),
-      error: (err) => console.log(err),
+      error: (err) => this.errorHandler.handleLoadError(),
     });
   }
 

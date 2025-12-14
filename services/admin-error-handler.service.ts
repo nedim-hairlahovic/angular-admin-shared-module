@@ -4,10 +4,16 @@ import { Injectable } from "@angular/core";
 import { AdminToastService } from "./admin-toast.service";
 
 @Injectable({ providedIn: "root" })
-export class AdminErrorService {
+export class AdminErrorHandlerService {
   constructor(private readonly toast: AdminToastService) {}
 
-  handleHttpError(
+  handleLoadError(): void {
+    this.toast.error(
+      "Došlo je do greške prilikom učitavanja podataka. Molimo pokušajte ponovo."
+    );
+  }
+
+  handleOperationError(
     error: unknown,
     fallbackMessage: string = "Došlo je do greške prilikom izvršavanja operacije."
   ): void {

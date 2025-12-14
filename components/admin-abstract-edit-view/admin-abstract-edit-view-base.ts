@@ -10,6 +10,11 @@ import { ApiResource } from "../../models/api-resource";
 import { UrlConfig } from "../../models/url-config";
 import { BreadcrumbItem } from "../../models/breadcrumb";
 import { AdminToastService } from "../../services/admin-toast.service";
+import { HttpErrorResponse } from "@angular/common/http";
+import { ErrorDto } from "../../models/error";
+import { AdminErrorMessageService } from "../../services/admin-error-message.service";
+import { Observable } from "rxjs";
+import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
 
 @Directive()
 export default abstract class AdminAbstractEditViewBase<
@@ -18,11 +23,11 @@ export default abstract class AdminAbstractEditViewBase<
 > {
   protected pageTitle!: string;
   protected formConfig!: DataFormConfig<T, R>;
-  protected errorMessage!: string;
 
   mode: "ADD" | "EDIT" = "ADD";
   dataLoaded: boolean = false;
   processingRequest!: boolean;
+  backendFieldErrors: Record<string, string> | null = null;
 
   protected breadcrumbs!: BreadcrumbItem[];
 
@@ -35,6 +40,8 @@ export default abstract class AdminAbstractEditViewBase<
   abstract getSaveSuccessMessage(item: T): string;
 
   protected readonly toast = inject(AdminToastService);
+  protected readonly errorMessageService = inject(AdminErrorMessageService);
+  protected readonly errorHandler = inject(AdminErrorHandlerService);
 
   constructor(protected route: ActivatedRoute, protected router: Router) {}
 
@@ -162,9 +169,27 @@ export default abstract class AdminAbstractEditViewBase<
     });
   }
 
-  protected handleError(err: any): void {
+  protected handleError(err: HttpErrorResponse): void {
     this.processingRequest = false;
-    this.errorMessage = err.error.message;
+
+    const backendError = err.error as ErrorDto;
+
+    if (err.status === 400 || err.status === 409) {
+      if (backendError.fieldErrors) {
+        this.backendFieldErrors = Object.fromEntries(
+          Object.entries(backendError.fieldErrors).map(([field, fe]) => [
+            field,
+            this.errorMessageService.backendErrorToUserMessage(fe) || "", // can use code+params here
+          ])
+        );
+      }
+
+      this.toast.error(
+        "Neuspješno spremanje podataka. Molimo ispravite označena polja."
+      );
+    } else {
+      this.toast.error("Dogodila se greška. Pokušajte ponovo.");
+    }
   }
 
   protected get editTitle(): string {
@@ -186,5 +211,39 @@ export default abstract class AdminAbstractEditViewBase<
     breadcrumbs.push({ title: this.editTitle, active: true });
 
     return breadcrumbs;
+  }
+
+  protected loadSelectOptions<T>(
+    source$: Observable<T[]>,
+    controlName: string,
+    valueKey: string,
+    labelKey: string,
+    onError?: (err: any) => void
+  ): void {
+    source$.subscribe({
+      next: (data) => {
+        this.updateSelectValues(
+          data,
+          controlName,
+          valueKey as string,
+          labelKey as string
+        );
+      },
+      error: (err) => {
+        if (onError) {
+          onError(err);
+        } else {
+          this.handleSelectLoadError(err, controlName);
+        }
+      },
+    });
+  }
+
+  protected handleSelectLoadError(err?: any, controlName?: string): void {
+    this.toast.error(
+      "Greška prilikom učitavanja povezanih podataka. Formu trenutno nije moguće ispravno popuniti.",
+      "Greška",
+      0
+    );
   }
 }

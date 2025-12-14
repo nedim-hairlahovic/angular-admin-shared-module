@@ -1,5 +1,6 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
+import { HttpErrorResponse } from "@angular/common/http";
 
 import { ApiResource } from "../../models/api-resource";
 import { DataCrudService } from "../../services/data.service";
@@ -53,17 +54,15 @@ export abstract class AdminAbstractEditViewComponent<
     this.processingRequest = true;
     this.sanitizeRequestObject(requestDto);
 
-    if (this.mode === "ADD") {
-      this.dataService.createItem(requestDto).subscribe({
-        next: (saved: T) => this.onSaveComplete(saved),
-        error: (err) => this.handleError(err),
-      });
-    } else if (this.mode === "EDIT") {
-      this.dataService.updateItem(this.itemId, requestDto).subscribe({
-        next: (saved: T) => this.onSaveComplete(saved),
-        error: (err) => this.handleError(err),
-      });
-    }
+    const request$ =
+      this.mode === "ADD"
+        ? this.dataService.createItem(requestDto)
+        : this.dataService.updateItem(this.itemId, requestDto);
+
+    request$.subscribe({
+      next: (saved: T) => this.onSaveComplete(saved),
+      error: (err: HttpErrorResponse) => this.handleError(err),
+    });
   }
 
   protected sanitizeRequestObject(requestDto: R): void {}

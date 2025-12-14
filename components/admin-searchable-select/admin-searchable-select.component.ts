@@ -2,6 +2,7 @@ import {
   Component,
   ElementRef,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
@@ -13,6 +14,7 @@ import { Subject, debounceTime, distinctUntilChanged, map } from "rxjs";
 import { SearchableSelectItem } from "../../models/searchable-select-item";
 import { ApiResource } from "../../models/api-resource";
 import { DataCrudService } from "../../services/data.service";
+import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
 
 @Component({
   selector: "admin-searchable-select",
@@ -27,6 +29,7 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
   @Input() dataService!: DataCrudService<T, any>;
   @Input() initialValue: any;
   @Input() resetTrigger: boolean = false;
+  @Input() invalid = false;
   @Output() onSelectEvent = new EventEmitter<any>();
 
   @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;
@@ -41,6 +44,8 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
 
   focusedIndex: number = -1;
   private dropdownSession = 0;
+
+  protected readonly errorHandler = inject(AdminErrorHandlerService);
 
   constructor() {
     this.searchTerms
@@ -63,7 +68,7 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
         next: (item: T) => {
           this.onItemSelect(this.dataService.convertToSearchableItem(item));
         },
-        error: (err) => console.log(err),
+        error: (err) => this.errorHandler.handleLoadError(),
       });
     }
 
@@ -129,7 +134,12 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
     this.onSelectEvent.emit({ inputName: this.inputName, value: null });
   }
 
-  clearInput() {
+  closeDropdown() {
+    if (this.isDropdownOpen) {
+      // User closed the dropdown without making a selection –
+      // emit `null` to reset the value and activate required-field validation.
+      this.onSelectEvent.emit({ inputName: this.inputName, value: null });
+    }
     this.isDropdownOpen = false;
     if (!this.isValueSelected) {
       this.resetValues();

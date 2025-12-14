@@ -75,7 +75,7 @@ export abstract class AdminAbstractNestedEditViewComponent<
           this.updateFormData(child);
           this.breadcrumbs = this.initBreadcrumbs(parent, child);
         },
-        error: (err) => console.log(err),
+        error: (err) => this.errorHandler.handleLoadError(),
       });
   }
 

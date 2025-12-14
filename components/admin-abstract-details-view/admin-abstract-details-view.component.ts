@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, inject, OnInit } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
 import {
@@ -10,6 +10,7 @@ import { DataCrudService } from "../../services/data.service";
 import { CardButton } from "../../models/data-card";
 import { BreadcrumbItem } from "../../models/breadcrumb";
 import { UrlConfig } from "../../models/url-config";
+import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
 
 @Component({
   template: "",
@@ -22,12 +23,6 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
   protected pageTitle!: string;
   protected routeConfig!: DetailsViewConfigRouteConfig<T>;
   protected breadcrumbs!: BreadcrumbItem[];
-
-  constructor(
-    private dataService: DataCrudService<T, any>,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
 
   abstract getTitle(): string;
   abstract getDetailsData(): DetailsViewData;
@@ -42,6 +37,14 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
       action: () => this.navigateToEdit(),
     },
   ];
+
+  protected readonly errorHandler = inject(AdminErrorHandlerService);
+
+  constructor(
+    private dataService: DataCrudService<T, any>,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {
@@ -66,7 +69,7 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
           return;
         }
 
-        console.log(err.error.message);
+        this.errorHandler.handleLoadError();
       },
     });
   }

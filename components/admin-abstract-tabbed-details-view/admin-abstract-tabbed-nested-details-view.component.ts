@@ -52,7 +52,7 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
           return;
         }
 
-        console.log(err.error.message);
+        this.errorHandler.handleLoadError();
       },
     });
   }

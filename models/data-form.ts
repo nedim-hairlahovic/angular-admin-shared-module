@@ -8,17 +8,16 @@ export interface DataFormConfig<T extends ApiResource, R> {
   title: string;
   data?: any;
   elements: DataFormElement<T, R>[];
-  validationMessages: { [key: string]: { [key: string]: string } };
   routeConfig?: DataFormRouteConfig<T>;
 }
 
 export interface DataFormElement<T extends ApiResource, R> {
-  type: DataFormElementType;
-  mode: DataFormControlMode;
   id: string;
   name: string;
   label: string;
-  validators?: ValidatorFn[];
+  type: DataFormElementType;
+  mode: DataFormControlMode;
+  validators?: ValidatorConfig[];
   values?: DataFormSelectOption[];
   dataService?: DataCrudService<T, R>;
   defaultValue?: any;
@@ -50,4 +49,10 @@ export enum DataFormElementType {
 export interface DataFormRouteConfig<T> {
   onSave: (item?: T) => UrlConfig;
   onNotFound: UrlConfig;
+}
+
+export interface ValidatorConfig {
+  key: string;
+  validator: ValidatorFn;
+  message: string;
 }

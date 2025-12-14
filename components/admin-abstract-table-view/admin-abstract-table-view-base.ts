@@ -10,7 +10,7 @@ import { CardButton } from "../../models/data-card";
 import { BreadcrumbItem } from "../../models/breadcrumb";
 import { Page } from "../../models/page";
 import { AdminToastService } from "../../services/admin-toast.service";
-import { AdminErrorService } from "../../services/admin-error.service";
+import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
 
 @Directive()
 export default abstract class AdminAbstractTableViewBase<T> {
@@ -22,7 +22,7 @@ export default abstract class AdminAbstractTableViewBase<T> {
   protected breadcrumbs!: BreadcrumbItem[];
 
   protected readonly toast = inject(AdminToastService);
-  protected readonly errorHandler = inject(AdminErrorService);
+  protected readonly errorHandler = inject(AdminErrorHandlerService);
 
   protected readonly DEFAULT_BUTTONS: CardButton[] = [
     {

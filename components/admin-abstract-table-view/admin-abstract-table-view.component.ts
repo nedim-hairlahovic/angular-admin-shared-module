@@ -52,7 +52,7 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
           this.data = data;
           this.dataLoaded = true;
         },
-        error: (err) => console.log(err),
+        error: (err) => this.errorHandler.handleLoadError(),
       });
     });
   }
@@ -66,7 +66,7 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
           this.toast.success(this.getDeleteSuccessMessage(item));
           this.fetchData(this.tableState);
         },
-        error: (err) => this.errorHandler.handleHttpError(err),
+        error: (err) => this.errorHandler.handleOperationError(err),
       });
     }
   }

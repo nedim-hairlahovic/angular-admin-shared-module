@@ -2,6 +2,7 @@ import {
   ComponentRef,
   Directive,
   EventEmitter,
+  inject,
   ViewChild,
   ViewContainerRef,
 } from "@angular/core";
@@ -15,6 +16,7 @@ import {
   DetailsViewData,
 } from "../../models/details-view";
 import { ApiResource } from "../../models/api-resource";
+import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
 
 @Directive()
 export default abstract class AdminAbstractTabbedDetailsViewBase<
@@ -46,10 +48,11 @@ export default abstract class AdminAbstractTabbedDetailsViewBase<
   abstract initTabs(): void;
   abstract getDetailsData(): DetailsViewData;
   abstract getRouteConfig(): DetailsViewConfigRouteConfig<T>;
+  protected abstract ngOnInit(): void;
+
+  protected readonly errorHandler = inject(AdminErrorHandlerService);
 
   constructor(protected route: ActivatedRoute, protected router: Router) {}
-
-  protected abstract ngOnInit(): void;
 
   protected showTabs() {
     this.initTabs();

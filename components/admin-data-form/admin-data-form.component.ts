@@ -24,7 +24,6 @@ import {
   DataFormControlMode,
   DataFormElementType,
 } from "../../models/data-form";
-import { GenericValidator } from "../../validators/generic-validator";
 import { ApiResource } from "../../models/api-resource";
 
 @Component({
@@ -40,14 +39,15 @@ export class AdminDataFormComponent<T extends ApiResource, R>
   formInputElements: ElementRef[] = [];
 
   @Input() config!: DataFormConfig<T, R>;
-  @Input() errorMessage!: string;
+  @Input() backendFieldErrors: Record<string, string> | null = null;
   @Input() formProcessing!: boolean;
 
   @Output() btnSaveEvent = new EventEmitter<R>();
 
   mode: "ADD" | "EDIT" = "ADD";
   dataForm!: FormGroup;
-  displayMessage: { [key: string]: string } = {};
+  validationMessages: { [key: string]: { [key: string]: string } } = {};
+  displayMessages: { [key: string]: string } = {};
 
   readonly TEXT: DataFormElementType = DataFormElementType.Text;
   readonly DATE: DataFormElementType = DataFormElementType.Date;
@@ -58,8 +58,6 @@ export class AdminDataFormComponent<T extends ApiResource, R>
   readonly TEXTAREA: DataFormElementType = DataFormElementType.TextArea;
   readonly TIME: DataFormElementType = DataFormElementType.Time;
   readonly CHECKBOX: DataFormElementType = DataFormElementType.Checkbox;
-
-  private genericValidator!: GenericValidator;
 
   DataFormControlMode = DataFormControlMode;
 
@@ -75,9 +73,6 @@ export class AdminDataFormComponent<T extends ApiResource, R>
       this.mode = "EDIT";
     }
 
-    this.genericValidator = new GenericValidator(
-      this.config.validationMessages
-    );
     this.initDataForm();
     this.updateDataForm();
   }
@@ -96,6 +91,10 @@ export class AdminDataFormComponent<T extends ApiResource, R>
         this.previousConfigData = currentData;
       }
     }
+
+    if (changes["backendFieldErrors"] && this.backendFieldErrors) {
+      this.applyBackendFieldErrors();
+    }
   }
 
   ngAfterViewInit(): void {
@@ -110,27 +109,49 @@ export class AdminDataFormComponent<T extends ApiResource, R>
     merge(this.dataForm.valueChanges, ...controlBlurs)
       .pipe(debounceTime(200))
       .subscribe((value) => {
-        this.displayMessage = this.genericValidator.processMessages(
-          this.dataForm
+        this.displayMessages = this.processValidationMessages(
+          this.dataForm,
+          this.validationMessages
         );
       });
   }
 
   initDataForm(): void {
-    this.dataForm = this.fb.group({});
-    for (const element of this.config.elements) {
-      const mode = element.mode ?? DataFormControlMode.Control;
+    const formControls: any = {};
+    const validationMessages: { [key: string]: { [key: string]: string } } = {};
+
+    for (const el of this.config.elements) {
+      const mode = el.mode ?? DataFormControlMode.Control;
 
       if (mode === DataFormControlMode.Control) {
-        const formControl = new FormControl(
-          { value: "", disabled: element.disabled ? element.disabled : false },
-          element.validators
+        const validators = el.validators?.map((v) => v.validator) ?? [];
+
+        formControls[el.name] = new FormControl(
+          { value: "", disabled: !!el.disabled },
+          validators
         );
-        this.dataForm.addControl(element.name, formControl);
       } else if (mode === DataFormControlMode.Array) {
-        this.dataForm.addControl(element.name, this.fb.array([]));
+        const validators = el.validators?.map((v) => v.validator) ?? [];
+
+        formControls[el.name] = this.fb.array([
+          new FormControl("", validators),
+        ]);
+      }
+
+      // Collect validation messages per form control, keyed by validator name
+      // (used later to map validation errors to user-friendly messages)
+      if (el.validators && el.validators.length) {
+        if (!el.validators?.length) continue;
+
+        validationMessages[el.name] = el.validators.reduce((acc, v) => {
+          acc[v.key] = v.message;
+          return acc;
+        }, {} as { [k: string]: string });
       }
     }
+
+    this.validationMessages = validationMessages;
+    this.dataForm = this.fb.group(formControls);
   }
 
   updateDataForm(): void {
@@ -146,7 +167,12 @@ export class AdminDataFormComponent<T extends ApiResource, R>
         } else if (mode === DataFormControlMode.Array) {
           const formArray = this.fb.array([]);
           for (const singleData of this.config.data[element.name]) {
-            formArray.push(new FormControl(singleData, element.validators));
+            formArray.push(
+              new FormControl(
+                singleData,
+                element.validators?.map((v) => v.validator) ?? []
+              )
+            );
           }
 
           this.dataForm.setControl(element.name, formArray);
@@ -157,21 +183,57 @@ export class AdminDataFormComponent<T extends ApiResource, R>
     } else if (this.mode === "ADD") {
       let values = {} as any;
 
-      for (const element of this.config.elements) {
+      for (const el of this.config.elements) {
         // Use default value if specified in the element definition
-        if (element.defaultValue) {
-          values[element.name] = element.defaultValue;
+        if (el.defaultValue) {
+          values[el.name] = el.defaultValue;
         }
 
         // Override with provided data value if available
-        if (this.config.data && this.config.data[element.name]) {
-          values[element.name] = this.config.data[element.name];
+        if (this.config.data && this.config.data[el.name]) {
+          values[el.name] = this.config.data[el.name];
         }
       }
 
       this.dataForm.patchValue(values);
       this.patchFormArrayValues(values);
     }
+  }
+
+  private applyBackendFieldErrors(): void {
+    Object.entries(this.backendFieldErrors!).forEach(([fieldName, message]) => {
+      const arrayFieldMatch =
+        fieldName.match(/^(.+?)\[(\d+)\]$/) || // fieldName[0]
+        fieldName.match(/^(.+?)(\d+)$/); // fieldName0 (fallback)
+
+      if (arrayFieldMatch) {
+        const [, arrayName, indexStr] = arrayFieldMatch;
+        const index = Number(indexStr);
+        const array = this.dataForm.get(arrayName) as FormArray | null;
+
+        const control = array?.at(index);
+        if (!control) return;
+
+        control.setErrors({ ...(control.errors ?? {}), backend: message });
+        control.markAsTouched();
+        return;
+      } else {
+        const control = this.dataForm.get(fieldName);
+        if (!control) return;
+
+        const existing = control.errors ?? {};
+        control.setErrors({
+          ...existing,
+          backend: message,
+        });
+        control.markAsTouched();
+      }
+    });
+
+    this.displayMessages = this.processValidationMessages(
+      this.dataForm,
+      this.validationMessages
+    );
   }
 
   getFormInputValue(controlName: string): any {
@@ -187,9 +249,15 @@ export class AdminDataFormComponent<T extends ApiResource, R>
     const config = this.config.elements.find(
       (e: any) => e.name === controlName
     );
-    if (config) {
-      formArray.push(new FormControl("", config.validators));
+
+    if (!config) {
+      return;
     }
+
+    const validators = config.validators?.map((v) => v.validator) ?? [];
+
+    formArray.push(new FormControl(config.defaultValue ?? null, validators));
+    formArray.markAsDirty();
   }
 
   deleteInputFromFormArray(controlName: string, index: number): void {
@@ -206,46 +274,113 @@ export class AdminDataFormComponent<T extends ApiResource, R>
     }
   }
 
-  onSearchableSelectChange(inputName: string, event: any) {
-    var formElement = this.dataForm.get(inputName);
-    if (!formElement) {
+  onSearchableSelectChange(controlName: string, event: any) {
+    const control = this.dataForm.get(controlName);
+
+    if (!control) {
       return;
     }
 
-    if (Array.isArray(formElement.value)) {
-      // If the form element is an array, you can push the new value to the array
-      const updatedValue = [...formElement.value, event.value]
-        .filter((x) => x !== "")
-        .map((x) => +x)
-        .filter((value, index, self) => self.indexOf(value) === index); // Remove duplicates
-      formElement.setValue(updatedValue);
-    } else {
-      // If the form element is not an array, set the value directly
-      formElement.setValue(event.value);
-    }
+    control.setValue(event?.value ?? null);
+    control.markAsTouched();
+    control.markAsDirty();
+    control.updateValueAndValidity({ emitEvent: true });
+  }
 
-    formElement.markAsTouched();
-    formElement.markAsDirty();
-    formElement.updateValueAndValidity();
+  onSearchableSelectChangeInArray(
+    controlArrayName: string,
+    index: number,
+    event: any
+  ) {
+    const array = this.dataForm.get(controlArrayName) as FormArray | null;
+    const control = array?.at(index);
+    if (!control) return;
+
+    control.setValue(event.value);
+    control.markAsTouched();
+    control.markAsDirty();
+    control.updateValueAndValidity();
   }
 
   patchFormArrayValues(values: any): void {
-    for (const element of this.config.elements) {
-      const mode = element.mode ?? DataFormControlMode.Control;
+    for (const el of this.config.elements) {
+      const mode = el.mode ?? DataFormControlMode.Control;
 
       if (mode === DataFormControlMode.Array) {
-        const arrayValue = values[element.name] ?? [];
+        const arrayValue = values[el.name] ?? [];
 
-        const formArray = this.dataForm.get(element.name) as FormArray;
+        const formArray = this.dataForm.get(el.name) as FormArray;
 
         if (formArray && formArray instanceof FormArray) {
           formArray.clear();
 
           for (const item of arrayValue) {
-            formArray.push(new FormControl(item, element.validators));
+            const validators = el.validators?.map((v) => v.validator) ?? [];
+            formArray.push(new FormControl(item, validators));
           }
         }
       }
     }
+  }
+
+  processValidationMessages(
+    form: FormGroup,
+    validationMessages: { [key: string]: { [key: string]: string } }
+  ): { [key: string]: string } {
+    const messages = {} as any;
+    for (const controlKey in form.controls) {
+      if (form.controls.hasOwnProperty(controlKey)) {
+        const c = form.controls[controlKey];
+        // If it is a FormGroup, process its child controls.
+        if (c instanceof FormGroup) {
+          const childMessages = this.processValidationMessages(
+            c,
+            validationMessages
+          );
+          Object.assign(messages, childMessages);
+        } else if (c instanceof FormArray) {
+          // If it is a FormArray, process each control separately.
+          const arrayControls = c.controls;
+          for (let i = 0; i < arrayControls.length; i++) {
+            const singleControl = arrayControls[i];
+            messages[controlKey + i] = "";
+            if (
+              (singleControl.dirty || singleControl.touched) &&
+              singleControl.errors
+            ) {
+              Object.entries(singleControl.errors).forEach(
+                ([errorKey, errorValue]) => {
+                  if (
+                    errorKey === "backend" &&
+                    typeof errorValue === "string"
+                  ) {
+                    messages[controlKey + i] += errorValue;
+                  } else if (validationMessages[controlKey]?.[errorKey]) {
+                    messages[controlKey + i] +=
+                      validationMessages[controlKey][errorKey];
+                  }
+                }
+              );
+            }
+          }
+        } else {
+          messages[controlKey] = "";
+
+          if ((c.dirty || c.touched) && c.errors) {
+            Object.entries(c.errors).forEach(([errorKey, errorValue]) => {
+              if (errorKey === "backend" && typeof errorValue === "string") {
+                // backend error from server
+                messages[controlKey] += errorValue + " ";
+              } else if (validationMessages[controlKey][errorKey]) {
+                // normal client-side validator
+                messages[controlKey] +=
+                  validationMessages[controlKey][errorKey] + " ";
+              }
+            });
+          }
+        }
+      }
+    }
+    return messages;
   }
 }

@@ -6,8 +6,18 @@
 
 .form-array-item {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.4rem;
+    position: relative;
+}
+
+.form-array-field {
+    flex: 1;
+    min-width: 0;
+}
+
+.form-array-field .invalid-feedback {
+    display: block;
 }
 
 .form-array-item .form-control {
@@ -16,9 +26,9 @@
 }
 
 .form-array-item .form-control:focus {
-    background-color: #fff;
     border-color: #80bdff;
     box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.15);
+    outline: none;
 }
 
 .form-array-item admin-searchable-select {
@@ -28,4 +38,9 @@
 
 .form-array-item admin-searchable-select ::ng-deep .dropdown {
     width: 100%;
+}
+
+.form-array-item button {
+    position: relative;
+    top: 5px
 }

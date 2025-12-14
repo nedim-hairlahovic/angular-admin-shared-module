@@ -49,7 +49,7 @@ export abstract class AdminAbstractTabbedDetailsViewComponent<
           return;
         }
 
-        console.log(err.error.message);
+        this.errorHandler.handleLoadError();
       },
     });
   }

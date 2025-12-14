@@ -790,7 +790,6 @@ fieldset:disabled a.btn {
 .form-control {
     border: 1px solid #e5e7eb;
     background-color: #fafafa;
-    transition: all 0.15s ease-in-out;
     box-shadow: none;
 }
 
@@ -819,6 +818,15 @@ fieldset:disabled a.btn {
     color: #9ca3af;
 }
 
+.form-control.is-invalid,
+.form-select.is-invalid {
+    border-color: #e74a3b !important;
+}
+
+.invalid-feedback {
+    color: #e74a3b;
+}
+
 .form-control:disabled,
 .form-select:disabled {
     background-color: #f0f0f0;
@@ -837,6 +845,12 @@ fieldset:disabled a.btn {
     border-color: #80bdff;
     box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.15);
     outline: none;
+}
+
+.form-control.is-invalid:focus,
+.form-select.is-invalid:focus {
+    border-color: #e74a3b !important;
+    box-shadow: 0 0 0 0.1rem rgba(231, 74, 59, 0.25) !important;
 }
 
 .form-control:hover:not(:focus),

@@ -47,7 +47,7 @@ export abstract class AdminAbstractNestedTableViewComponent<
         this.data = data;
         this.dataLoaded = true;
       },
-      error: (err) => console.log(err),
+      error: (err) => this.errorHandler.handleLoadError(),
     });
   }
 
@@ -58,7 +58,7 @@ export abstract class AdminAbstractNestedTableViewComponent<
           this.toast.success(this.getDeleteSuccessMessage(item));
           this.fetchData(this.tableState);
         },
-        error: (err) => this.errorHandler.handleHttpError(err),
+        error: (err) => this.errorHandler.handleOperationError(err),
       });
     }
   }

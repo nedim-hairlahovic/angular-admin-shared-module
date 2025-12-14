@@ -25,29 +25,26 @@ export class AdminToastService {
     const current = this.toastsSubject.getValue();
     this.toastsSubject.next([...current, toast]);
 
-    setTimeout(() => this.dismiss(toast.id), toast.duration);
+    // Automatically dismiss the toast after the configured duration (if provided)
+    if (toast.duration && toast.duration > 0)
+      setTimeout(() => this.dismiss(toast.id), toast.duration);
   }
 
-  success(message: string, title = "Uspješna akcija", duration = 4000) {
+  success(message: string, title = "Uspješna akcija", duration = 3000) {
     this.show(message, { title, type: "success", duration });
   }
 
-  error(message: string, title = "Greška", duration = 5000) {
+  error(message: string, title = "Greška", duration = 4000) {
     this.show(message, { title, type: "error", duration });
   }
 
-  info(message: string, title = "Informacija", duration = 4000) {
+  info(message: string, title = "Informacija", duration = 3000) {
     this.show(message, { title, type: "info", duration });
   }
 
-  warning(message: string, title = "Upozorenje", duration = 4000) {
+  warning(message: string, title = "Upozorenje", duration = 3000) {
     this.show(message, { title, type: "warning", duration });
   }
-
-  // dismiss(id: number) {
-  //   const current = this.toastsSubject.getValue();
-  //   this.toastsSubject.next(current.filter((t: Toast) => t.id !== id));
-  // }
 
   dismiss(id: number) {
     const current = this.toastsSubject.getValue();

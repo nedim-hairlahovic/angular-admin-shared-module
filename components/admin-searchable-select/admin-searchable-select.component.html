@@ -1,4 +1,4 @@
-<div class="dropdown" (clickOutside)="clearInput()">
+<div class="dropdown" (clickOutside)="closeDropdown()">
     <div class="input-container">
         <div class="overlay" [class.visible]="isValueSelected">
             {{ selectedValue?.label }} <span class="ps-1">{{ selectedValue?.description }}</span>
@@ -6,7 +6,7 @@
                 <i class="fa fa-times"></i>
             </button>
         </div>
-        <input #searchInput type="text" class="form-control" [(ngModel)]="selectedValue"
+        <input #searchInput type="text" class="form-control" [class.is-invalid]="invalid" [(ngModel)]="selectedValue"
             (input)="onSearch($event.target.value)" [disabled]="isValueSelected" autocomplete="off"
             id="searchableSelect{{inputName}}" (click)="openDropdown()" (keydown)="onKeyDown($event)" />
         <ul class="dropdown-menu" [class.show]="isDropdownOpen">
