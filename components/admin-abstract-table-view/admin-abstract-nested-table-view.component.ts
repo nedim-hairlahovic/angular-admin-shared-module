@@ -1,9 +1,10 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, inject, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 
 import { NestedDataService } from "../../services/nested-data.service";
 import { ApiResource } from "../../models/api-resource";
 import AdminAbstractTableViewBase from "./admin-abstract-table-view-base";
+import { AdminConfirmDialogService } from "../../services/admin-confirm-dialog.service";
 
 @Component({
   template: "",
@@ -19,6 +20,8 @@ export abstract class AdminAbstractNestedTableViewComponent<
   @Input() parentId!: ID;
 
   abstract getDeletePrompt(): string;
+
+  protected readonly confirmDialog = inject(AdminConfirmDialogService);
 
   constructor(
     private dataService: NestedDataService<T, any, ID>,
@@ -51,15 +54,23 @@ export abstract class AdminAbstractNestedTableViewComponent<
     });
   }
 
-  override deleteItem(item: T): void {
-    if (confirm(this.getDeletePrompt())) {
-      this.dataService.deleteItem(this.parentId, item.id).subscribe({
-        next: () => {
-          this.toast.success(this.getDeleteSuccessMessage(item));
-          this.fetchData(this.tableState);
-        },
-        error: (err) => this.errorHandler.handleOperationError(err),
-      });
-    }
+  override async deleteItem(item: T): Promise<void> {
+    const confirmed = await this.confirmDialog.confirm({
+      title: "Potvrda brisanja",
+      message: this.getDeletePrompt(),
+      confirmText: "Obriši",
+      cancelText: "Odustani",
+      confirmVariant: "danger",
+    });
+
+    if (!confirmed) return;
+
+    this.dataService.deleteItem(this.parentId, item.id).subscribe({
+      next: () => {
+        this.toast.success(this.getDeleteSuccessMessage(item));
+        this.fetchData(this.tableState);
+      },
+      error: (err) => this.errorHandler.handleOperationError(err),
+    });
   }
 }

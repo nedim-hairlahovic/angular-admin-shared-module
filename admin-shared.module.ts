@@ -19,6 +19,8 @@ import { AdminBreadcrumbsComponent } from "./components/admin-breadcrumbs/admin-
 import { TooltipDirective } from "./directives/tooltip.directive";
 import { AdminModalComponent } from "./components/admin-modal/admin-modal.component";
 import { AdminToastContainerComponent } from "./components/admin-toast-container/admin-toast-container.component";
+import { AdminConfirmDialogComponent } from "./components/admin-confirm-dialog/admin-confirm-dialog.component";
+import { AdminConfirmDialogHostComponent } from "./components/admin-confirm-dialog-host/admin-confirm-dialog-host.component";
 
 @NgModule({
   declarations: [
@@ -31,6 +33,8 @@ import { AdminToastContainerComponent } from "./components/admin-toast-container
     AdminTabbedDetailsViewTemplateComponent,
     AdminBreadcrumbsComponent,
     AdminToastContainerComponent,
+    AdminConfirmDialogComponent,
+    AdminConfirmDialogHostComponent,
     ClickOutsideDirective,
     TooltipDirective,
   ],
@@ -44,6 +48,8 @@ import { AdminToastContainerComponent } from "./components/admin-toast-container
     AdminTabbedDetailsViewTemplateComponent,
     AdminBreadcrumbsComponent,
     AdminToastContainerComponent,
+    AdminConfirmDialogComponent,
+    AdminConfirmDialogHostComponent,
     TooltipDirective,
   ],
   imports: [
