@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 
 import { AdminTabConfig } from "../../models/tabbed-view";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
@@ -16,12 +16,14 @@ import { ApiResource } from "../../models/api-resource";
 })
 export class AdminTabbedDetailsViewTemplateComponent<T extends ApiResource>
   extends AdminAbstractTabbedDetailsViewBase<T>
-  implements OnInit
+  implements OnChanges
 {
   @Input() override tabs!: AdminTabConfig[];
   @Input() override pageTitle!: string;
 
-  ngOnInit(): void {
+  ngOnInit(): void {}
+
+  ngOnChanges(changes: SimpleChanges): void {
     this.showTabs();
   }
 
