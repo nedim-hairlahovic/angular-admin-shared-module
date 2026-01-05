@@ -32,7 +32,6 @@
 .sidebar .nav-item .nav-link span {
     font-size: 0.65rem;
     display: block;
-    margin-left: 5px;
 }
 
 .sidebar .nav-item.active .nav-link {
@@ -111,10 +110,11 @@
 }
 
 .sidebar #sidebarToggle::after {
-    font-weight: 900;
+    font-family: "FontAwesome";
     content: '\f104';
-    font-family: 'Font Awesome 5 Free';
     margin-right: 0.1rem;
+    font-size: 1rem;
+    text-shadow: 0 0 1px rgba(255, 255, 255, 0.5);
 }
 
 .sidebar #sidebarToggle:hover {
@@ -131,8 +131,9 @@
 }
 
 .sidebar.toggled #sidebarToggle::after {
+    font-family: "FontAwesome";
+    font-weight: 900;
     content: '\f105';
-    font-family: 'Font Awesome 5 Free';
     margin-left: 0.25rem;
 }
 
@@ -241,8 +242,10 @@
     }
 
     .sidebar .nav-item .nav-link i {
+        width: 1.25em;
         font-size: 0.85rem;
-        margin-right: 0.25rem;
+        margin-right: 0.45rem;
+        text-align: center;
     }
 
     .sidebar .nav-item .nav-link span {
@@ -420,6 +423,10 @@
 #content-wrapper {
     margin-left: 14rem;
     min-height: 100vh;
+}
+
+#content-wrapper.sidebar-toggled {
+    margin-left: 6.5rem !important;
 }
 
 #content {

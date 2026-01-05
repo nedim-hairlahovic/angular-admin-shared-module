@@ -1,10 +1,11 @@
 export interface AdminMenu {
-    appName: string;
-    items: AdminMenuItem[];
+  appName: string;
+  logoIcon?: string;
+  items: AdminMenuItem[];
 }
 
 export interface AdminMenuItem {
-    title: string;
-    route: string;
-    icon: string;
+  title: string;
+  route: string;
+  icon: string;
 }

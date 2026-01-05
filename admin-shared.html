@@ -2,14 +2,17 @@
 <div id="wrapper">
 
     <!-- Sidebar -->
-    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark position-fixed" id="sidebar">
+    <ul id="sidebar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark position-fixed"
+        [ngClass]="{'toggled': isSidebarToggled }">
 
         <!-- Sidebar - Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" [routerLink]="['/']">
-            <div class="sidebar-brand-icon rotate-n-15">
-                <i class="fas fa-laugh-wink"></i>
+            <div class="sidebar-brand-icon rotate-n-15" *ngIf="menu.logoIcon">
+                <i [class]="menu.logoIcon"></i>
             </div>
-            <div class="sidebar-brand-text mx-3">{{ menu.appName }}</div>
+            <div class="sidebar-brand-text mx-3">
+                {{ menu.appName }}
+            </div>
         </a>
 
         <!-- Divider -->
@@ -28,15 +31,15 @@
         <hr class="sidebar-divider d-none d-md-block">
 
         <!-- Sidebar Toggler (Sidebar) -->
-        <!-- <div class="text-center d-none d-md-inline">
-            <button class="rounded-circle border-0" id="sidebarToggle"></button>
-        </div> -->
+        <div class="text-center d-none d-md-inline">
+            <button id="sidebarToggle" class="rounded-circle border-0" (click)="toggleSidebar()"></button>
+        </div>
 
     </ul>
     <!-- End of Sidebar -->
 
     <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column">
+    <div id="content-wrapper" class="d-flex flex-column" [ngClass]="{'sidebar-toggled': isSidebarToggled }">
 
         <!-- Main Content -->
         <div id="content">
