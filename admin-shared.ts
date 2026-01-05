@@ -1,7 +1,8 @@
-import { OnInit } from "@angular/core";
+import { Directive, OnInit } from "@angular/core";
 
 import { AdminMenu } from "./models/menu";
 
+@Directive()
 export abstract class AdminSharedBaseComponent implements OnInit {
   isSidebarToggled = false;
   currentYear = new Date().getFullYear();
