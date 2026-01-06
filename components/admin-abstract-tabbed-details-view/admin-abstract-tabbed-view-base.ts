@@ -32,7 +32,7 @@ export default abstract class AdminAbstractTabbedDetailsViewBase<
   @ViewChild("dynamicComponentHost", { read: ViewContainerRef })
   protected hostRef!: ViewContainerRef;
 
-  protected breadcrumbs!: BreadcrumbItem[];
+  protected breadcrumbs: BreadcrumbItem[] = [];
 
   protected DEFAULT_BUTTONS: CardButton[] = [
     {

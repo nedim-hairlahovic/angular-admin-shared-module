@@ -20,7 +20,7 @@
 
         <!-- Nav Item - Dashboard -->
         <li class="nav-item" routerLinkActive="active" *ngFor="let item of menu.items">
-            <a class="nav-link" routerLink="{{ item.route }}">
+            <a class="nav-link" [routerLink]="item.route">
                 <i [ngClass]="item.icon"></i>
                 <span>{{ item.title }}</span>
             </a>

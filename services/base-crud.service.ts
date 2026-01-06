@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, of } from "rxjs";
 
-import { environment } from "src/environments/environment";
+import { environment } from "../../../environments/environment";
 
 export abstract class BaseCrudService<T> {
   protected readonly baseUrl = `${environment.backendUrl}/api/v1/admin`;

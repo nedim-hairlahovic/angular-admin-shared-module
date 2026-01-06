@@ -51,6 +51,10 @@ export class AdminDataTableComponent<T> implements OnChanges {
 
   constructor() {}
 
+  get items(): T[] {
+    return Array.isArray(this.data) ? this.data : this.data?.content ?? [];
+  }
+
   ngOnChanges(changes: SimpleChanges): void {
     this.setPagination();
 

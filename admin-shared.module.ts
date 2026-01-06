@@ -1,5 +1,4 @@
 import { NgModule } from "@angular/core";
-import { BrowserModule } from "@angular/platform-browser";
 import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { CommonModule } from "@angular/common";
 import {
@@ -52,14 +51,7 @@ import { AdminConfirmDialogHostComponent } from "./components/admin-confirm-dial
     AdminConfirmDialogHostComponent,
     TooltipDirective,
   ],
-  imports: [
-    BrowserModule,
-    ReactiveFormsModule,
-    FormsModule,
-    BrowserModule,
-    CommonModule,
-    RouterModule,
-  ],
+  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterModule],
   providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class AdminSharedModule {}

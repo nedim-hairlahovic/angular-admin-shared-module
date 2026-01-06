@@ -7,17 +7,17 @@
             </button>
         </div>
         <input #searchInput type="text" class="form-control" [class.is-invalid]="invalid" [(ngModel)]="selectedValue"
-            (input)="onSearch($event.target.value)" [disabled]="isValueSelected" autocomplete="off"
+            (input)="onSearch($event)" [disabled]="isValueSelected" autocomplete="off"
             id="searchableSelect{{inputName}}" (click)="openDropdown()" (keydown)="onKeyDown($event)" />
         <ul class="dropdown-menu" [class.show]="isDropdownOpen">
             <li *ngIf="!searching && (selectedValue === undefined || selectedValue === null)">
-                <div class="dropdown-item" (click)="clearInput()">Unesite pojam za pretragu...</div>
+                <div class="dropdown-item" (click)="closeDropdown()">Unesite pojam za pretragu...</div>
             </li>
             <li *ngIf="searching">
-                <div class="dropdown-item" (click)="clearInput()">Pretraga se provodi...</div>
+                <div class="dropdown-item" (click)="closeDropdown()">Pretraga se provodi...</div>
             </li>
             <li *ngIf="!searching && (selectedValue != undefined || selectedValue != null) && searchResults.length < 1">
-                <div class="dropdown-item" (click)="clearInput()">
+                <div class="dropdown-item" (click)="closeDropdown()">
                     <i class="fa fa-ban icon-up" aria-hidden="true"></i> Nema rezultata
                 </div>
             </li>

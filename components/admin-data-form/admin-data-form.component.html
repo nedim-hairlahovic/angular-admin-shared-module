@@ -53,12 +53,12 @@
                                 </div>
                             </ng-container>
 
-                            <ng-container *ngIf="input.type === SEARCHABLE_SELECT">
+                            <ng-container *ngIf="input.type === SEARCHABLE_SELECT && input.dataService as ds">
                                 <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
                                 <input type="hidden" class="form-control" id="{{ input.id }}"
                                     formControlName="{{ input.name }}"
                                     [ngClass]="{'is-invalid': displayMessages[input.name]}">
-                                <admin-searchable-select [inputName]="input.name" [dataService]="input.dataService"
+                                <admin-searchable-select [inputName]="input.name" [dataService]="ds"
                                     [initialValue]="getFormInputValue(input.name)"
                                     [invalid]="!!displayMessages[input.name]"
                                     (onSelectEvent)="onSearchableSelectChange(input.name, $event)">
@@ -126,10 +126,11 @@
                                                 </select>
                                             </ng-container>
 
-                                            <ng-container *ngIf="input.type === SEARCHABLE_SELECT">
+                                            <ng-container
+                                                *ngIf="input.type === SEARCHABLE_SELECT && input.dataService as ds">
                                                 <input type="hidden" class="form-control" [formControlName]="i">
-                                                <admin-searchable-select [inputName]="input.name"
-                                                    [dataService]="input.dataService" [initialValue]="el.value"
+                                                <admin-searchable-select [inputName]="input.name" [dataService]="ds"
+                                                    [initialValue]="el.value"
                                                     (onSelectEvent)="onSearchableSelectChangeInArray(input.name, i, $event)">
                                                 </admin-searchable-select>
                                             </ng-container>

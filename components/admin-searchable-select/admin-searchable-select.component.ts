@@ -83,11 +83,12 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
     this.isDropdownOpen = true;
   }
 
-  onSearch(term: string): void {
+  onSearch(event: Event): void {
+    const searchValue = (event.target as HTMLInputElement).value;
     this.focusedIndex = -1;
     this.searchResults = [];
     this.searching = true;
-    this.searchTerms.next(term);
+    this.searchTerms.next(searchValue);
   }
 
   executeSearch(query: string): void {

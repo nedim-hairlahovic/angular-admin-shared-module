@@ -67,13 +67,14 @@
                                 </a>
                             </ng-container>
 
-                            <ng-container *ngIf="column.pipe">
-                                {{ applyPipe(row[column.value], column.pipe) }}
+                            <ng-container *ngIf="column.pipe && column.value as key">
+                                {{ applyPipe(getText(row, key), column.pipe) }}
                             </ng-container>
 
-                            <ng-container *ngIf="column.badge">
-                                <span class="badge" [ngClass]="'badge-' + (column.badge[row[column.value]] || 'light')">
-                                    {{ row[column.value] }}
+                            <ng-container *ngIf="column.badge && column.value as key">
+                                <span class="badge"
+                                    [ngClass]="'badge-' + (column.badge[(getText(row, key) ?? '').toString()] || 'light')">
+                                    {{ getText(row, key) }}
                                 </span>
                             </ng-container>
 
@@ -128,11 +129,11 @@
 
         <div class="row align-items-center mt-3" *ngIf="!simpleTable && !this.pagination && data">
             <div class="col">
-                <span *ngIf="rows.length === data.length">
+                <span *ngIf="rows.length === items.length">
                     Prikazano {{ rows.length }} {{ getItemLabel(rows.length) }}
                 </span>
-                <span *ngIf="rows.length !== data.length">
-                    Prikazano {{ rows.length }} od {{ data.length }} {{ getItemLabel(data.length) }} (filtrirano)
+                <span *ngIf="rows.length !== items.length">
+                    Prikazano {{ rows.length }} od {{ items.length }} {{ getItemLabel(items.length) }} (filtrirano)
                 </span>
             </div>
         </div>

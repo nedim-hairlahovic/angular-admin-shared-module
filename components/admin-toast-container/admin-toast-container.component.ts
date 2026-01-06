@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component, inject } from "@angular/core";
 import { Observable } from "rxjs";
 
 import { Toast } from "../../models/toast";
@@ -15,9 +15,9 @@ import { AdminToastService } from "../../services/admin-toast.service";
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminToastContainerComponent {
-  readonly toasts$: Observable<Toast[]> = this.toastService.toasts$;
+  toastService = inject(AdminToastService);
 
-  constructor(private readonly toastService: AdminToastService) {}
+  readonly toasts$: Observable<Toast[]> = this.toastService.toasts$;
 
   dismiss(id: number) {
     this.toastService.dismiss(id);

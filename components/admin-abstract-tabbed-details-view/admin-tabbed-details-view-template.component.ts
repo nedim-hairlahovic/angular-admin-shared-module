@@ -18,8 +18,8 @@ export class AdminTabbedDetailsViewTemplateComponent<T extends ApiResource>
   extends AdminAbstractTabbedDetailsViewBase<T>
   implements OnChanges
 {
-  @Input() override tabs!: AdminTabConfig[];
-  @Input() override pageTitle!: string;
+  @Input() declare tabs: AdminTabConfig[];
+  @Input() declare pageTitle: string;
 
   ngOnInit(): void {}
 
