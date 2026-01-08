@@ -22,7 +22,7 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
   item!: T;
   protected pageTitle!: string;
   protected routeConfig!: DetailsViewConfigRouteConfig<T>;
-  protected breadcrumbs!: BreadcrumbItem[];
+  protected breadcrumbs: BreadcrumbItem[] = [];
 
   abstract getTitle(): string;
   abstract getDetailsData(): DetailsViewData;

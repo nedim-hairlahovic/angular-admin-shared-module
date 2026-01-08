@@ -27,11 +27,14 @@ export class AdminDataTableComponent<T> implements OnChanges {
   @Input() dataLoaded!: boolean;
   @Input() config!: DataTableConfig<T>;
   @Input() data!: T[] | Page<T>;
-  @Input() searchValue!: string;
+  @Input() searchValue: string | null = null;
   @Input() simpleTable: boolean = false;
 
   @Output() fetchDataEvent = new EventEmitter<any>();
-  @Output() actionClickEvent = new EventEmitter<any>();
+  @Output() actionClickEvent = new EventEmitter<{
+    action: DataTableAction;
+    row: any;
+  }>();
   @Output() btnClickEvent = new EventEmitter<any>();
 
   readonly pageSize: number = 10;
@@ -59,7 +62,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
     this.setPagination();
 
     if (changes["data"] && changes["data"].isFirstChange()) {
-      if (this.searchValue?.length > 0) {
+      if (this.searchValue && this.searchValue?.length > 0) {
         this.searchForm.setValue({
           keyword: this.searchValue,
         });
@@ -301,7 +304,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
     );
   }
 
-  handleActionClick<T>(action: DataTableAction, row: T): void {
+  handleActionClick(action: DataTableAction, row: T): void {
     this.actionClickEvent.emit({ action, row });
   }
 

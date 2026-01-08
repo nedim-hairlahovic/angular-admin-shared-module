@@ -19,7 +19,7 @@ export default abstract class AdminAbstractTableViewBase<T> {
   dataLoaded: boolean = false;
   searchValue!: string | null;
   tableState!: any;
-  protected breadcrumbs!: BreadcrumbItem[];
+  protected breadcrumbs: BreadcrumbItem[] = [];
 
   protected readonly toast = inject(AdminToastService);
   protected readonly errorHandler = inject(AdminErrorHandlerService);

@@ -62,3 +62,8 @@ export interface DataTableAction {
   color?: string;
   click?: (row: any) => void;
 }
+
+export type DataTableActionClickEvent<T = any> = {
+  action: DataTableAction;
+  row: T;
+};

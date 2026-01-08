@@ -29,7 +29,7 @@ export default abstract class AdminAbstractEditViewBase<
   processingRequest!: boolean;
   backendFieldErrors: Record<string, string> | null = null;
 
-  protected breadcrumbs!: BreadcrumbItem[];
+  protected breadcrumbs: BreadcrumbItem[] = [];
 
   abstract getTitle(item: T): string;
   abstract convertToRequestObject(item: T): R;
