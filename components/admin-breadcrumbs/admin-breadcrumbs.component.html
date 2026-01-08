@@ -1,15 +1,16 @@
 <nav aria-label="breadcrumb" class="custom-breadcrumb">
     <ol class="breadcrumb">
-        <li *ngFor="let item of items; let last = last" class="breadcrumb-item" [class.active]="item.active || last"
+        @for (item of items; track $index; let last = $last) {
+        <li class="breadcrumb-item" [class.active]="item.active || last"
             [attr.aria-current]="item.active || last ? 'page' : null">
-            <ng-container *ngIf="!item.active && !last">
-                <a [routerLink]="item.url" [fragment]="item.fragment">
-                    {{ item.title }}
-                </a>
-            </ng-container>
-            <ng-container *ngIf="item.active || last">
+            @if (!item.active && !last) {
+            <a [routerLink]="item.url" [fragment]="item.fragment">
                 {{ item.title }}
-            </ng-container>
+            </a>
+            } @else {
+            {{ item.title }}
+            }
         </li>
+        }
     </ol>
 </nav>

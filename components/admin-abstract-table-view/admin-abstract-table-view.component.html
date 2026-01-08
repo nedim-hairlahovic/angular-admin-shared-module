@@ -1,10 +1,12 @@
-<admin-breadcrumbs *ngIf="breadcrumbs.length > 0" [items]="breadcrumbs"></admin-breadcrumbs>
+@if (breadcrumbs.length > 0) {
+<admin-breadcrumbs [items]="breadcrumbs" />
+}
 
-<div class="page-header" *ngIf="config.title">
-    <h2 class="page-title">
-        {{ config.title }}
-    </h2>
+@if (config.title) {
+<div class="page-header">
+    <h2 class="page-title">{{ config.title }}</h2>
 </div>
+}
 
 <admin-data-table [dataLoaded]="dataLoaded" [config]="config" [data]="data" [searchValue]="searchValue"
     (fetchDataEvent)="fetchData($event)" (actionClickEvent)="handleTableAction($event)"

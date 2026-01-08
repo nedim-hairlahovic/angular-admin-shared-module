@@ -9,7 +9,7 @@ import {
 
 @Directive({
   selector: "[tooltip]",
-  standalone: false,
+  standalone: true,
 })
 export class TooltipDirective implements OnDestroy {
   @Input("tooltip") tooltipText!: string;

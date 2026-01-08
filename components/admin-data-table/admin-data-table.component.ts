@@ -7,7 +7,7 @@ import {
   PipeTransform,
   SimpleChanges,
 } from "@angular/core";
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 
 import {
   DataTableAction,
@@ -16,12 +16,16 @@ import {
 } from "../../models/data-table";
 import { Pagination, PaginationFactory } from "../../models/pagination";
 import { Page } from "../../models/page";
+import { TooltipDirective } from "../../directives/tooltip.directive";
+import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 
 @Component({
   selector: "admin-data-table",
   templateUrl: "./admin-data-table.component.html",
   styleUrls: ["../../admin-shared.css", "./admin-data-table.component.css"],
-  standalone: false,
+  imports: [TooltipDirective, CommonModule, RouterModule, ReactiveFormsModule],
+  standalone: true,
 })
 export class AdminDataTableComponent<T> implements OnChanges {
   @Input() dataLoaded!: boolean;

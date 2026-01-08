@@ -21,37 +21,44 @@ import { AdminToastContainerComponent } from "./components/admin-toast-container
 import { AdminConfirmDialogComponent } from "./components/admin-confirm-dialog/admin-confirm-dialog.component";
 import { AdminConfirmDialogHostComponent } from "./components/admin-confirm-dialog-host/admin-confirm-dialog-host.component";
 
+const ADMIN_SHARED_STANDALONE = [
+  AdminDataTableComponent,
+  AdminBreadcrumbsComponent,
+  TooltipDirective,
+];
+
 @NgModule({
   declarations: [
-    AdminDataTableComponent,
     AdminDataFormComponent,
     AdminDetailsViewComponent,
     AdminModalComponent,
     AdminSearchableSelectComponent,
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
-    AdminBreadcrumbsComponent,
     AdminToastContainerComponent,
     AdminConfirmDialogComponent,
     AdminConfirmDialogHostComponent,
     ClickOutsideDirective,
-    TooltipDirective,
   ],
   exports: [
-    AdminDataTableComponent,
+    ...ADMIN_SHARED_STANDALONE,
     AdminDataFormComponent,
     AdminDetailsViewComponent,
     AdminModalComponent,
     AdminSearchableSelectComponent,
     AdminSpinnerComponent,
     AdminTabbedDetailsViewTemplateComponent,
-    AdminBreadcrumbsComponent,
     AdminToastContainerComponent,
     AdminConfirmDialogComponent,
     AdminConfirmDialogHostComponent,
-    TooltipDirective,
   ],
-  imports: [ReactiveFormsModule, FormsModule, CommonModule, RouterModule],
+  imports: [
+    ReactiveFormsModule,
+    FormsModule,
+    CommonModule,
+    RouterModule,
+    ...ADMIN_SHARED_STANDALONE,
+  ],
   providers: [provideHttpClient(withInterceptorsFromDi())],
 })
 export class AdminSharedModule {}
