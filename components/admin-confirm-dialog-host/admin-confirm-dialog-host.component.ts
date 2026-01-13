@@ -3,12 +3,14 @@ import { Subscription } from "rxjs";
 
 import { ConfirmDialogOptions } from "../../models/confirm-dialog";
 import { AdminConfirmDialogService } from "../../services/admin-confirm-dialog.service";
+import { AdminConfirmDialogComponent } from "../admin-confirm-dialog/admin-confirm-dialog.component";
 
 @Component({
   selector: "admin-confirm-dialog-host",
   templateUrl: "./admin-confirm-dialog-host.component.html",
   styleUrls: ["../../admin-shared.css"],
-  standalone: false,
+  standalone: true,
+  imports: [AdminConfirmDialogComponent],
 })
 export class AdminConfirmDialogHostComponent {
   current?: {

@@ -7,7 +7,6 @@ import {
 } from "@angular/common/http";
 import { RouterModule } from "@angular/router";
 
-import { ClickOutsideDirective } from "./directives/click-outside.directive";
 import { AdminDataTableComponent } from "./components/admin-data-table/admin-data-table.component";
 import { AdminDataFormComponent } from "./components/admin-data-form/admin-data-form.component";
 import { AdminDetailsViewComponent } from "./components/admin-details-view/admin-details-view.component";
@@ -22,36 +21,23 @@ import { AdminConfirmDialogComponent } from "./components/admin-confirm-dialog/a
 import { AdminConfirmDialogHostComponent } from "./components/admin-confirm-dialog-host/admin-confirm-dialog-host.component";
 
 const ADMIN_SHARED_STANDALONE = [
+  AdminDataFormComponent,
+  AdminDetailsViewComponent,
   AdminDataTableComponent,
   AdminBreadcrumbsComponent,
+  AdminConfirmDialogComponent,
+  AdminConfirmDialogHostComponent,
+  AdminModalComponent,
+  AdminSearchableSelectComponent,
+  AdminSpinnerComponent,
+  AdminTabbedDetailsViewTemplateComponent,
+  AdminToastContainerComponent,
   TooltipDirective,
 ];
 
 @NgModule({
-  declarations: [
-    AdminDataFormComponent,
-    AdminDetailsViewComponent,
-    AdminModalComponent,
-    AdminSearchableSelectComponent,
-    AdminSpinnerComponent,
-    AdminTabbedDetailsViewTemplateComponent,
-    AdminToastContainerComponent,
-    AdminConfirmDialogComponent,
-    AdminConfirmDialogHostComponent,
-    ClickOutsideDirective,
-  ],
-  exports: [
-    ...ADMIN_SHARED_STANDALONE,
-    AdminDataFormComponent,
-    AdminDetailsViewComponent,
-    AdminModalComponent,
-    AdminSearchableSelectComponent,
-    AdminSpinnerComponent,
-    AdminTabbedDetailsViewTemplateComponent,
-    AdminToastContainerComponent,
-    AdminConfirmDialogComponent,
-    AdminConfirmDialogHostComponent,
-  ],
+  declarations: [],
+  exports: [...ADMIN_SHARED_STANDALONE],
   imports: [
     ReactiveFormsModule,
     FormsModule,

@@ -7,7 +7,7 @@ import { CardButton } from "../../models/data-card";
   selector: "admin-details-view",
   templateUrl: "./admin-details-view.component.html",
   styleUrls: ["../../admin-shared.css", "./admin-details-view.component.css"],
-  standalone: false,
+  standalone: true,
 })
 export class AdminDetailsViewComponent {
   @Input() data!: DetailsViewData;

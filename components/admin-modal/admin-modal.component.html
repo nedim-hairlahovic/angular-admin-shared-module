@@ -1,14 +1,12 @@
 <div #modal class="modal fade" tabindex="-1" (click)="closeModal()">
-    <div class="modal-dialog" [ngClass]="{
-      'modal-sm': size === 'sm',
-      'modal-lg': size === 'lg',
-      'modal-xl': size === 'xl'
-    }" (click)="$event.stopPropagation()">
+    <div class="modal-dialog" [class.modal-sm]="size === 'sm'" [class.modal-lg]="size === 'lg'"
+        [class.modal-xl]="size === 'xl'" (click)="$event.stopPropagation()">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">{{ title }}</h5>
                 <button type="button" class="btn-close" (click)="closeModal()"></button>
             </div>
+
             <div class="modal-body">
                 <ng-content></ng-content>
             </div>

@@ -12,7 +12,7 @@ import { ApiResource } from "../../models/api-resource";
   selector: "admin-tabbed-details-view-template",
   templateUrl: "./admin-tabbed-details-view-template.component.html",
   styleUrl: "../../admin-shared.css",
-  standalone: false,
+  standalone: true,
 })
 export class AdminTabbedDetailsViewTemplateComponent<T extends ApiResource>
   extends AdminAbstractTabbedDetailsViewBase<T>

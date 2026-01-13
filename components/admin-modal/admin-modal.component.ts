@@ -15,7 +15,7 @@ import {
   selector: "admin-modal",
   templateUrl: "./admin-modal.component.html",
   styleUrls: ["../../admin-shared.css", "./admin-modal.component.css"],
-  standalone: false,
+  standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
 export class AdminModalComponent implements OnChanges {

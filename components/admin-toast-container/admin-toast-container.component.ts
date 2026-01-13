@@ -3,6 +3,7 @@ import { Observable } from "rxjs";
 
 import { Toast } from "../../models/toast";
 import { AdminToastService } from "../../services/admin-toast.service";
+import { AsyncPipe } from "@angular/common";
 
 @Component({
   selector: "admin-toast-container",
@@ -11,7 +12,8 @@ import { AdminToastService } from "../../services/admin-toast.service";
     "../../admin-shared.css",
     "./admin-toast-container.component.css",
   ],
-  standalone: false,
+  standalone: true,
+  imports: [AsyncPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AdminToastContainerComponent {

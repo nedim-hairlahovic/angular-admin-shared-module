@@ -4,162 +4,171 @@
             <div class="card-body">
                 <form novalidate [formGroup]="dataForm" (ngSubmit)="onSave()">
 
-                    <div class="mb-3" *ngFor="let input of config.elements">
+                    @for (input of config.elements; track $index) {
+                    <div class="mb-3">
 
                         <!-- Single Controls -->
-                        <ng-container *ngIf="input.mode === undefined || input.mode === DataFormControlMode.Control">
+                        @if (input.mode === undefined || input.mode === DataFormControlMode.Control) {
 
-                            <ng-container *ngIf="input.type === TEXT">
-                                <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
-                                <input type="text" class="form-control" id="{{ input.id }}"
-                                    formControlName="{{ input.name }}"
-                                    [ngClass]="{'is-invalid': displayMessages[input.name]}" autocomplete="off">
-                                <div class="invalid-feedback">
-                                    {{ displayMessages[input.name] }}
-                                </div>
-                            </ng-container>
+                        @if (input.type === TEXT) {
+                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <input type="text" class="form-control" [id]="input.id" [formControlName]="input.name"
+                            [class.is-invalid]="displayMessages[input.name]" autocomplete="off">
+                        <div class="invalid-feedback">
+                            {{ displayMessages[input.name] }}
+                        </div>
+                        }
 
-                            <ng-container *ngIf="input.type === DATE">
-                                <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
-                                <input type="date" class="form-control" id="{{ input.id }}"
-                                    formControlName="{{ input.name }}"
-                                    [ngClass]="{'is-invalid': displayMessages[input.name]}">
-                                <div class="invalid-feedback">
-                                    {{ displayMessages[input.name] }}
-                                </div>
-                            </ng-container>
+                        @if (input.type === DATE) {
+                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <input type="date" class="form-control" [id]="input.id" [formControlName]="input.name"
+                            [class.is-invalid]="displayMessages[input.name]">
+                        <div class="invalid-feedback">
+                            {{ displayMessages[input.name] }}
+                        </div>
+                        }
 
-                            <ng-container *ngIf="input.type === NUMBER">
-                                <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
-                                <input type="number" class="form-control" id="{{ input.id }}"
-                                    formControlName="{{ input.name }}"
-                                    [ngClass]="{'is-invalid': displayMessages[input.name]}">
-                                <div class="invalid-feedback">
-                                    {{ displayMessages[input.name] }}
-                                </div>
-                            </ng-container>
+                        @if (input.type === NUMBER) {
+                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <input type="number" class="form-control" [id]="input.id" [formControlName]="input.name"
+                            [class.is-invalid]="displayMessages[input.name]">
+                        <div class="invalid-feedback">
+                            {{ displayMessages[input.name] }}
+                        </div>
+                        }
 
-                            <ng-container *ngIf="input.type === SELECT">
-                                <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
-                                <select class="form-select" id="{{ input.id }}" formControlName="{{ input.name }}"
-                                    [ngClass]="{'is-invalid': displayMessages[input.name]}">
-                                    <option value="">Odaberite opciju</option>
-                                    <option *ngFor="let option of input.values" [value]="option.value">
-                                        {{ option.label }}
-                                    </option>
-                                </select>
-                                <div class="invalid-feedback">
-                                    {{ displayMessages[input.name] }}
-                                </div>
-                            </ng-container>
+                        @if (input.type === SELECT) {
+                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <select class="form-select" [id]="input.id" [formControlName]="input.name"
+                            [class.is-invalid]="displayMessages[input.name]">
+                            <option value="">Odaberite opciju</option>
+                            @for (option of input.values; track $index) {
+                            <option [value]="option.value">
+                                {{ option.label }}
+                            </option>
+                            }
+                        </select>
+                        <div class="invalid-feedback">
+                            {{ displayMessages[input.name] }}
+                        </div>
+                        }
 
-                            <ng-container *ngIf="input.type === SEARCHABLE_SELECT && input.dataService as ds">
-                                <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
-                                <input type="hidden" class="form-control" id="{{ input.id }}"
-                                    formControlName="{{ input.name }}"
-                                    [ngClass]="{'is-invalid': displayMessages[input.name]}">
-                                <admin-searchable-select [inputName]="input.name" [dataService]="ds"
-                                    [initialValue]="getFormInputValue(input.name)"
-                                    [invalid]="!!displayMessages[input.name]"
-                                    (onSelectEvent)="onSearchableSelectChange(input.name, $event)">
-                                </admin-searchable-select>
-                                <div class="invalid-feedback d-block">
-                                    {{ displayMessages[input.name] }}
-                                </div>
-                            </ng-container>
+                        @if (input.type === SEARCHABLE_SELECT && input.dataService) {
 
-                            <ng-container *ngIf=" input.type===TEXTAREA">
-                                <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
-                                <textarea class="form-control" id="{{ input.id }}" formControlName="{{ input.name }}"
-                                    [ngClass]="{'is-invalid': displayMessages[input.name]}" autocomplete="off">
-                                </textarea>
-                                <div class="invalid-feedback">
-                                    {{ displayMessages[input.name] }}
-                                </div>
-                            </ng-container>
+                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <input type="hidden" class="form-control" [id]="input.id" [formControlName]="input.name"
+                            [class.is-invalid]="displayMessages[input.name]">
 
-                            <ng-container *ngIf="input.type === TIME">
-                                <label for="{{ input.id }}" class="form-label">{{ input.label }}</label>
-                                <input type="time" class="form-control" id="{{ input.id }}"
-                                    formControlName="{{ input.name }}"
-                                    [ngClass]="{'is-invalid': displayMessages[input.name]}">
-                                <div class="invalid-feedback">
-                                    {{ displayMessages[input.name] }}
-                                </div>
-                            </ng-container>
+                        <admin-searchable-select [inputName]="input.name" [dataService]="input.dataService"
+                            [initialValue]="getFormInputValue(input.name)" [invalid]="!!displayMessages[input.name]"
+                            (onSelectEvent)="onSearchableSelectChange(input.name, $event)">
+                        </admin-searchable-select>
 
-                            <ng-container *ngIf="input.type === CHECKBOX">
-                                <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" value="" id="{{ input.id }}"
-                                        formControlName="{{ input.name }}">
-                                    <label class="form-check-label" for="{{ input.id }}">
-                                        {{ input.label }}
-                                    </label>
-                                </div>
-                            </ng-container>
+                        <div class="invalid-feedback d-block">
+                            {{ displayMessages[input.name] }}
+                        </div>
+                        }
 
-                        </ng-container>
+                        @if (input.type === TEXTAREA) {
+                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <textarea class="form-control" [id]="input.id" [formControlName]="input.name"
+                            [class.is-invalid]="displayMessages[input.name]" autocomplete="off"></textarea>
+                        <div class="invalid-feedback">
+                            {{ displayMessages[input.name] }}
+                        </div>
+                        }
+
+                        @if (input.type === TIME) {
+                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <input type="time" class="form-control" [id]="input.id" [formControlName]="input.name"
+                            [class.is-invalid]="displayMessages[input.name]">
+                        <div class="invalid-feedback">
+                            {{ displayMessages[input.name] }}
+                        </div>
+                        }
+
+                        @if (input.type === CHECKBOX) {
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" [id]="input.id"
+                                [formControlName]="input.name">
+                            <label class="form-check-label" [for]="input.id">
+                                {{ input.label }}
+                            </label>
+                        </div>
+                        }
+
+                        }
 
                         <!-- Array Types -->
-                        <ng-container *ngIf="input.mode === DataFormControlMode.Array">
-                            <div formArrayName="{{ input.name }}" class="form-array-section">
-                                <label class="form-label mb-2 fw-semibold">{{ input.label }}</label>
+                        @if (input.mode === DataFormControlMode.Array) {
+                        <div [formArrayName]="input.name" class="form-array-section">
+                            <label class="form-label mb-2 fw-semibold">{{ input.label }}</label>
 
-                                <div class="form-array-list">
-                                    <div class="form-array-item"
-                                        *ngFor="let el of getFormArray(input.name).controls; let i = index">
-                                        <div class="form-array-field">
-                                            <ng-container *ngIf="input.type === TEXT">
-                                                <input type="text" class="form-control" [formControlName]="i"
-                                                    [ngClass]="{'is-invalid': displayMessages[input.name + i]}"
-                                                    autocomplete="off" />
-                                            </ng-container>
+                            <div class="form-array-list">
+                                @for (el of getFormArray(input.name).controls; track $index; let i = $index) {
+                                <div class="form-array-item">
+                                    <div class="form-array-field">
 
-                                            <ng-container *ngIf="input.type === SELECT">
-                                                <select class="form-select" [id]="i" [formControlName]="i"
-                                                    [ngClass]="{'is-invalid': displayMessages[input.name + i]}">
-                                                    <option value="">Odaberite opciju</option>
-                                                    <option *ngFor="let option of input.values"
-                                                        [ngValue]="option.value">
-                                                        {{ option.label }}
-                                                    </option>
-                                                </select>
-                                            </ng-container>
+                                        @if (input.type === TEXT) {
+                                        <input type="text" class="form-control" [formControlName]="i"
+                                            [class.is-invalid]="displayMessages[input.name + i]" autocomplete="off" />
+                                        }
 
-                                            <ng-container
-                                                *ngIf="input.type === SEARCHABLE_SELECT && input.dataService as ds">
-                                                <input type="hidden" class="form-control" [formControlName]="i">
-                                                <admin-searchable-select [inputName]="input.name" [dataService]="ds"
-                                                    [initialValue]="el.value"
-                                                    (onSelectEvent)="onSearchableSelectChangeInArray(input.name, i, $event)">
-                                                </admin-searchable-select>
-                                            </ng-container>
+                                        @if (input.type === SELECT) {
+                                        <select class="form-select" [id]="i" [formControlName]="i"
+                                            [class.is-invalid]="displayMessages[input.name + i]">
+                                            <option value="">Odaberite opciju</option>
+                                            @for (option of input.values; track $index) {
+                                            <option [ngValue]="option.value">
+                                                {{ option.label }}
+                                            </option>
+                                            }
+                                        </select>
+                                        }
 
-                                            <div class="invalid-feedback" *ngIf="displayMessages[input.name + i]">
-                                                {{ displayMessages[input.name + i] }}
-                                            </div>
+                                        @if (input.type === SEARCHABLE_SELECT && input.dataService) {
+
+                                        <input type="hidden" class="form-control" [formControlName]="i">
+                                        <admin-searchable-select [inputName]="input.name"
+                                            [dataService]="input.dataService" [initialValue]="el.value"
+                                            (onSelectEvent)="onSearchableSelectChangeInArray(input.name, i, $event)">
+                                        </admin-searchable-select>
+                                        }
+
+                                        @if (displayMessages[input.name + i]) {
+                                        <div class="invalid-feedback">
+                                            {{ displayMessages[input.name + i] }}
                                         </div>
-                                        <button type="button" class="btn btn-action danger" tooltip="Obriši stavku"
-                                            (click)="deleteInputFromFormArray(input.name, i)">
-                                            <i class="fa fa-trash"></i>
-                                        </button>
+                                        }
                                     </div>
-                                </div>
 
-                                <button type="button" class="btn btn-action success mt-1"
-                                    (click)="addInputToFormArray(input.name)">
-                                    <i class="fa fa-plus"></i> Dodaj stavku
-                                </button>
+                                    <button type="button" class="btn btn-action danger" tooltip="Obriši stavku"
+                                        (click)="deleteInputFromFormArray(input.name, i)">
+                                        <i class="fa fa-trash"></i>
+                                    </button>
+                                </div>
+                                }
                             </div>
-                        </ng-container>
+
+                            <button type="button" class="btn btn-action success mt-1"
+                                (click)="addInputToFormArray(input.name)">
+                                <i class="fa fa-plus"></i> Dodaj stavku
+                            </button>
+                        </div>
+                        }
+
                     </div>
+                    }
 
                     <button type="submit" class="btn btn-primary" style="margin-right: 5px;"
                         [disabled]="!dataForm.valid || formProcessing">
-                        <span *ngIf="formProcessing" class="spinner-border spinner-border-sm" role="status"
-                            aria-hidden="true"></span>
-                        <span *ngIf="!formProcessing">Spremi</span>
+                        @if (formProcessing) {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        } @else {
+                        <span>Spremi</span>
+                        }
                     </button>
+
                 </form>
             </div>
         </div>

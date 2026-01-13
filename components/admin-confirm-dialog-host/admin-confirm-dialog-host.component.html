@@ -1,2 +1,4 @@
-<admin-confirm-dialog *ngIf="current" [options]="current.options" (confirmed)="onResult($event)">
+@if (current) {
+<admin-confirm-dialog [options]="current.options" (confirmed)="onResult($event)">
 </admin-confirm-dialog>
+}

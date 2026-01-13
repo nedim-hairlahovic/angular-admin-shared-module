@@ -15,12 +15,15 @@ import { SearchableSelectItem } from "../../models/searchable-select-item";
 import { ApiResource } from "../../models/api-resource";
 import { DataCrudService } from "../../services/data.service";
 import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
+import { FormsModule } from "@angular/forms";
+import { ClickOutsideDirective } from "../../directives/click-outside.directive";
 
 @Component({
   selector: "admin-searchable-select",
   templateUrl: "./admin-searchable-select.component.html",
   styleUrls: ["./admin-searchable-select.component.css"],
-  standalone: false,
+  standalone: true,
+  imports: [FormsModule, ClickOutsideDirective],
 })
 export class AdminSearchableSelectComponent<T extends ApiResource>
   implements OnChanges

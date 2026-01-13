@@ -1,32 +1,50 @@
 <div class="dropdown" (clickOutside)="closeDropdown()">
     <div class="input-container">
         <div class="overlay" [class.visible]="isValueSelected">
-            {{ selectedValue?.label }} <span class="ps-1">{{ selectedValue?.description }}</span>
+            {{ selectedValue?.label }}
+            <span class="ps-1">{{ selectedValue?.description }}</span>
+
             <button type="button" class="clear-btn" (click)="onClear()">
                 <i class="fa fa-times"></i>
             </button>
         </div>
+
         <input #searchInput type="text" class="form-control" [class.is-invalid]="invalid" [(ngModel)]="selectedValue"
             (input)="onSearch($event)" [disabled]="isValueSelected" autocomplete="off"
-            id="searchableSelect{{inputName}}" (click)="openDropdown()" (keydown)="onKeyDown($event)" />
+            [id]="'searchableSelect' + inputName" (click)="openDropdown()" (keydown)="onKeyDown($event)" />
+
         <ul class="dropdown-menu" [class.show]="isDropdownOpen">
-            <li *ngIf="!searching && (selectedValue === undefined || selectedValue === null)">
-                <div class="dropdown-item" (click)="closeDropdown()">Unesite pojam za pretragu...</div>
+            @if (!searching && (selectedValue === undefined || selectedValue === null)) {
+            <li>
+                <div class="dropdown-item" (click)="closeDropdown()">
+                    Unesite pojam za pretragu...
+                </div>
             </li>
-            <li *ngIf="searching">
-                <div class="dropdown-item" (click)="closeDropdown()">Pretraga se provodi...</div>
+            }
+
+            @if (searching) {
+            <li>
+                <div class="dropdown-item" (click)="closeDropdown()">
+                    Pretraga se provodi...
+                </div>
             </li>
-            <li *ngIf="!searching && (selectedValue != undefined || selectedValue != null) && searchResults.length < 1">
+            }
+
+            @if (!searching && selectedValue != null && searchResults.length < 1) { <li>
                 <div class="dropdown-item" (click)="closeDropdown()">
                     <i class="fa fa-ban icon-up" aria-hidden="true"></i> Nema rezultata
                 </div>
-            </li>
-            <li *ngFor="let item of searchResults; let i = index">
-                <div class="dropdown-item clickable" [class.focused]="i === focusedIndex" (mouseenter)="onMouseEnter(i)"
-                    (click)="onItemSelect(item)">
-                    {{ item.label }} <small>{{ item.description }}</small>
-                </div>
-            </li>
+                </li>
+                }
+
+                @for (item of searchResults; track $index; let i = $index) {
+                <li>
+                    <div class="dropdown-item clickable" [class.focused]="i === focusedIndex"
+                        (mouseenter)="onMouseEnter(i)" (click)="onItemSelect(item)">
+                        {{ item.label }} <small>{{ item.description }}</small>
+                    </div>
+                </li>
+                }
         </ul>
     </div>
 </div>

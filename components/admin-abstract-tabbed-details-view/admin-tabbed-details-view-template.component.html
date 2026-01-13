@@ -1,4 +1,6 @@
-<admin-breadcrumbs *ngIf="breadcrumbs.length > 0" [items]="breadcrumbs"></admin-breadcrumbs>
+@if (breadcrumbs.length > 0) {
+<admin-breadcrumbs [items]="breadcrumbs"></admin-breadcrumbs>
+}
 
 <div class="row align-items-center mb-4">
     <div class="col-md">
@@ -8,19 +10,25 @@
     </div>
 </div>
 
-<div class="admin-tabs" *ngIf="tabs">
+@if (tabs) {
+<div class="admin-tabs">
     <ul class="nav nav-tabs" role="tablist">
-        <li class="nav-item" *ngFor="let tab of tabs; let i = index" role="presentation">
+        @for (tab of tabs; track $index; let i = $index) {
+        <li class="nav-item" role="presentation">
             <button class="nav-link" [class.active]="i === selectedIndex" type="button" role="tab"
                 (click)="onTabClick(i)">
                 {{ tab.label }}
             </button>
         </li>
+        }
     </ul>
 
-    <div class="tab-content mt-4" *ngIf="tabs?.length">
+    @if (tabs.length > 0) {
+    <div class="tab-content mt-4">
         <ng-template #dynamicComponentHost></ng-template>
     </div>
+    }
 </div>
+}
 
 <ng-content select="[after-tabs]"></ng-content>

@@ -16,6 +16,7 @@ import {
   FormControl,
   FormControlName,
   FormGroup,
+  ReactiveFormsModule,
 } from "@angular/forms";
 import { debounceTime, fromEvent, merge, Observable } from "rxjs";
 
@@ -25,12 +26,14 @@ import {
   DataFormElementType,
 } from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
+import { AdminSearchableSelectComponent } from "../admin-searchable-select/admin-searchable-select.component";
 
 @Component({
   selector: "admin-data-form",
   templateUrl: "./admin-data-form.component.html",
   styleUrls: ["../../admin-shared.css", "./admin-data-form.component.css"],
-  standalone: false,
+  standalone: true,
+  imports: [ReactiveFormsModule, AdminSearchableSelectComponent],
 })
 export class AdminDataFormComponent<T extends ApiResource, R>
   implements OnInit, OnChanges, AfterViewInit
