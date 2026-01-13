@@ -7,12 +7,14 @@ import {
   DetailsViewData,
 } from "../../models/details-view";
 import { ApiResource } from "../../models/api-resource";
+import { AdminBreadcrumbsComponent } from "../admin-breadcrumbs/admin-breadcrumbs.component";
 
 @Component({
   selector: "admin-tabbed-details-view-template",
   templateUrl: "./admin-tabbed-details-view-template.component.html",
   styleUrl: "../../admin-shared.css",
   standalone: true,
+  imports: [AdminBreadcrumbsComponent],
 })
 export class AdminTabbedDetailsViewTemplateComponent<T extends ApiResource>
   extends AdminAbstractTabbedDetailsViewBase<T>

@@ -1,102 +1,75 @@
-<!-- Page Wrapper -->
+<!-- App layout -->
 <div id="wrapper">
 
     <!-- Sidebar -->
     <ul id="sidebar" class="navbar-nav bg-gradient-primary sidebar sidebar-dark position-fixed"
-        [ngClass]="{'toggled': isSidebarToggled }">
-
-        <!-- Sidebar - Brand -->
+        [class.toggled]="isSidebarToggled">
+        <!-- Brand -->
         <a class="sidebar-brand d-flex align-items-center justify-content-center" [routerLink]="['/']">
-            <div class="sidebar-brand-icon rotate-n-15" *ngIf="menu.logoIcon">
+            @if (menu.logoIcon) {
+            <div class="sidebar-brand-icon rotate-n-15">
                 <i [class]="menu.logoIcon"></i>
             </div>
+            }
             <div class="sidebar-brand-text mx-3">
                 {{ menu.appName }}
             </div>
         </a>
 
-        <!-- Divider -->
         <hr class="sidebar-divider my-0">
 
-        <!-- Nav Item - Dashboard -->
-        <li class="nav-item" routerLinkActive="active" *ngFor="let item of menu.items">
+        <!-- Navigation -->
+        @for (item of menu.items; track $index) {
+        <li class="nav-item" routerLinkActive="active">
             <a class="nav-link" [routerLink]="item.route">
-                <i [ngClass]="item.icon"></i>
+                <i [class]="item.icon"></i>
                 <span>{{ item.title }}</span>
             </a>
         </li>
+        }
 
-
-        <!-- Divider -->
         <hr class="sidebar-divider d-none d-md-block">
 
-        <!-- Sidebar Toggler (Sidebar) -->
+        <!-- Sidebar toggle -->
         <div class="text-center d-none d-md-inline">
             <button id="sidebarToggle" class="rounded-circle border-0" (click)="toggleSidebar()"></button>
         </div>
-
     </ul>
-    <!-- End of Sidebar -->
 
-    <!-- Content Wrapper -->
-    <div id="content-wrapper" class="d-flex flex-column" [ngClass]="{'sidebar-toggled': isSidebarToggled }">
-
-        <!-- Main Content -->
+    <!-- Main content area -->
+    <div id="content-wrapper" class="d-flex flex-column" [class.sidebar-toggled]="isSidebarToggled">
+        <!-- Top navigation -->
         <div id="content">
-
-            <!-- Topbar -->
             <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
-
-                <!-- Sidebar Toggle (Topbar) -->
                 <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
                     <i class="fa fa-bars"></i>
                 </button>
 
-                <!-- Topbar Navbar -->
                 <ul class="navbar-nav ml-auto">
-
-                    <!-- Sign Out -->
-                    <!-- <li class="nav-item dropdown no-arrow">
-                        <button type="button" (click)="signOut()" class="btn nav-link dropdown-toggle">
-                            <span class="mr-2 d-none d-lg-inline text-gray-600 small">
-                                <i class="fa fa-power-off fa-sm"></i> Odjava
-                            </span>
-                        </button>
-                    </li> -->
-
+                    <!-- User actions (optional) -->
                 </ul>
-
             </nav>
-            <!-- End of Topbar -->
 
-            <!-- Page Content -->
+            <!-- Routed page content -->
             <div class="container-fluid">
                 <router-outlet></router-outlet>
             </div>
-            <!-- /.container-fluid -->
-
         </div>
-        <!-- End of Main Content -->
 
         <!-- Footer -->
         <footer class="sticky-footer bg-white">
             <div class="container my-auto">
                 <div class="copyright text-center my-auto">
-                    <span>Copyright &copy; {{ menu.appName }} {{ currentYear }}</span>
+                    <span>
+                        © {{ menu.appName }} {{ currentYear }}
+                    </span>
                 </div>
             </div>
         </footer>
-        <!-- End of Footer -->
-
     </div>
-    <!-- End of Content Wrapper -->
 
-    <!-- Global admin toasts (notifications) -->
+    <!-- Global UI -->
     <admin-toast-container></admin-toast-container>
-
-    <!-- Global admin confirmation dialogs -->
     <admin-confirm-dialog-host></admin-confirm-dialog-host>
 
-
 </div>
-<!-- End of Page Wrapper -->

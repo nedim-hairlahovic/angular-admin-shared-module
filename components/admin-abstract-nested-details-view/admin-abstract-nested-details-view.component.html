@@ -1,2 +1,5 @@
-<admin-details-view *ngIf="item" [id]="item.id" [title]="getTitle()" [rows]="getDetailsData()" [buttons]="getButtons()" (btnClickEvent)="onBtnClick($event)">
+@if (item) {
+<admin-details-view [id]="item.id" [title]="getTitle()" [rows]="getDetailsData()" [buttons]="getButtons()"
+    (btnClickEvent)="onBtnClick($event)">
 </admin-details-view>
+}
