@@ -1,10 +1,13 @@
 import { HttpClient, HttpHeaders } from "@angular/common/http";
 import { Observable, of } from "rxjs";
+import { inject } from "@angular/core";
 
-import { environment } from "../../../environments/environment";
+import { ADMIN_SHARED_CONFIG } from "../config/admin-shared-config";
 
 export abstract class BaseCrudService<T> {
-  protected readonly baseUrl = `${environment.backendUrl}/api/v1/admin`;
+  private readonly config = inject(ADMIN_SHARED_CONFIG);
+
+  protected readonly baseUrl = this.config.backend.url;
   protected readonly httpHeaders = new HttpHeaders({
     "Content-Type": "application/json",
   });

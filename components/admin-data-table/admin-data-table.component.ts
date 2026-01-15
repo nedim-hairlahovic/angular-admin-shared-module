@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   Output,
@@ -8,17 +9,17 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { CommonModule } from "@angular/common";
+import { RouterModule } from "@angular/router";
 
 import {
   DataTableAction,
   DataTableColumn,
   DataTableConfig,
 } from "../../models/data-table";
-import { Pagination, PaginationFactory } from "../../models/pagination";
-import { Page } from "../../models/page";
 import { TooltipDirective } from "../../directives/tooltip.directive";
-import { CommonModule } from "@angular/common";
-import { RouterModule } from "@angular/router";
+import { ADMIN_BACKEND_ADAPTER } from "../../config/backend/backend-adapter";
+import { PagedData, Pagination } from "../../config/backend/backend-types";
 
 @Component({
   selector: "admin-data-table",
@@ -30,7 +31,7 @@ import { RouterModule } from "@angular/router";
 export class AdminDataTableComponent<T> implements OnChanges {
   @Input() dataLoaded!: boolean;
   @Input() config!: DataTableConfig<T>;
-  @Input() data!: T[] | Page<T>;
+  @Input() data!: T[] | PagedData<T>;
   @Input() searchValue: string | null = null;
   @Input() simpleTable: boolean = false;
 
@@ -40,6 +41,8 @@ export class AdminDataTableComponent<T> implements OnChanges {
     row: any;
   }>();
   @Output() btnClickEvent = new EventEmitter<any>();
+
+  private readonly backendAdapter = inject(ADMIN_BACKEND_ADAPTER);
 
   readonly pageSize: number = 10;
   rows: T[] = [];
@@ -59,7 +62,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
   constructor() {}
 
   get items(): T[] {
-    return Array.isArray(this.data) ? this.data : this.data?.content ?? [];
+    return Array.isArray(this.data) ? this.data : this.data?.items ?? [];
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -83,17 +86,12 @@ export class AdminDataTableComponent<T> implements OnChanges {
   }
 
   setPagination(): void {
-    // Return early if pagination is already initialized
-    if (this.pagination !== null) {
-      return;
-    }
+    if (this.pagination !== null) return;
 
-    // If pagination configuration is provided, create the appropriate Pagination instance
-    if (this.config.dataOptions?.pagination !== undefined) {
-      this.pagination = PaginationFactory.createPagination(
-        this.config.dataOptions.pagination
-      );
-    }
+    const enabled = this.config.dataOptions?.pagination === true;
+    if (!enabled) return;
+
+    this.pagination = this.backendAdapter.pagination();
   }
 
   getRows(): T[] {
@@ -101,23 +99,27 @@ export class AdminDataTableComponent<T> implements OnChanges {
       return Array.isArray(this.data) ? [...this.data] : [];
     }
 
+    const meta = this.getMetaSource();
+
     this.currentPage = this.findDeepByPath(
-      this.data,
-      this.pagination.getCurrentPageKey()
+      meta,
+      this.pagination.currentPageKey()
     );
-    const numberOfPages = Number(
-      this.findDeepByPath(this.data, this.pagination.getTotalPagesKey())
-    );
-    this.pages = this.getPages(numberOfPages);
-    this.totalElements = Number(
-      this.findDeepByPath(this.data, this.pagination.getTotalElementsKey())
+    this.pages = this.findDeepByPath(meta, this.pagination.totalPagesKey());
+    this.totalElements = this.findDeepByPath(
+      meta,
+      this.pagination.totalElementsKey()
     );
 
-    const content = this.findDeepByPath(
-      this.data,
-      this.pagination.getContentKey()
-    );
+    const content = this.findDeepByPath(this.data, this.pagination.dataKey());
     return Array.isArray(content) ? [...content] : [];
+  }
+
+  private getMetaSource(): any {
+    if (!this.pagination) return this.data;
+
+    const root = this.pagination.metaRootKey();
+    return root ? this.findDeepByPath(this.data, root) : this.data;
   }
 
   getPages(totalPages: number): string[] {
@@ -195,26 +197,34 @@ export class AdminDataTableComponent<T> implements OnChanges {
   }
 
   emitFetchDataEvent(): void {
-    if (this.pagination == null) {
-      return;
-    }
+    if (this.pagination == null) return;
 
-    const requestParams = this.pagination?.getRequestParams(
+    const requestParams = this.pagination.requestParams(
       this.currentPage,
       this.pageSize,
       this.sortBy,
       this.sortOrder
     );
 
-    if (
-      this.config.dataOptions?.search &&
-      this.searchForm.get("keyword")?.value
-    ) {
-      requestParams[this.config.dataOptions.search.key] =
-        this.searchForm.get("keyword")?.value;
+    const searchConfig = this.config.dataOptions?.search;
+    const keyword = this.searchForm.get("keyword")?.value?.trim();
+
+    let filterParams: Record<string, any> = {};
+
+    if (searchConfig && keyword) {
+      filterParams = this.backendAdapter.buildFilterParams({
+        search: {
+          key: searchConfig.key,
+          value: keyword,
+        },
+      });
     }
 
-    this.fetchDataEvent.emit(requestParams);
+    // Merge pagination params with filter params for backend request
+    this.fetchDataEvent.emit({
+      ...requestParams,
+      ...filterParams,
+    });
   }
 
   onPageChange(pageNumber: number): void {

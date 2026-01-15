@@ -1,11 +1,11 @@
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { Injectable } from "@angular/core";
-import { Observable, of } from "rxjs";
+import { Observable } from "rxjs";
 
-import { Page } from "../models/page";
 import { ApiResource } from "../models/api-resource";
 import { SearchableSelectItem } from "../models/searchable-select-item";
 import { BaseCrudService } from "./base-crud.service";
+import { PagedData } from "../config/backend/backend-types";
 
 @Injectable({
   providedIn: "root",
@@ -38,8 +38,8 @@ export abstract class DataCrudService<
     return this.http.get<T[]>(url, { params });
   }
 
-  getPagedItems(params?: HttpParams): Observable<Page<T>> {
-    return this.http.get<Page<T>>(this.getCommonUrl(), { params });
+  getPagedItems(params?: HttpParams): Observable<PagedData<T>> {
+    return this.http.get<PagedData<T>>(this.getCommonUrl(), { params });
   }
 
   createItem(request: R): Observable<T> {

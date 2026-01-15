@@ -8,14 +8,14 @@ import {
 } from "../../models/data-table";
 import { CardButton } from "../../models/data-card";
 import { BreadcrumbItem } from "../../models/breadcrumb";
-import { Page } from "../../models/page";
 import { AdminToastService } from "../../services/admin-toast.service";
 import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
+import { PagedData } from "../../config/backend/backend-types";
 
 @Directive()
 export default abstract class AdminAbstractTableViewBase<T> {
   protected config!: DataTableConfig<T>;
-  protected data!: T[] | Page<T>;
+  protected data!: T[] | PagedData<T>;
   dataLoaded: boolean = false;
   searchValue!: string | null;
   tableState!: any;

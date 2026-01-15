@@ -36,13 +36,9 @@ export interface DataTableRouteConfig<T> {
 }
 
 export interface DataTableDataOptions {
-  pagination?: DataTablePaginationType;
+  pagination?: boolean;
   search?: DataTableSearch;
   defaultSort?: DataTableColumnSort;
-}
-
-export enum DataTablePaginationType {
-  SPRING,
 }
 
 export interface DataTableColumnSort {

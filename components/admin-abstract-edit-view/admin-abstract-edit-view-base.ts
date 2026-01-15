@@ -1,5 +1,7 @@
 import { Directive, inject } from "@angular/core";
 import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { Observable } from "rxjs";
+import { HttpErrorResponse } from "@angular/common/http";
 
 import {
   DataFormConfig,
@@ -10,11 +12,9 @@ import { ApiResource } from "../../models/api-resource";
 import { UrlConfig } from "../../models/url-config";
 import { BreadcrumbItem } from "../../models/breadcrumb";
 import { AdminToastService } from "../../services/admin-toast.service";
-import { HttpErrorResponse } from "@angular/common/http";
-import { ErrorDto } from "../../models/error";
 import { AdminErrorMessageService } from "../../services/admin-error-message.service";
-import { Observable } from "rxjs";
 import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
+import { ADMIN_BACKEND_ADAPTER } from "../../config/backend/backend-adapter";
 
 @Directive()
 export default abstract class AdminAbstractEditViewBase<
@@ -42,6 +42,7 @@ export default abstract class AdminAbstractEditViewBase<
   protected readonly toast = inject(AdminToastService);
   protected readonly errorMessageService = inject(AdminErrorMessageService);
   protected readonly errorHandler = inject(AdminErrorHandlerService);
+  private readonly backendAdapter = inject(ADMIN_BACKEND_ADAPTER);
 
   constructor(protected route: ActivatedRoute, protected router: Router) {}
 
@@ -172,14 +173,16 @@ export default abstract class AdminAbstractEditViewBase<
   protected handleError(err: HttpErrorResponse): void {
     this.processingRequest = false;
 
-    const backendError = err.error as ErrorDto;
+    const backendError = this.backendAdapter.mapError(err);
 
     if (err.status === 400 || err.status === 409) {
-      if (backendError.fieldErrors) {
+      const fe = backendError?.fieldErrors;
+
+      if (fe) {
         this.backendFieldErrors = Object.fromEntries(
-          Object.entries(backendError.fieldErrors).map(([field, fe]) => [
+          Object.entries(fe).map(([field, e]) => [
             field,
-            this.errorMessageService.backendErrorToUserMessage(fe) || "", // can use code+params here
+            this.errorMessageService.backendErrorToUserMessage(e) ?? "",
           ])
         );
       }

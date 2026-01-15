@@ -26,6 +26,14 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
     super(router);
   }
 
+  override ngOnInit(): void {
+    super.ngOnInit();
+
+    this.route.queryParamMap.subscribe((params) => {
+      this.searchValue = params.get("search"); // or make this dynamic later
+    });
+  }
+
   override initializeDataTableConfigDefaults(): void {
     if (!this.config.buttons) {
       this.config.buttons = this.DEFAULT_BUTTONS;
@@ -40,23 +48,17 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
   }
 
   override fetchData(requestParams?: any): void {
-    this.route.queryParamMap.subscribe((params) => {
-      this.searchValue = params.get("search");
+    if (!requestParams) return;
 
-      if (requestParams == null) {
-        return;
-      }
+    this.tableState = requestParams;
+    this.dataLoaded = false;
 
-      this.tableState = requestParams;
-
-      this.dataLoaded = false;
-      this.dataService.getPagedItems(requestParams).subscribe({
-        next: (data) => {
-          this.data = data;
-          this.dataLoaded = true;
-        },
-        error: (err) => this.errorHandler.handleLoadError(),
-      });
+    this.dataService.getPagedItems(requestParams).subscribe({
+      next: (data) => {
+        this.data = data;
+        this.dataLoaded = true;
+      },
+      error: () => this.errorHandler.handleLoadError(),
     });
   }
 
