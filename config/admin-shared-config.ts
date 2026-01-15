@@ -5,6 +5,7 @@ export type BackendType = "spring" | "laravel";
 export interface AdminSharedConfig {
   backend: {
     url: string;
+    apiBasePath: string;
     type: BackendType;
   };
 
