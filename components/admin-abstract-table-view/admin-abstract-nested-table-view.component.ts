@@ -1,5 +1,4 @@
 import { Component, inject, Input, OnInit } from "@angular/core";
-import { Router } from "@angular/router";
 
 import { NestedDataService } from "../../services/nested-data.service";
 import { ApiResource } from "../../models/api-resource";
@@ -11,9 +10,9 @@ import { AdminConfirmDialogService } from "../../services/admin-confirm-dialog.s
   standalone: false,
 })
 export abstract class AdminAbstractNestedTableViewComponent<
-    T extends ApiResource,
-    ID = number
-  >
+  T extends ApiResource,
+  ID = number,
+>
   extends AdminAbstractTableViewBase<T>
   implements OnInit
 {
@@ -23,11 +22,8 @@ export abstract class AdminAbstractNestedTableViewComponent<
 
   protected readonly confirmDialog = inject(AdminConfirmDialogService);
 
-  constructor(
-    private dataService: NestedDataService<T, any, ID>,
-    router: Router
-  ) {
-    super(router);
+  constructor(private dataService: NestedDataService<T, any, ID>) {
+    super();
   }
 
   override initializeDataTableConfigDefaults(): void {
@@ -36,7 +32,7 @@ export abstract class AdminAbstractNestedTableViewComponent<
     }
 
     const actionsColumn = this.config.columns.find(
-      (c) => c.value === "actions"
+      (c) => c.value === "actions",
     );
     if (actionsColumn && !actionsColumn.actions) {
       actionsColumn.actions = this.DEFAULT_ACTIONS;

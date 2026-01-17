@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
+import { ParamMap } from "@angular/router";
 
 import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
@@ -13,11 +13,11 @@ import { BreadcrumbItem } from "../../models/breadcrumb";
   standalone: false,
 })
 export abstract class AdminAbstractNestedEditViewComponent<
-    T extends ApiResource,
-    R,
-    ID = number,
-    P extends ApiResource = any
-  >
+  T extends ApiResource,
+  R,
+  ID = number,
+  P extends ApiResource = any,
+>
   extends AdminAbstractEditViewBase<T, R>
   implements OnInit
 {
@@ -29,10 +29,8 @@ export abstract class AdminAbstractNestedEditViewComponent<
   constructor(
     private parentDataService: BaseCrudService<P>,
     private dataService: NestedDataService<T, R, ID>,
-    route: ActivatedRoute,
-    router: Router
   ) {
-    super(route, router);
+    super();
   }
 
   override extractIds(params: ParamMap): void {
@@ -67,8 +65,8 @@ export abstract class AdminAbstractNestedEditViewComponent<
         switchMap((parent: P) =>
           this.dataService
             .getSingleItem(this.parentId, this.childId)
-            .pipe(map((child: T) => ({ parent, child })))
-        )
+            .pipe(map((child: T) => ({ parent, child }))),
+        ),
       )
       .subscribe({
         next: ({ parent, child }) => {
@@ -116,7 +114,7 @@ export abstract class AdminAbstractNestedEditViewComponent<
     baseTitle: string,
     baseUrl: string,
     getEntityLabel: (entity: T) => string,
-    section: { title: string; fragment: string }
+    section: { title: string; fragment: string },
   ): BreadcrumbItem[] {
     return [
       { title: baseTitle, url: baseUrl },
