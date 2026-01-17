@@ -1,10 +1,25 @@
 import { HttpErrorResponse } from "@angular/common/http";
 
-import { BackendError, BackendFieldError, Pagination } from "./backend-types";
+import {
+  BackendError,
+  BackendFieldError,
+  CrudEndpointConvention,
+  Pagination,
+} from "./backend-types";
 import { BaseBackendAdapter } from "./base-backend-adapter";
 
 export class LaravelBackendAdapter extends BaseBackendAdapter {
   protected readonly paginationImpl = new LaravelPagination();
+
+  override crudEndpoints(): CrudEndpointConvention {
+    return this.createRestCrudConvention({
+      selectList: {
+        url: (p, base) => `${base}${p}/lookup`,
+        searchParamKey: "search",
+        responseDataKey: "data",
+      },
+    });
+  }
 
   mapError(err: HttpErrorResponse): BackendError | null {
     const dto = err.error as any;
@@ -16,7 +31,7 @@ export class LaravelBackendAdapter extends BaseBackendAdapter {
             Object.entries(dto.errors).map(([field, msgs]: any) => [
               field,
               { message: Array.isArray(msgs) ? msgs[0] : String(msgs) },
-            ])
+            ]),
           )
         : undefined;
 
@@ -53,7 +68,7 @@ class LaravelPagination implements Pagination {
     page: number,
     size: number,
     sortBy?: string,
-    sortOrder?: "ASC" | "DESC"
+    sortOrder?: "ASC" | "DESC",
   ): Record<string, any> {
     const params: any = {
       page,
@@ -61,7 +76,7 @@ class LaravelPagination implements Pagination {
     };
 
     if (sortBy && sortOrder) {
-      params.sort = `${sortBy},${sortOrder.toLowerCase()}`; // id,asc
+      params.sort = `${sortBy},${sortOrder.toLowerCase()}`;
     }
 
     return params;

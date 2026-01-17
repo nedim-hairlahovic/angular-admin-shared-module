@@ -16,14 +16,11 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
 {
   abstract getItemTitle(item: T): string;
 
+  protected readonly route = inject(ActivatedRoute);
   protected readonly confirmDialog = inject(AdminConfirmDialogService);
 
-  constructor(
-    private dataService: DataCrudService<T, any>,
-    router: Router,
-    private route: ActivatedRoute
-  ) {
-    super(router);
+  constructor(private dataService: DataCrudService<T, any>) {
+    super();
   }
 
   override ngOnInit(): void {
@@ -40,7 +37,7 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
     }
 
     const actionsColumn = this.config.columns.find(
-      (c) => c.value === "actions"
+      (c) => c.value === "actions",
     );
     if (actionsColumn && !actionsColumn.actions) {
       actionsColumn.actions = this.DEFAULT_ACTIONS;

@@ -13,16 +13,12 @@ import { BreadcrumbItem } from "../../models/breadcrumb";
 })
 export abstract class AdminAbstractEditViewComponent<
   T extends ApiResource,
-  R
+  R,
 > extends AdminAbstractEditViewBase<T, R> {
   itemId!: string;
 
-  constructor(
-    private dataService: DataCrudService<T, R>,
-    route: ActivatedRoute,
-    router: Router
-  ) {
-    super(route, router);
+  constructor(private dataService: DataCrudService<T, R>) {
+    super();
   }
 
   override extractIds(params: any): void {

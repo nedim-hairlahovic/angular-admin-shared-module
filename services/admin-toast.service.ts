@@ -12,7 +12,7 @@ export class AdminToastService {
 
   show(
     message: string,
-    options?: { title?: string; type?: ToastType; duration?: number }
+    options?: { title?: string; type?: ToastType; duration?: number },
   ) {
     const toast: Toast = {
       id: ++this.idCounter,
@@ -30,19 +30,19 @@ export class AdminToastService {
       setTimeout(() => this.dismiss(toast.id), toast.duration);
   }
 
-  success(message: string, title = "Uspješna akcija", duration = 3000) {
+  success(message: string, title = "Uspješna akcija", duration = 2000) {
     this.show(message, { title, type: "success", duration });
   }
 
-  error(message: string, title = "Greška", duration = 4000) {
+  error(message: string, title = "Greška", duration = 3000) {
     this.show(message, { title, type: "error", duration });
   }
 
-  info(message: string, title = "Informacija", duration = 3000) {
+  info(message: string, title = "Informacija", duration = 2000) {
     this.show(message, { title, type: "info", duration });
   }
 
-  warning(message: string, title = "Upozorenje", duration = 3000) {
+  warning(message: string, title = "Upozorenje", duration = 2000) {
     this.show(message, { title, type: "warning", duration });
   }
 

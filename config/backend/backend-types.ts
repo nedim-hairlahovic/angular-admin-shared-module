@@ -10,7 +10,7 @@ export interface Pagination {
     page: number,
     size: number,
     sortBy?: string,
-    sortOrder?: "ASC" | "DESC"
+    sortOrder?: "ASC" | "DESC",
   ): Record<string, any>;
 }
 
@@ -44,4 +44,17 @@ export interface PagedData<T> {
   totalElements: number;
   currentPage: number;
   last: boolean;
+}
+
+/* ---------- CRUD endpoint conventions ---------- */
+export interface CrudEndpointConvention {
+  collection(path: string): string; // GET/POST base
+  item(path: string, id: any): string; // GET/PUT/PATCH/DELETE
+
+  /** Endpoint used to load items for selects/autocomplete (usually a lightweight list). */
+  selectList?: {
+    url(path: string): string; // e.g. /items/select
+    searchParamKey?: string; // e.g. "search"
+    responseDataKey?: string | null; // e.g. "data" for { data: [...] }, null if backend returns T[]
+  };
 }

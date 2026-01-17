@@ -5,14 +5,13 @@ import { inject } from "@angular/core";
 import { ADMIN_SHARED_CONFIG } from "../config/admin-shared-config";
 
 export abstract class BaseCrudService<T> {
+  protected readonly http = inject(HttpClient);
   private readonly config = inject(ADMIN_SHARED_CONFIG);
 
   protected readonly baseUrl = `${this.config.backend.url}${this.config.backend.apiBasePath}`;
   protected readonly httpHeaders = new HttpHeaders({
     "Content-Type": "application/json",
   });
-
-  constructor(protected http: HttpClient) {}
 
   abstract initializeItem(): T;
   protected abstract buildItemUrl(...ids: any[]): string;

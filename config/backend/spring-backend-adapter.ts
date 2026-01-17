@@ -1,10 +1,24 @@
 import { HttpErrorResponse } from "@angular/common/http";
 
 import { BaseBackendAdapter } from "./base-backend-adapter";
-import { BackendError, Pagination } from "./backend-types";
+import {
+  BackendError,
+  CrudEndpointConvention,
+  Pagination,
+} from "./backend-types";
 
 export class SpringBackendAdapter extends BaseBackendAdapter {
   protected readonly paginationImpl = new SpringPagination();
+
+  override crudEndpoints(): CrudEndpointConvention {
+    return this.createRestCrudConvention({
+      selectList: {
+        url: (p, base) => `${base}${p}/all`,
+        searchParamKey: "search",
+        responseDataKey: null,
+      },
+    });
+  }
 
   mapError(err: HttpErrorResponse): BackendError | null {
     const dto = err.error as any;
@@ -15,7 +29,7 @@ export class SpringBackendAdapter extends BaseBackendAdapter {
           Object.entries(dto.fieldErrors).map(([field, fe]: any) => [
             field,
             { code: fe?.errorCode, message: fe?.message, params: fe?.params },
-          ])
+          ]),
         )
       : undefined;
 
@@ -53,7 +67,7 @@ class SpringPagination implements Pagination {
     page: number,
     size: number,
     sortBy?: string,
-    sortOrder?: "ASC" | "DESC"
+    sortOrder?: "ASC" | "DESC",
   ): Record<string, any> {
     const params: any = { page, size };
 

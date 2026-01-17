@@ -25,9 +25,9 @@ import { ClickOutsideDirective } from "../../directives/click-outside.directive"
   standalone: true,
   imports: [FormsModule, ClickOutsideDirective],
 })
-export class AdminSearchableSelectComponent<T extends ApiResource>
-  implements OnChanges
-{
+export class AdminSearchableSelectComponent<
+  T extends ApiResource,
+> implements OnChanges {
   @Input() inputName!: string;
   @Input() dataService!: DataCrudService<T, any>;
   @Input() initialValue: any;
@@ -56,9 +56,9 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
         debounceTime(1000),
         map((term) => ({ term, session: this.dropdownSession })),
         distinctUntilChanged(
-          (a, b) => a.term === b.term && a.session === b.session
+          (a, b) => a.term === b.term && a.session === b.session,
         ),
-        map((x) => x.term)
+        map((x) => x.term),
       )
       .subscribe((term) => this.executeSearch(term));
   }
@@ -96,10 +96,10 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
 
   executeSearch(query: string): void {
     if (query && query.length >= 3) {
-      this.dataService.getAllItems(query).subscribe({
+      this.dataService.getSelectItems(query).subscribe({
         next: (data: any[]) => {
           this.searchResults = data.map((item) =>
-            this.dataService.convertToSearchableItem(item)
+            this.dataService.convertToSearchableItem(item),
           );
           this.searching = false;
         },
@@ -195,7 +195,7 @@ export class AdminSearchableSelectComponent<T extends ApiResource>
   scrollToFocused(): void {
     setTimeout(() => {
       const list = document.querySelectorAll(
-        ".dropdown-menu .dropdown-item.clickable"
+        ".dropdown-menu .dropdown-item.clickable",
       );
       if (list[this.focusedIndex]) {
         (list[this.focusedIndex] as HTMLElement).scrollIntoView({

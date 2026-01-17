@@ -1,4 +1,3 @@
-import { HttpClient } from "@angular/common/http";
 import { Injectable } from "@angular/core";
 import { Observable } from "rxjs";
 
@@ -10,12 +9,8 @@ import { BaseCrudService } from "./base-crud.service";
 export abstract class NestedDataService<
   T,
   R,
-  ID = number
+  ID = number,
 > extends BaseCrudService<T> {
-  constructor(protected override http: HttpClient) {
-    super(http);
-  }
-
   abstract getCommonUrl(parentId: ID): string;
 
   protected buildItemUrl(parentId: ID, childId: any): string {

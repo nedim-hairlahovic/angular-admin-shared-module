@@ -16,9 +16,9 @@ import { AdminErrorHandlerService } from "../../services/admin-error-handler.ser
   template: "",
   standalone: false,
 })
-export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
-  implements OnInit
-{
+export abstract class AdminAbstractDetailsViewComponent<
+  T extends ApiResource,
+> implements OnInit {
   item!: T;
   protected pageTitle!: string;
   protected routeConfig!: DetailsViewConfigRouteConfig<T>;
@@ -38,13 +38,11 @@ export abstract class AdminAbstractDetailsViewComponent<T extends ApiResource>
     },
   ];
 
+  protected readonly route = inject(ActivatedRoute);
+  protected readonly router = inject(Router);
   protected readonly errorHandler = inject(AdminErrorHandlerService);
 
-  constructor(
-    private dataService: DataCrudService<T, any>,
-    private route: ActivatedRoute,
-    private router: Router
-  ) {}
+  constructor(private dataService: DataCrudService<T, any>) {}
 
   ngOnInit(): void {
     this.route.paramMap.subscribe((params) => {

@@ -21,6 +21,7 @@ export default abstract class AdminAbstractTableViewBase<T> {
   tableState!: any;
   protected breadcrumbs: BreadcrumbItem[] = [];
 
+  protected readonly router = inject(Router);
   protected readonly toast = inject(AdminToastService);
   protected readonly errorHandler = inject(AdminErrorHandlerService);
 
@@ -56,8 +57,6 @@ export default abstract class AdminAbstractTableViewBase<T> {
   protected abstract fetchData(event?: any): void;
   protected abstract deleteItem(item: T): void;
   protected abstract getDeleteSuccessMessage(item: T): string;
-
-  constructor(protected router: Router) {}
 
   ngOnInit(): void {
     this.config = this.initDataTableConfig();
@@ -99,7 +98,7 @@ export default abstract class AdminAbstractTableViewBase<T> {
 
   onBtnClick(actionName: any): void {
     const button = this.config.buttons?.find(
-      (button) => button.actionName === actionName
+      (button) => button.actionName === actionName,
     );
     if (button) {
       button.action();

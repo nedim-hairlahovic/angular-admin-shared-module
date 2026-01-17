@@ -19,7 +19,7 @@ import { ADMIN_BACKEND_ADAPTER } from "../../config/backend/backend-adapter";
 @Directive()
 export default abstract class AdminAbstractEditViewBase<
   T extends ApiResource,
-  R
+  R,
 > {
   protected pageTitle!: string;
   protected formConfig!: DataFormConfig<T, R>;
@@ -39,12 +39,12 @@ export default abstract class AdminAbstractEditViewBase<
   abstract getFormConfig(): DataFormConfig<T, R>;
   abstract getSaveSuccessMessage(item: T): string;
 
+  protected readonly route = inject(ActivatedRoute);
+  protected readonly router = inject(Router);
   protected readonly toast = inject(AdminToastService);
   protected readonly errorMessageService = inject(AdminErrorMessageService);
   protected readonly errorHandler = inject(AdminErrorHandlerService);
   private readonly backendAdapter = inject(ADMIN_BACKEND_ADAPTER);
-
-  constructor(protected route: ActivatedRoute, protected router: Router) {}
 
   public ngOnInit(): void {
     this.route.paramMap.subscribe((params: ParamMap) => {
@@ -103,7 +103,7 @@ export default abstract class AdminAbstractEditViewBase<
     selectValues: any[],
     controlName: string,
     value: string = "value",
-    label: string = "label"
+    label: string = "label",
   ) {
     const selectOptions = [] as DataFormSelectOption[];
     for (const selectValue of selectValues) {
@@ -114,7 +114,7 @@ export default abstract class AdminAbstractEditViewBase<
     }
 
     const targetSelectInput = this.formConfig?.elements.find(
-      (x: any) => x.id === controlName
+      (x: any) => x.id === controlName,
     );
     if (targetSelectInput) {
       targetSelectInput.values = selectOptions;
@@ -183,12 +183,12 @@ export default abstract class AdminAbstractEditViewBase<
           Object.entries(fe).map(([field, e]) => [
             field,
             this.errorMessageService.backendErrorToUserMessage(e) ?? "",
-          ])
+          ]),
         );
       }
 
       this.toast.error(
-        "Neuspješno spremanje podataka. Molimo ispravite označena polja."
+        "Neuspješno spremanje podataka. Molimo ispravite označena polja.",
       );
     } else {
       this.toast.error("Dogodila se greška. Pokušajte ponovo.");
@@ -200,7 +200,7 @@ export default abstract class AdminAbstractEditViewBase<
   }
 
   protected buildEditBreadcrumbs(
-    baseCrumbs: BreadcrumbItem[]
+    baseCrumbs: BreadcrumbItem[],
   ): BreadcrumbItem[] {
     // clone to avoid mutating original
     const breadcrumbs = [...baseCrumbs];
@@ -221,7 +221,7 @@ export default abstract class AdminAbstractEditViewBase<
     controlName: string,
     valueKey: string,
     labelKey: string,
-    onError?: (err: any) => void
+    onError?: (err: any) => void,
   ): void {
     source$.subscribe({
       next: (data) => {
@@ -229,7 +229,7 @@ export default abstract class AdminAbstractEditViewBase<
           data,
           controlName,
           valueKey as string,
-          labelKey as string
+          labelKey as string,
         );
       },
       error: (err) => {
@@ -246,7 +246,7 @@ export default abstract class AdminAbstractEditViewBase<
     this.toast.error(
       "Greška prilikom učitavanja povezanih podataka. Formu trenutno nije moguće ispravno popuniti.",
       "Greška",
-      0
+      0,
     );
   }
 }

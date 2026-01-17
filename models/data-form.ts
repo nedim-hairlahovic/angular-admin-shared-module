@@ -19,7 +19,7 @@ export interface DataFormElement<T extends ApiResource, R> {
   mode: DataFormControlMode;
   validators?: ValidatorConfig[];
   values?: DataFormSelectOption[];
-  dataService?: DataCrudService<T, R>;
+  dataService?: DataCrudService<any, any>;
   defaultValue?: any;
   disabled?: boolean;
 }
