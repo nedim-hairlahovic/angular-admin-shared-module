@@ -62,7 +62,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
   constructor() {}
 
   get items(): T[] {
-    return Array.isArray(this.data) ? this.data : this.data?.items ?? [];
+    return Array.isArray(this.data) ? this.data : (this.data?.items ?? []);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -103,12 +103,16 @@ export class AdminDataTableComponent<T> implements OnChanges {
 
     this.currentPage = this.findDeepByPath(
       meta,
-      this.pagination.currentPageKey()
+      this.pagination.currentPageKey(),
     );
-    this.pages = this.findDeepByPath(meta, this.pagination.totalPagesKey());
+    const totalPages = this.findDeepByPath(
+      meta,
+      this.pagination.totalPagesKey(),
+    );
+    this.pages = this.getPages(totalPages);
     this.totalElements = this.findDeepByPath(
       meta,
-      this.pagination.totalElementsKey()
+      this.pagination.totalElementsKey(),
     );
 
     const content = this.findDeepByPath(this.data, this.pagination.dataKey());
@@ -132,7 +136,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
           (page < this.currentPage + visiblePages &&
             page >= this.currentPage - visiblePages - 1) ||
           page === 0 ||
-          page === totalPages - 1
+          page === totalPages - 1,
       )
       .map((page) => {
         // Insert ellipsis if the page is at the boundary of the visible range
@@ -203,7 +207,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
       this.currentPage,
       this.pageSize,
       this.sortBy,
-      this.sortOrder
+      this.sortOrder,
     );
 
     const searchConfig = this.config.dataOptions?.search;
@@ -314,7 +318,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
       this.config.columns.some((column) => {
         const value = this.getColumnText(row, column);
         return value?.toString().toLowerCase().includes(lowerSearch);
-      })
+      }),
     );
   }
 
