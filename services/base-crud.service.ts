@@ -4,7 +4,7 @@ import { inject } from "@angular/core";
 
 import { ADMIN_SHARED_CONFIG } from "../config/admin-shared-config";
 
-export abstract class BaseCrudService<T> {
+export abstract class BaseCrudService<TEntity> {
   protected readonly http = inject(HttpClient);
   private readonly config = inject(ADMIN_SHARED_CONFIG);
 
@@ -13,17 +13,17 @@ export abstract class BaseCrudService<T> {
     "Content-Type": "application/json",
   });
 
-  abstract initializeItem(): T;
-  protected abstract buildItemUrl(...ids: any[]): string;
+  abstract initEmpty(): TEntity;
 
-  getSingleItem(...ids: any[]): Observable<T> {
-    const itemId = ids[ids.length - 1];
+  protected abstract buildEntityUrl(...ids: (string | number | any)[]): string;
 
-    if (itemId === 0 || itemId === "0") {
-      return of(this.initializeItem());
+  fetch(...ids: (string | number)[]): Observable<TEntity> {
+    const id = ids[ids.length - 1];
+
+    if (id === 0 || id === "0") {
+      return of(this.initEmpty());
     }
 
-    const url = this.buildItemUrl(...ids);
-    return this.http.get<T>(url);
+    return this.http.get<TEntity>(this.buildEntityUrl(...ids));
   }
 }

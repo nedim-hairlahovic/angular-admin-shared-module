@@ -1,73 +1,83 @@
 import { Directive, inject } from "@angular/core";
-import { ActivatedRoute, ParamMap, Router } from "@angular/router";
 import { Observable } from "rxjs";
 import { HttpErrorResponse } from "@angular/common/http";
 
 import {
   DataFormConfig,
+  DataFormElement,
   DataFormRouteConfig,
   DataFormSelectOption,
+  FormToRequestFieldMap,
 } from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
 import { UrlConfig } from "../../models/url-config";
 import { BreadcrumbItem } from "../../models/breadcrumb";
 import { AdminToastService } from "../../services/admin-toast.service";
 import { AdminErrorMessageService } from "../../services/admin-error-message.service";
-import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
 import { ADMIN_BACKEND_ADAPTER } from "../../config/backend/backend-adapter";
+import { AdminAbstractEntityViewBase } from "../admin-abstract-details-view/admin-abstract-entity-view-base";
 
 @Directive()
 export default abstract class AdminAbstractEditViewBase<
-  T extends ApiResource,
-  R,
-> {
+  TEntity extends ApiResource,
+  TRequest,
+  TForm,
+> extends AdminAbstractEntityViewBase<TEntity, any> {
   protected pageTitle!: string;
-  protected formConfig!: DataFormConfig<T, R>;
+  protected formConfig!: DataFormConfig<TEntity, TForm>;
+  protected breadcrumbItems: BreadcrumbItem[] = [];
 
   mode: "ADD" | "EDIT" = "ADD";
   dataLoaded: boolean = false;
   processingRequest!: boolean;
   backendFieldErrors: Record<string, string> | null = null;
 
-  protected breadcrumbs: BreadcrumbItem[] = [];
+  abstract formElements(): DataFormElement<TForm>[];
+  abstract routeConfig(): DataFormRouteConfig<TEntity>;
+  abstract title(entity: TEntity): string;
+  abstract mapToFormData(entity: TEntity): TForm;
+  abstract getSaveSuccessMessage(entity: TEntity): string;
 
-  abstract getTitle(item: T): string;
-  abstract convertToRequestObject(item: T): R;
-  abstract extractIds(params: any): void;
-  abstract getEditMode(): "ADD" | "EDIT";
-  abstract getItem(): void;
-  abstract getFormConfig(): DataFormConfig<T, R>;
-  abstract getSaveSuccessMessage(item: T): string;
-
-  protected readonly route = inject(ActivatedRoute);
-  protected readonly router = inject(Router);
   protected readonly toast = inject(AdminToastService);
   protected readonly errorMessageService = inject(AdminErrorMessageService);
-  protected readonly errorHandler = inject(AdminErrorHandlerService);
   private readonly backendAdapter = inject(ADMIN_BACKEND_ADAPTER);
 
-  public ngOnInit(): void {
-    this.route.paramMap.subscribe((params: ParamMap) => {
-      this.extractIds(params);
-      this.mode = this.getEditMode();
-      this.formConfig = this.getFormConfig();
+  protected override onEntityLoaded(entity: TEntity): void {
+    this.mode = this.resolveMode();
+    const elements = this.formElements();
+    const routeConfig = this.routeConfig();
 
-      this.getItem();
+    this.verifyFormConfig(elements, routeConfig);
 
-      this.postItemInit();
-    });
-  }
-
-  initRouteConfig(baseUrl: UrlConfig): DataFormRouteConfig<T> {
-    return {
-      onSave: (item?: T) => baseUrl,
-      onNotFound: baseUrl,
+    this.formConfig = {
+      elements,
+      routeConfig,
+      isEditMode: this.mode === "EDIT",
     };
+
+    this.updateDefaultValuesFromQueryParams();
+    this.fetchAndBindRelatedFormData();
   }
 
-  protected postItemInit(): void {
-    this.updateDefaultValuesFromQueryParams();
-    this.getAndUpdateRelatedFormData();
+  private resolveMode(): "ADD" | "EDIT" {
+    return this.entityId === "0" ? "ADD" : "EDIT";
+  }
+
+  protected verifyFormConfig(
+    elements: DataFormElement<TForm>[],
+    routeConfig: DataFormRouteConfig<TEntity> | null,
+  ): void {
+    if (!elements || elements.length === 0) {
+      throw new Error(
+        `${this.constructor.name}: formElements() must return at least one element`,
+      );
+    }
+
+    if (!routeConfig) {
+      throw new Error(
+        `${this.constructor.name}: routeConfig() must be provided`,
+      );
+    }
   }
 
   protected updateDefaultValuesFromQueryParams(): void {
@@ -82,21 +92,37 @@ export default abstract class AdminAbstractEditViewBase<
     });
   }
 
+  protected updateFormData(entity: TEntity): void {
+    this.pageTitle = this.title(entity);
+
+    const formData = this.mapToFormData(entity);
+
+    this.formConfig = {
+      ...this.formConfig,
+      title: this.pageTitle,
+      data: formData,
+      requestFieldMap: this.mapFormToRequestFields(formData),
+    };
+  }
+
   // Fetches and sets related form data (e.g. options for select inputs)
-  protected getAndUpdateRelatedFormData(): void {}
+  protected fetchAndBindRelatedFormData(): void {}
 
-  protected updateFormData(item: T): void {
-    this.pageTitle = this.getTitle(item);
+  protected mapToRequest(form: TForm): TRequest {
+    // Default: form shape matches request DTO
+    return form as unknown as TRequest;
+  }
 
-    if (this.formConfig) {
-      this.formConfig.title = this.pageTitle;
-      this.formConfig = {
-        ...this.formConfig,
-        data: this.convertToRequestObject(item),
-      };
+  protected mapFormToRequestFields(form: TForm): FormToRequestFieldMap<TForm> {
+    const map: FormToRequestFieldMap<TForm> = {};
+
+    for (const key of Object.keys(form as object) as Array<
+      Extract<keyof TForm, string>
+    >) {
+      map[key] = key; // default: same field name
     }
 
-    this.dataLoaded = true;
+    return map;
   }
 
   protected updateSelectValues(
@@ -121,8 +147,8 @@ export default abstract class AdminAbstractEditViewBase<
     }
   }
 
-  protected onSaveComplete(savedItem: T): void {
-    const urlConfig = this.resolveOnSaveUrl(savedItem);
+  protected onSaveComplete(savedEntity: TEntity): void {
+    const urlConfig = this.resolveOnSaveUrl(savedEntity);
     if (!urlConfig) return;
 
     this.processingRequest = false;
@@ -130,14 +156,14 @@ export default abstract class AdminAbstractEditViewBase<
       fragment: urlConfig.fragment,
     });
 
-    this.toast.success(this.getSaveSuccessMessage(savedItem));
+    this.toast.success(this.getSaveSuccessMessage(savedEntity));
   }
 
-  private resolveOnSaveUrl(savedItem?: T): UrlConfig | null {
+  private resolveOnSaveUrl(savedEntity: TEntity): UrlConfig | null {
     const backUrl = this.getBackUrlFromQueryParams();
     if (backUrl) return backUrl;
 
-    const urlConfig = this.formConfig.routeConfig?.onSave?.(savedItem);
+    const urlConfig = this.formConfig.routeConfig?.onSave?.(savedEntity);
     if (!urlConfig) {
       return null;
     }
@@ -158,16 +184,16 @@ export default abstract class AdminAbstractEditViewBase<
     }
   }
 
-  protected onNotFoundError(): void {
-    const urlConfig = this.formConfig.routeConfig?.onNotFound;
-    if (!urlConfig) {
+  override onEntityNotFound(): void {
+    const notFoundRoute = this.formConfig.routeConfig?.onNotFound;
+
+    if (!notFoundRoute) {
+      this.errorHandler.handleLoadError();
       return;
     }
 
-    this.processingRequest = false;
-    this.router.navigate([urlConfig.url], {
-      fragment: urlConfig.fragment,
-    });
+    const { url, fragment } = notFoundRoute;
+    this.router.navigate([url], { fragment });
   }
 
   protected handleError(err: HttpErrorResponse): void {
@@ -197,6 +223,17 @@ export default abstract class AdminAbstractEditViewBase<
 
   protected get editTitle(): string {
     return this.mode === "ADD" ? "Dodaj" : "Uredi";
+  }
+
+  buildDefaultRouteConfig(baseUrl: UrlConfig): DataFormRouteConfig<TEntity> {
+    return {
+      onSave: (entity: TEntity) => baseUrl,
+      onNotFound: baseUrl,
+    };
+  }
+
+  protected breadcrumbs(entity: TEntity): BreadcrumbItem[] {
+    return [];
   }
 
   protected buildEditBreadcrumbs(

@@ -52,7 +52,7 @@ export interface CrudEndpointConvention {
   item(path: string, id: any): string; // GET/PUT/PATCH/DELETE
 
   /** Endpoint used to load items for selects/autocomplete (usually a lightweight list). */
-  selectList?: {
+  listConfig?: {
     url(path: string): string; // e.g. /items/select
     searchParamKey?: string; // e.g. "search"
     responseDataKey?: string | null; // e.g. "data" for { data: [...] }, null if backend returns T[]

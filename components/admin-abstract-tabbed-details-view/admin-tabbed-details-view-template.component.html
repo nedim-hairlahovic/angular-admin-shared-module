@@ -1,5 +1,5 @@
-@if (breadcrumbs.length > 0) {
-<admin-breadcrumbs [items]="breadcrumbs"></admin-breadcrumbs>
+@if (breadcrumbItems.length > 0) {
+<admin-breadcrumbs [items]="breadcrumbItems"></admin-breadcrumbs>
 }
 
 <div class="row align-items-center mb-4">
@@ -10,10 +10,10 @@
     </div>
 </div>
 
-@if (tabs) {
+@if (config && config.tabs) {
 <div class="admin-tabs">
     <ul class="nav nav-tabs" role="tablist">
-        @for (tab of tabs; track $index; let i = $index) {
+        @for (tab of config.tabs; track $index; let i = $index) {
         <li class="nav-item" role="presentation">
             <button class="nav-link" [class.active]="i === selectedIndex" type="button" role="tab"
                 (click)="onTabClick(i)">
@@ -23,7 +23,7 @@
         }
     </ul>
 
-    @if (tabs.length > 0) {
+    @if (config.tabs.length > 0) {
     <div class="tab-content mt-4">
         <ng-template #dynamicComponentHost></ng-template>
     </div>

@@ -1,5 +1,5 @@
-@if (breadcrumbs.length > 0) {
-<admin-breadcrumbs [items]="breadcrumbs"></admin-breadcrumbs>
+@if (breadcrumbItems.length > 0) {
+<admin-breadcrumbs [items]="breadcrumbItems"></admin-breadcrumbs>
 }
 
 @if (pageTitle) {
@@ -10,8 +10,8 @@
 </div>
 }
 
-@if (item) {
-<admin-details-view [id]="item.id" [title]="getTitle()" [data]="getDetailsData()" [buttons]="getButtons()"
+@if (entity) {
+<admin-details-view [id]="entity.id" [title]="pageTitle" [data]="detailsViewData" [buttons]="actionButtons"
     (btnClickEvent)="onBtnClick($event)">
 </admin-details-view>
 }

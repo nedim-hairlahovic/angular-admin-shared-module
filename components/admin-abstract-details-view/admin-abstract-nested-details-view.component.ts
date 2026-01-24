@@ -4,17 +4,15 @@ import { Observable } from "rxjs";
 
 import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
-import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
+import { AdminAbstractDetailsViewBase } from "./admin-abstract-details-view.base";
 
 @Directive()
-export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
+export abstract class AdminAbstractNestedDetailsViewComponent<
   TEntity extends ApiResource,
-  ID = number,
-> extends AdminAbstractTabbedDetailsViewBase<TEntity> {
-  parentId!: number | string;
-  childId!: string | null;
+> extends AdminAbstractDetailsViewBase<TEntity> {
+  parentId!: string | number;
 
-  constructor(private dataService: NestedDataService<TEntity, any, ID>) {
+  constructor(protected readonly dataService: NestedDataService<TEntity, any>) {
     super();
   }
 
@@ -33,17 +31,5 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
 
   protected override fetch$(): Observable<TEntity> {
     return this.dataService.fetch(this.parentId, this.entityId);
-  }
-
-  protected override onEntityLoaded(entity: TEntity): void {
-    super.onEntityLoaded(entity);
-
-    this.config = {
-      routeConfig: this.routeConfig(),
-      tabs: this.tabs(),
-    };
-
-    this.pageTitle = this.title();
-    this.showTabs();
   }
 }

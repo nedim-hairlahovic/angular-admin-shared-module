@@ -20,6 +20,7 @@ import {
 import { TooltipDirective } from "../../directives/tooltip.directive";
 import { ADMIN_BACKEND_ADAPTER } from "../../config/backend/backend-adapter";
 import { PagedData, Pagination } from "../../config/backend/backend-types";
+import { getObjectValueByPath } from "../../utils/object.utils";
 
 @Component({
   selector: "admin-data-table",
@@ -101,21 +102,21 @@ export class AdminDataTableComponent<T> implements OnChanges {
 
     const meta = this.getMetaSource();
 
-    this.currentPage = this.findDeepByPath(
+    this.currentPage = getObjectValueByPath(
       meta,
       this.pagination.currentPageKey(),
     );
-    const totalPages = this.findDeepByPath(
+    const totalPages = getObjectValueByPath(
       meta,
       this.pagination.totalPagesKey(),
     );
     this.pages = this.getPages(totalPages);
-    this.totalElements = this.findDeepByPath(
+    this.totalElements = getObjectValueByPath(
       meta,
       this.pagination.totalElementsKey(),
     );
 
-    const content = this.findDeepByPath(this.data, this.pagination.dataKey());
+    const content = getObjectValueByPath(this.data, this.pagination.dataKey());
     return Array.isArray(content) ? [...content] : [];
   }
 
@@ -123,7 +124,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
     if (!this.pagination) return this.data;
 
     const root = this.pagination.metaRootKey();
-    return root ? this.findDeepByPath(this.data, root) : this.data;
+    return root ? getObjectValueByPath(this.data, root) : this.data;
   }
 
   getPages(totalPages: number): string[] {
@@ -180,7 +181,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
 
   getText(row: any, columnValue: string) {
     if (columnValue.includes(".")) {
-      return this.findDeepByPath(row, columnValue);
+      return getObjectValueByPath(row, columnValue);
     }
 
     return row[columnValue];
@@ -333,17 +334,6 @@ export class AdminDataTableComponent<T> implements OnChanges {
   clearSearch(): void {
     this.searchForm.reset({ keyword: "" });
     this.onSearch();
-  }
-
-  findDeepByPath(obj: any | any[], path: any) {
-    for (var i = 0, path = path.split("."), len = path.length; i < len; i++) {
-      if (obj == null) {
-        return "";
-      }
-      obj = obj[path[i]];
-    }
-
-    return obj;
   }
 
   getItemLabel(count: number): string {

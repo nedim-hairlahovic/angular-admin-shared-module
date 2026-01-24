@@ -1,79 +1,69 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Directive, OnInit } from "@angular/core";
 import { ParamMap } from "@angular/router";
+import { map, Observable, switchMap } from "rxjs";
 
 import { ApiResource } from "../../models/api-resource";
 import { NestedDataService } from "../../services/nested-data.service";
 import AdminAbstractEditViewBase from "./admin-abstract-edit-view-base";
 import { BaseCrudService } from "../../services/base-crud.service";
-import { map, switchMap } from "rxjs";
 import { BreadcrumbItem } from "../../models/breadcrumb";
 
-@Component({
-  template: "",
-  standalone: false,
-})
+@Directive()
 export abstract class AdminAbstractNestedEditViewComponent<
-  T extends ApiResource,
-  R,
-  ID = number,
-  P extends ApiResource = any,
+  TEntity extends ApiResource,
+  TRequest,
+  TForm,
+  TParentId extends string | number | any = number,
+  TParent extends ApiResource = any,
 >
-  extends AdminAbstractEditViewBase<T, R>
+  extends AdminAbstractEditViewBase<TEntity, TRequest, TForm>
   implements OnInit
 {
-  parentId!: ID;
-  childId!: string | null;
-
-  abstract getChildIdKey(): string;
+  parentId!: string | number;
+  parent!: TParent;
 
   constructor(
-    private parentDataService: BaseCrudService<P>,
-    private dataService: NestedDataService<T, R, ID>,
+    private parentDataService: BaseCrudService<TParent>,
+    private dataService: NestedDataService<TEntity, TRequest, TParentId>,
   ) {
     super();
   }
 
-  override extractIds(params: ParamMap): void {
-    this.parentId = this.resolveParentId(params);
-    this.childId = params.get(this.getChildIdKey());
-  }
+  /** Route param key for this entity id. */
+  protected abstract override entityIdParam(): string;
 
-  override getEditMode(): "ADD" | "EDIT" {
-    return this.childId === "0" ? "ADD" : "EDIT";
-  }
-
-  protected resolveParentId(params: ParamMap): ID {
-    const raw = params.get(this.getParentIdKey());
-    if (raw === null) return {} as ID;
-
-    if (/^\d+$/.test(raw)) {
-      return Number.parseInt(raw) as ID;
-    }
-    return {} as ID;
-  }
-
-  protected getParentIdKey(): string {
+  /** Route param key for the parent entity id. */
+  protected parentIdParam(): string {
     return "id";
   }
 
-  override getItem(): void {
+  protected override extractIds(params: ParamMap): void {
+    this.parentId = this.readIdParam(params, this.parentIdParam());
+    this.entityId = this.readIdParam(params, this.entityIdParam());
+  }
+
+  protected override fetch$(): Observable<TEntity> {
+    return this.dataService.fetch(this.parentId, this.entityId);
+  }
+
+  override loadEntity(): void {
     this.dataLoaded = false;
 
     this.parentDataService
-      .getSingleItem(...this.normalizeId(this.parentId))
+      .fetch(...this.normalizeId(this.parentId))
       .pipe(
-        switchMap((parent: P) =>
+        switchMap((parent: TParent) =>
           this.dataService
-            .getSingleItem(this.parentId, this.childId)
-            .pipe(map((child: T) => ({ parent, child }))),
+            .fetch(this.parentId, this.entityId)
+            .pipe(map((entity: TEntity) => ({ parent, entity }))),
         ),
       )
       .subscribe({
-        next: ({ parent, child }) => {
-          this.updateFormData(child);
-          this.breadcrumbs = this.initBreadcrumbs(parent, child);
+        next: ({ parent, entity }) => {
+          this.parent = parent;
+          this.onEntityLoaded(entity);
         },
-        error: (err) => this.errorHandler.handleLoadError(),
+        error: () => this.errorHandler.handleLoadError(),
       });
   }
 
@@ -87,26 +77,24 @@ export abstract class AdminAbstractNestedEditViewComponent<
     return [id];
   }
 
-  onSave(requestDto: R): void {
+  onSave(formData: TForm): void {
     this.processingRequest = true;
 
-    if (this.mode === "ADD") {
-      this.dataService.createItem(this.parentId, requestDto).subscribe({
-        next: (saved: T) => this.onSaveComplete(saved),
-        error: (err) => this.handleError(err),
-      });
-    } else if (this.mode === "EDIT") {
-      this.dataService
-        .updateItem(this.parentId, this.childId, requestDto)
-        .subscribe({
-          next: (saved: T) => this.onSaveComplete(saved),
-          error: (err) => this.handleError(err),
-        });
-    }
-  }
+    const request = this.mapToRequest(formData);
 
-  protected initBreadcrumbs(parent: P, child: T): BreadcrumbItem[] {
-    return [];
+    const request$ =
+      this.mode === "ADD"
+        ? this.dataService.create(this.parentId as TParentId, request)
+        : this.dataService.update(
+            this.parentId as TParentId,
+            this.entityId,
+            request,
+          );
+
+    request$.subscribe({
+      next: (saved: TEntity) => this.onSaveComplete(saved),
+      error: (err) => this.handleError(err),
+    });
   }
 
   protected buildBreadcrumbs<T extends { id?: number | string }>(

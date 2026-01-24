@@ -1,43 +1,42 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Directive, inject, OnInit } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
-import { ApiResource } from "../../models/api-resource";
-import { DataCrudService } from "../../services/data.service";
-import AdminAbstractTableViewBase from "./admin-abstract-table-view-base";
-import { AdminConfirmDialogService } from "../../services/admin-confirm-dialog.service";
+import { ApiResource } from '../../models/api-resource';
+import { DataCrudService } from '../../services/data.service';
+import AdminAbstractTableViewBase from './admin-abstract-table-view-base';
+import { AdminConfirmDialogService } from '../../services/admin-confirm-dialog.service';
 
-@Component({
-  template: "",
-  standalone: false,
-})
-export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
-  extends AdminAbstractTableViewBase<T>
+@Directive()
+export abstract class AdminAbstractTableViewComponent<
+  TEntity extends ApiResource,
+>
+  extends AdminAbstractTableViewBase<TEntity>
   implements OnInit
 {
-  abstract getItemTitle(item: T): string;
-
   protected readonly route = inject(ActivatedRoute);
   protected readonly confirmDialog = inject(AdminConfirmDialogService);
 
-  constructor(private dataService: DataCrudService<T, any>) {
+  constructor(private dataService: DataCrudService<TEntity, any>) {
     super();
   }
+
+  abstract rowTitle(entity: TEntity): string;
 
   override ngOnInit(): void {
     super.ngOnInit();
 
     this.route.queryParamMap.subscribe((params) => {
-      this.searchValue = params.get("search"); // or make this dynamic later
+      this.searchValue = params.get('search');
     });
   }
 
-  override initializeDataTableConfigDefaults(): void {
+  override applyTableConfigDefaults(): void {
     if (!this.config.buttons) {
       this.config.buttons = this.DEFAULT_BUTTONS;
     }
 
     const actionsColumn = this.config.columns.find(
-      (c) => c.value === "actions",
+      (c) => c.value === 'actions',
     );
     if (actionsColumn && !actionsColumn.actions) {
       actionsColumn.actions = this.DEFAULT_ACTIONS;
@@ -50,7 +49,7 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
     this.tableState = requestParams;
     this.dataLoaded = false;
 
-    this.dataService.getPagedItems(requestParams).subscribe({
+    this.dataService.fetchPage(requestParams).subscribe({
       next: (data) => {
         this.data = data;
         this.dataLoaded = true;
@@ -59,27 +58,27 @@ export abstract class AdminAbstractTableViewComponent<T extends ApiResource>
     });
   }
 
-  override async deleteItem(item: T): Promise<void> {
+  override async deleteEntity(item: TEntity): Promise<void> {
     const confirmed = await this.confirmDialog.confirm({
-      title: "Potvrda brisanja",
+      title: 'Potvrda brisanja',
       message: this.getDeletePrompt(item),
-      confirmText: "Obriši",
-      cancelText: "Odustani",
-      confirmVariant: "danger",
+      confirmText: 'Obriši',
+      cancelText: 'Odustani',
+      confirmVariant: 'danger',
     });
 
     if (!confirmed) return;
 
-    this.dataService.deleteItem(item.id).subscribe({
+    this.dataService.delete(item.id).subscribe({
       next: () => {
-        this.toast.success(this.getDeleteSuccessMessage(item));
+        this.toast.success(this.deleteSuccessMessage(item));
         this.fetchData(this.tableState);
       },
       error: (err) => this.errorHandler.handleOperationError(err),
     });
   }
 
-  protected getDeletePrompt(item: T) {
-    return `Da li želite obrisati ovaj podatak: ${this.getItemTitle(item)}?`;
+  protected getDeletePrompt(item: TEntity) {
+    return `Da li želite obrisati ovaj podatak: ${this.rowTitle(item)}?`;
   }
 }

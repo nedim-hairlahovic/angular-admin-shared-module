@@ -6,6 +6,7 @@
             <div class="d-flex align-items-center justify-content-between">
                 <div class="flex-grow-1 d-flex align-items-center">
                     <!-- Search -->
+                    @if (config.dataOptions?.search) {
                     <form [formGroup]="searchForm" class="d-flex align-items-center table-search mb-2 mb-sm-0"
                         (ngSubmit)="onSearch()">
                         <div class="input-group position-relative">
@@ -26,6 +27,7 @@
                             </div>
                         </div>
                     </form>
+                    }
 
                     <!-- Action buttons -->
                     <div class="ms-auto d-flex align-items-center gap-2">

@@ -67,11 +67,11 @@ export class AdminSearchableSelectComponent<
     this.resetValues();
 
     if (this.initialValue) {
-      this.dataService.getSingleItem(this.initialValue).subscribe({
+      this.dataService.fetch(this.initialValue).subscribe({
         next: (item: T) => {
-          this.onItemSelect(this.dataService.convertToSearchableItem(item));
+          this.onItemSelect(this.dataService.toSearchableSelectItem(item));
         },
-        error: (err) => this.errorHandler.handleLoadError(),
+        error: () => this.errorHandler.handleLoadError(),
       });
     }
 
@@ -96,10 +96,10 @@ export class AdminSearchableSelectComponent<
 
   executeSearch(query: string): void {
     if (query && query.length >= 3) {
-      this.dataService.getSelectItems(query).subscribe({
+      this.dataService.fetchAll(query).subscribe({
         next: (data: any[]) => {
           this.searchResults = data.map((item) =>
-            this.dataService.convertToSearchableItem(item),
+            this.dataService.toSearchableSelectItem(item),
           );
           this.searching = false;
         },

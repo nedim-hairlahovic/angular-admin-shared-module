@@ -1,125 +1,28 @@
-import { Component, inject, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Directive } from "@angular/core";
+import { ParamMap } from "@angular/router";
+import { Observable } from "rxjs";
 
-import {
-  DetailsViewConfigRouteConfig,
-  DetailsViewData,
-} from "../../models/details-view";
 import { ApiResource } from "../../models/api-resource";
 import { DataCrudService } from "../../services/data.service";
-import { CardButton } from "../../models/data-card";
-import { BreadcrumbItem } from "../../models/breadcrumb";
-import { UrlConfig } from "../../models/url-config";
-import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
+import { AdminAbstractDetailsViewBase } from "./admin-abstract-details-view.base";
 
-@Component({
-  template: "",
-  standalone: false,
-})
+@Directive()
 export abstract class AdminAbstractDetailsViewComponent<
-  T extends ApiResource,
-> implements OnInit {
-  item!: T;
-  protected pageTitle!: string;
-  protected routeConfig!: DetailsViewConfigRouteConfig<T>;
-  protected breadcrumbs: BreadcrumbItem[] = [];
-
-  abstract getTitle(): string;
-  abstract getDetailsData(): DetailsViewData;
-  abstract getRouteConfig(): DetailsViewConfigRouteConfig<T>;
-
-  protected readonly DEFAULT_BUTTONS: CardButton[] = [
-    {
-      label: "Uredi",
-      icon: "fa fa-pencil",
-      class: "btn-primary",
-      actionName: "edit",
-      action: () => this.navigateToEdit(),
-    },
-  ];
-
-  protected readonly route = inject(ActivatedRoute);
-  protected readonly router = inject(Router);
-  protected readonly errorHandler = inject(AdminErrorHandlerService);
-
-  constructor(private dataService: DataCrudService<T, any>) {}
-
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get("id");
-      if (id) {
-        this.routeConfig = this.getRouteConfig();
-        this.getItem(id);
-      }
-    });
+  TEntity extends ApiResource,
+> extends AdminAbstractDetailsViewBase<TEntity> {
+  constructor(private dataService: DataCrudService<TEntity, any>) {
+    super();
   }
 
-  getItem(id: any): void {
-    this.dataService.getSingleItem(id).subscribe({
-      next: (_item: T) => {
-        this.item = _item;
-        this.pageTitle = this.getTitle();
-        this.breadcrumbs = this.initBreadcrumbs();
-      },
-      error: (err) => {
-        if (err.status === 404) {
-          this.onNotFoundError();
-          return;
-        }
-
-        this.errorHandler.handleLoadError();
-      },
-    });
+  protected override fetch$(): Observable<TEntity> {
+    return this.dataService.fetch(this.entityId);
   }
 
-  buildRouteConfig(baseConfig: UrlConfig): DetailsViewConfigRouteConfig<T> {
-    return {
-      edit: (item: T) => ({
-        url: `/${baseConfig.url}/${item.id}/edit`,
-        fragment: baseConfig.fragment,
-      }),
-      onNotFound: {
-        url: baseConfig.url,
-        fragment: baseConfig.fragment,
-      },
-    };
+  override entityIdParam(): string {
+    return "id";
   }
 
-  navigateToEdit(): void {
-    if (this.routeConfig?.edit) {
-      const urlConfig = this.routeConfig.edit(this.item);
-      this.router.navigate([urlConfig.url], {
-        fragment: urlConfig.fragment,
-      });
-    }
-  }
-
-  protected onNotFoundError(): void {
-    const urlConfig = this.routeConfig?.onNotFound;
-    if (!urlConfig) {
-      return;
-    }
-    this.router.navigate([urlConfig.url], {
-      fragment: urlConfig.fragment,
-    });
-  }
-
-  onBtnClick(actionName: any): void {
-    const button = this.findButtonByActionName(actionName);
-    if (button) {
-      button.action();
-    }
-  }
-
-  protected getButtons(): CardButton[] {
-    return this.DEFAULT_BUTTONS;
-  }
-
-  findButtonByActionName(actionName: string): CardButton | undefined {
-    return this.getButtons().find((button) => button.actionName === actionName);
-  }
-
-  protected initBreadcrumbs(): BreadcrumbItem[] {
-    return [];
+  protected override extractIds(params: ParamMap): void {
+    this.entityId = this.readIdParam(params, this.entityIdParam());
   }
 }

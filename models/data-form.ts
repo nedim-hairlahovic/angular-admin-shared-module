@@ -4,16 +4,18 @@ import { ApiResource } from "./api-resource";
 import { DataCrudService } from "../services/data.service";
 import { UrlConfig } from "./url-config";
 
-export interface DataFormConfig<T extends ApiResource, R> {
-  title: string;
-  data?: any;
-  elements: DataFormElement<T, R>[];
-  routeConfig?: DataFormRouteConfig<T>;
+export interface DataFormConfig<TEntity extends ApiResource, TForm> {
+  title?: string;
+  elements: DataFormElement<TForm>[];
+  data?: TForm;
+  routeConfig: DataFormRouteConfig<TEntity>;
+  isEditMode?: boolean;
+  requestFieldMap?: FormToRequestFieldMap<TForm>;
 }
 
-export interface DataFormElement<T extends ApiResource, R> {
-  id: string;
-  name: string;
+export interface DataFormElement<TForm> {
+  id: Extract<keyof TForm, string>;
+  name: Extract<keyof TForm, string>;
   label: string;
   type: DataFormElementType;
   mode: DataFormControlMode;
@@ -29,6 +31,11 @@ export enum DataFormControlMode {
   Array = "Array",
   Group = "Group",
 }
+
+// Maps form field names to request (backend) field names
+export type FormToRequestFieldMap<TForm> = Partial<
+  Record<Extract<keyof TForm, string>, string>
+>;
 
 export interface DataFormSelectOption {
   value: string;
@@ -46,8 +53,8 @@ export enum DataFormElementType {
   Checkbox,
 }
 
-export interface DataFormRouteConfig<T> {
-  onSave: (item?: T) => UrlConfig;
+export interface DataFormRouteConfig<TEntity extends ApiResource> {
+  onSave: (item: TEntity) => UrlConfig;
   onNotFound: UrlConfig;
 }
 

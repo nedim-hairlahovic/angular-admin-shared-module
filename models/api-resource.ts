@@ -1,3 +1,3 @@
 export interface ApiResource {
-    id: any;
+  id: any;
 }

@@ -15,9 +15,9 @@ import { ADMIN_BACKEND_ADAPTER } from "../config";
   providedIn: "root",
 })
 export abstract class DataCrudService<
-  T extends ApiResource,
-  R,
-> extends BaseCrudService<T> {
+  TEntity extends ApiResource,
+  TRequest,
+> extends BaseCrudService<TEntity> {
   private readonly backendAdapter = inject(ADMIN_BACKEND_ADAPTER);
 
   abstract getUrlPath(): string;
@@ -26,21 +26,19 @@ export abstract class DataCrudService<
     return this.backendAdapter.crudEndpoints();
   }
 
-  protected buildItemUrl(id: any): string {
+  protected buildEntityUrl(id: any): string {
     return this.endpoints().item(this.getUrlPath(), id);
   }
 
-  getCommonUrl(): string {
+  getCollectionUrl(): string {
     return this.endpoints().collection(this.getUrlPath());
   }
 
-  getSelectItems(searchQuery?: string): Observable<T[]> {
-    const select = this.endpoints().selectList;
+  fetchAll(searchQuery?: string): Observable<TEntity[]> {
+    const select = this.endpoints().listConfig;
 
     if (!select) {
-      throw new Error(
-        "Select list endpoint is not configured for this backend.",
-      );
+      throw new Error("All endpoint is not configured for this backend.");
     }
 
     let params = new HttpParams();
@@ -48,49 +46,51 @@ export abstract class DataCrudService<
       params = params.append(select.searchParamKey, searchQuery);
     }
 
-    return this.http.get<any>(select.url(this.getUrlPath()), { params }).pipe(
+    const url = select.url(this.getUrlPath());
+
+    return this.http.get<any>(url, { params }).pipe(
       map((res) => {
         if (select.responseDataKey == null) {
           return Array.isArray(res) ? res : [];
         }
-
         return res?.[select.responseDataKey] ?? [];
       }),
     );
   }
 
-  getPagedItems(params?: HttpParams): Observable<PagedData<T>> {
-    return this.http.get<PagedData<T>>(this.getCommonUrl(), { params });
+  fetchPage(params?: HttpParams): Observable<PagedData<TEntity>> {
+    return this.http.get<PagedData<TEntity>>(this.getCollectionUrl(), {
+      params,
+    });
   }
 
-  createItem(request: R): Observable<T> {
-    return this.http.post<T>(this.getCommonUrl(), request, {
+  create(request: TRequest): Observable<TEntity> {
+    return this.http.post<TEntity>(this.getCollectionUrl(), request, {
       headers: this.httpHeaders,
     });
   }
 
-  updateItem(id: any, request: R): Observable<T> {
-    const url = this.buildItemUrl(id);
-    return this.http.put<T>(url, request, { headers: this.httpHeaders });
-  }
-
-  patchItem(id: any, request: Partial<R>): Observable<T> {
-    const url = this.buildItemUrl(id);
-    return this.http.patch<T>(url, request, {
+  update(id: string | number, request: TRequest): Observable<TEntity> {
+    return this.http.put<TEntity>(this.buildEntityUrl(id), request, {
       headers: this.httpHeaders,
     });
   }
 
-  deleteItem(id: any): Observable<{}> {
-    const url = this.buildItemUrl(id);
-    return this.http.delete<any>(url, {
+  patch(id: string | number, request: Partial<TRequest>): Observable<TEntity> {
+    return this.http.patch<TEntity>(this.buildEntityUrl(id), request, {
       headers: this.httpHeaders,
     });
   }
 
-  convertToSearchableItem(item: T): SearchableSelectItem {
+  delete(id: string | number): Observable<void> {
+    return this.http.delete<void>(this.buildEntityUrl(id), {
+      headers: this.httpHeaders,
+    });
+  }
+
+  toSearchableSelectItem(entity: TEntity): SearchableSelectItem {
     return {
-      label: item.id,
+      label: entity.id,
     } as SearchableSelectItem;
   }
 }

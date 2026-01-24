@@ -2,72 +2,42 @@ import {
   ComponentRef,
   Directive,
   EventEmitter,
-  inject,
   ViewChild,
   ViewContainerRef,
 } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
 
-import { AdminTabConfig } from "../../models/tabbed-view";
-import { CardButton } from "../../models/data-card";
-import { BreadcrumbItem } from "../../models/breadcrumb";
 import {
-  DetailsViewConfigRouteConfig,
-  DetailsViewData,
-} from "../../models/details-view";
+  AdminTabConfig,
+  TabbedDetailsViewConfig,
+} from "../../models/tabbed-view";
 import { ApiResource } from "../../models/api-resource";
-import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
+import { AdminAbstractDetailsViewBase } from "../admin-abstract-details-view/admin-abstract-details-view.base";
 
 @Directive()
 export default abstract class AdminAbstractTabbedDetailsViewBase<
-  T extends ApiResource
-> {
-  protected item!: T;
-  protected errorMessage!: string;
-  protected pageTitle!: string;
-  protected routeConfig!: DetailsViewConfigRouteConfig<T>;
-  protected tabs!: AdminTabConfig[];
+  TEntity extends ApiResource,
+> extends AdminAbstractDetailsViewBase<TEntity> {
+  protected config!: TabbedDetailsViewConfig<TEntity>;
   protected selectedIndex = 0;
 
   @ViewChild("dynamicComponentHost", { read: ViewContainerRef })
   protected hostRef!: ViewContainerRef;
 
-  protected breadcrumbs: BreadcrumbItem[] = [];
-
-  protected DEFAULT_BUTTONS: CardButton[] = [
-    {
-      label: "Uredi",
-      icon: "fa fa-pencil",
-      class: "btn-primary",
-      actionName: "edit",
-      action: () => this.navigateToEdit(),
-    },
-  ];
-
-  abstract getTitle(): string;
-  abstract initTabs(): void;
-  abstract getDetailsData(): DetailsViewData;
-  abstract getRouteConfig(): DetailsViewConfigRouteConfig<T>;
-  protected abstract ngOnInit(): void;
-
-  protected readonly errorHandler = inject(AdminErrorHandlerService);
-
-  constructor(protected route: ActivatedRoute, protected router: Router) {}
+  abstract tabs(): AdminTabConfig[];
 
   protected showTabs() {
-    this.initTabs();
     this.setActiveTab();
 
     setTimeout(() => {
-      this.loadTabComponent(this.tabs[this.selectedIndex]);
+      this.loadTabComponent(this.config.tabs[this.selectedIndex]);
     });
   }
 
   protected setActiveTab(): void {
     this.route.fragment.subscribe((fragment) => {
       if (fragment) {
-        const tabIndex = this.tabs.findIndex(
-          (tab) => tab.id.toLowerCase() === fragment.toLowerCase()
+        const tabIndex = this.config.tabs.findIndex(
+          (tab) => tab.id.toLowerCase() === fragment.toLowerCase(),
         );
         if (tabIndex !== -1) {
           this.selectedIndex = tabIndex;
@@ -82,7 +52,7 @@ export default abstract class AdminAbstractTabbedDetailsViewBase<
     this.hostRef.clear();
 
     const componentRef: ComponentRef<any> = this.hostRef.createComponent(
-      tab.component
+      tab.component,
     );
 
     // Apply inputs manually, i.e. assign @Input() values
@@ -104,8 +74,8 @@ export default abstract class AdminAbstractTabbedDetailsViewBase<
 
   protected onTabClick(index: number): void {
     this.selectedIndex = index;
-    this.loadTabComponent(this.tabs[index]);
-    this.updateUrlFragment(this.tabs[index]);
+    this.loadTabComponent(this.config.tabs[index]);
+    this.updateUrlFragment(this.config.tabs[index]);
   }
 
   protected updateUrlFragment(tab: AdminTabConfig): void {
@@ -115,36 +85,6 @@ export default abstract class AdminAbstractTabbedDetailsViewBase<
       fragment,
       queryParamsHandling: "preserve",
       replaceUrl: true,
-    });
-  }
-
-  protected getButtons(): CardButton[] {
-    return this.DEFAULT_BUTTONS;
-  }
-
-  protected onBtnClick(actionName: string): void {
-    const button = this.getButtons().find((b) => b.actionName === actionName);
-    if (button) {
-      button.action();
-    }
-  }
-
-  protected navigateToEdit(): void {
-    if (this.routeConfig?.edit) {
-      const urlConfig = this.routeConfig.edit(this.item);
-      this.router.navigate([urlConfig.url], {
-        fragment: urlConfig.fragment,
-      });
-    }
-  }
-
-  protected onNotFoundError(): void {
-    const urlConfig = this.routeConfig?.onNotFound;
-    if (!urlConfig) {
-      return;
-    }
-    this.router.navigate([urlConfig.url], {
-      fragment: urlConfig.fragment,
     });
   }
 }

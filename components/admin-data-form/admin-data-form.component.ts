@@ -24,6 +24,7 @@ import {
   DataFormConfig,
   DataFormControlMode,
   DataFormElementType,
+  ValidatorConfig,
 } from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
 import { AdminSearchableSelectComponent } from "../admin-searchable-select/admin-searchable-select.component";
@@ -35,21 +36,24 @@ import { AdminSearchableSelectComponent } from "../admin-searchable-select/admin
   standalone: true,
   imports: [ReactiveFormsModule, AdminSearchableSelectComponent],
 })
-export class AdminDataFormComponent<T extends ApiResource, R>
+export class AdminDataFormComponent<
+  TEntity extends ApiResource,
+  TRequest,
+  TForm,
+>
   implements OnInit, OnChanges, AfterViewInit
 {
   @ViewChildren(FormControlName, { read: ElementRef })
   formInputElements: ElementRef[] = [];
 
-  @Input() config!: DataFormConfig<T, R>;
+  @Input() config!: DataFormConfig<TEntity, TForm>;
   @Input() backendFieldErrors: Record<string, string> | null = null;
   @Input() formProcessing!: boolean;
+  @Output() btnSaveEvent = new EventEmitter<TRequest>();
 
-  @Output() btnSaveEvent = new EventEmitter<R>();
-
-  mode: "ADD" | "EDIT" = "ADD";
+  mode!: "ADD" | "EDIT";
   dataForm!: FormGroup;
-  validationMessages: { [key: string]: { [key: string]: string } } = {};
+  validationMessages: Partial<Record<keyof TForm, Record<string, string>>> = {};
   displayMessages: { [key: string]: string } = {};
 
   readonly TEXT: DataFormElementType = DataFormElementType.Text;
@@ -67,14 +71,7 @@ export class AdminDataFormComponent<T extends ApiResource, R>
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
-    if (
-      this.config.data &&
-      this.config.data.id !== null &&
-      this.config.data.id !== undefined &&
-      this.config.data.id !== 0
-    ) {
-      this.mode = "EDIT";
-    }
+    this.mode = this.config.isEditMode ? "EDIT" : "ADD";
 
     this.initDataForm();
     this.updateDataForm();
@@ -104,7 +101,7 @@ export class AdminDataFormComponent<T extends ApiResource, R>
     // Watch for the blur event from any input element on the form.
     // This is required because the valueChanges does not provide notification on blur
     const controlBlurs: Observable<any>[] = this.formInputElements.map(
-      (formControl: ElementRef) => fromEvent(formControl.nativeElement, "blur")
+      (formControl: ElementRef) => fromEvent(formControl.nativeElement, "blur"),
     );
 
     // Merge the blur event observable with the valueChanges observable
@@ -114,14 +111,17 @@ export class AdminDataFormComponent<T extends ApiResource, R>
       .subscribe((value) => {
         this.displayMessages = this.processValidationMessages(
           this.dataForm,
-          this.validationMessages
+          this.validationMessages,
         );
       });
   }
 
   initDataForm(): void {
     const formControls: any = {};
-    const validationMessages: { [key: string]: { [key: string]: string } } = {};
+
+    const validationMessages: Partial<
+      Record<keyof TForm, Record<string, string>>
+    > = {};
 
     for (const el of this.config.elements) {
       const mode = el.mode ?? DataFormControlMode.Control;
@@ -131,7 +131,7 @@ export class AdminDataFormComponent<T extends ApiResource, R>
 
         formControls[el.name] = new FormControl(
           { value: "", disabled: !!el.disabled },
-          validators
+          validators,
         );
       } else if (mode === DataFormControlMode.Array) {
         const validators = el.validators?.map((v) => v.validator) ?? [];
@@ -146,10 +146,13 @@ export class AdminDataFormComponent<T extends ApiResource, R>
       if (el.validators && el.validators.length) {
         if (!el.validators?.length) continue;
 
-        validationMessages[el.name] = el.validators.reduce((acc, v) => {
-          acc[v.key] = v.message;
-          return acc;
-        }, {} as { [k: string]: string });
+        validationMessages[el.name] = el.validators.reduce(
+          (acc, v) => {
+            acc[v.key] = v.message;
+            return acc;
+          },
+          {} as { [k: string]: string },
+        );
       }
     }
 
@@ -160,23 +163,34 @@ export class AdminDataFormComponent<T extends ApiResource, R>
   updateDataForm(): void {
     // If the mode is 'EDIT', populate the form with existing data
     if (this.mode === "EDIT") {
-      let values = {} as any;
+      const data = this.config.data;
+      if (!data) return;
+
+      const values: Partial<TForm> = {};
 
       for (const element of this.config.elements) {
         const mode = element.mode ?? DataFormControlMode.Control;
 
         if (mode === DataFormControlMode.Control) {
-          values[element.name] = this.config.data[element.name];
-        } else if (mode === DataFormControlMode.Array) {
-          const formArray = this.fb.array([]);
-          for (const singleData of this.config.data[element.name]) {
-            formArray.push(
-              new FormControl(
-                singleData,
-                element.validators?.map((v) => v.validator) ?? []
-              )
-            );
-          }
+          values[element.name] = data[element.name];
+          continue;
+        }
+
+        if (mode === DataFormControlMode.Array) {
+          const raw = data[element.name];
+          const items = Array.isArray(raw) ? raw : [];
+
+          const formArray = this.fb.array(
+            items.map(
+              (singleData) =>
+                new FormControl(
+                  singleData,
+                  element.validators?.map(
+                    (v: ValidatorConfig) => v.validator,
+                  ) ?? [],
+                ),
+            ),
+          );
 
           this.dataForm.setControl(element.name, formArray);
         }
@@ -210,6 +224,8 @@ export class AdminDataFormComponent<T extends ApiResource, R>
         fieldName.match(/^(.+?)(\d+)$/); // fieldName0 (fallback)
 
       if (arrayFieldMatch) {
+        // TODO: Map backend array field names (request → form) using config.requestFieldMap
+        // (same mapping logic as resolveBackendFieldToFormField)
         const [, arrayName, indexStr] = arrayFieldMatch;
         const index = Number(indexStr);
         const array = this.dataForm.get(arrayName) as FormArray | null;
@@ -221,7 +237,9 @@ export class AdminDataFormComponent<T extends ApiResource, R>
         control.markAsTouched();
         return;
       } else {
-        const control = this.dataForm.get(fieldName);
+        const formField = this.resolveBackendFieldToFormField(fieldName);
+
+        const control = this.dataForm.get(formField);
         if (!control) return;
 
         const existing = control.errors ?? {};
@@ -235,8 +253,17 @@ export class AdminDataFormComponent<T extends ApiResource, R>
 
     this.displayMessages = this.processValidationMessages(
       this.dataForm,
-      this.validationMessages
+      this.validationMessages,
     );
+  }
+
+  private resolveBackendFieldToFormField(field: string): string {
+    const map = this.config.requestFieldMap;
+    if (!map) return field;
+
+    // invert: requestField -> formField
+    const entry = Object.entries(map).find(([, req]) => req === field);
+    return entry ? entry[0] : field;
   }
 
   getFormInputValue(controlName: string): any {
@@ -250,14 +277,15 @@ export class AdminDataFormComponent<T extends ApiResource, R>
   addInputToFormArray(controlName: string): void {
     const formArray = this.getFormArray(controlName);
     const config = this.config.elements.find(
-      (e: any) => e.name === controlName
+      (e: any) => e.name === controlName,
     );
 
     if (!config) {
       return;
     }
 
-    const validators = config.validators?.map((v) => v.validator) ?? [];
+    const validators =
+      config.validators?.map((v: ValidatorConfig) => v.validator) ?? [];
 
     formArray.push(new FormControl(config.defaultValue ?? null, validators));
     formArray.markAsDirty();
@@ -293,7 +321,7 @@ export class AdminDataFormComponent<T extends ApiResource, R>
   onSearchableSelectChangeInArray(
     controlArrayName: string,
     index: number,
-    event: any
+    event: any,
   ) {
     const array = this.dataForm.get(controlArrayName) as FormArray | null;
     const control = array?.at(index);
@@ -310,15 +338,16 @@ export class AdminDataFormComponent<T extends ApiResource, R>
       const mode = el.mode ?? DataFormControlMode.Control;
 
       if (mode === DataFormControlMode.Array) {
-        const arrayValue = values[el.name] ?? [];
-
-        const formArray = this.dataForm.get(el.name) as FormArray;
+        const controlName = String(el.name);
+        const formArray = this.dataForm.get(controlName) as FormArray;
+        const arrayValue = values[controlName] ?? [];
 
         if (formArray && formArray instanceof FormArray) {
           formArray.clear();
 
           for (const item of arrayValue) {
-            const validators = el.validators?.map((v) => v.validator) ?? [];
+            const validators =
+              el.validators?.map((v: ValidatorConfig) => v.validator) ?? [];
             formArray.push(new FormControl(item, validators));
           }
         }
@@ -328,62 +357,64 @@ export class AdminDataFormComponent<T extends ApiResource, R>
 
   processValidationMessages(
     form: FormGroup,
-    validationMessages: { [key: string]: { [key: string]: string } }
-  ): { [key: string]: string } {
-    const messages = {} as any;
-    for (const controlKey in form.controls) {
-      if (form.controls.hasOwnProperty(controlKey)) {
-        const c = form.controls[controlKey];
-        // If it is a FormGroup, process its child controls.
-        if (c instanceof FormGroup) {
-          const childMessages = this.processValidationMessages(
-            c,
-            validationMessages
-          );
-          Object.assign(messages, childMessages);
-        } else if (c instanceof FormArray) {
-          // If it is a FormArray, process each control separately.
-          const arrayControls = c.controls;
-          for (let i = 0; i < arrayControls.length; i++) {
-            const singleControl = arrayControls[i];
-            messages[controlKey + i] = "";
-            if (
-              (singleControl.dirty || singleControl.touched) &&
-              singleControl.errors
-            ) {
-              Object.entries(singleControl.errors).forEach(
-                ([errorKey, errorValue]) => {
-                  if (
-                    errorKey === "backend" &&
-                    typeof errorValue === "string"
-                  ) {
-                    messages[controlKey + i] += errorValue;
-                  } else if (validationMessages[controlKey]?.[errorKey]) {
-                    messages[controlKey + i] +=
-                      validationMessages[controlKey][errorKey];
-                  }
-                }
-              );
-            }
-          }
-        } else {
-          messages[controlKey] = "";
+    validationMessages: Partial<
+      Record<Extract<keyof TForm, string>, Record<string, string>>
+    >,
+  ): Record<string, string> {
+    const messages: Record<string, string> = {};
 
-          if ((c.dirty || c.touched) && c.errors) {
-            Object.entries(c.errors).forEach(([errorKey, errorValue]) => {
-              if (errorKey === "backend" && typeof errorValue === "string") {
-                // backend error from server
-                messages[controlKey] += errorValue + " ";
-              } else if (validationMessages[controlKey][errorKey]) {
-                // normal client-side validator
-                messages[controlKey] +=
-                  validationMessages[controlKey][errorKey] + " ";
-              }
-            });
+    for (const controlKey in form.controls) {
+      if (!Object.prototype.hasOwnProperty.call(form.controls, controlKey))
+        continue;
+
+      const c = form.controls[controlKey];
+      const key = controlKey as Extract<keyof TForm, string>; // ✅
+
+      if (c instanceof FormGroup) {
+        Object.assign(
+          messages,
+          this.processValidationMessages(c, validationMessages),
+        );
+        continue;
+      }
+
+      if (c instanceof FormArray) {
+        for (let i = 0; i < c.controls.length; i++) {
+          const singleControl = c.controls[i];
+          messages[controlKey + i] = "";
+
+          if (
+            (singleControl.dirty || singleControl.touched) &&
+            singleControl.errors
+          ) {
+            Object.entries(singleControl.errors).forEach(
+              ([errorKey, errorValue]) => {
+                if (errorKey === "backend" && typeof errorValue === "string") {
+                  messages[controlKey + i] += errorValue;
+                } else if (validationMessages[key]?.[errorKey]) {
+                  messages[controlKey + i] +=
+                    validationMessages[key]![errorKey];
+                }
+              },
+            );
           }
         }
+        continue;
+      }
+
+      messages[controlKey] = "";
+
+      if ((c.dirty || c.touched) && c.errors) {
+        Object.entries(c.errors).forEach(([errorKey, errorValue]) => {
+          if (errorKey === "backend" && typeof errorValue === "string") {
+            messages[controlKey] += errorValue + " ";
+          } else if (validationMessages[key]?.[errorKey]) {
+            messages[controlKey] += validationMessages[key]![errorKey] + " ";
+          }
+        });
       }
     }
+
     return messages;
   }
 }

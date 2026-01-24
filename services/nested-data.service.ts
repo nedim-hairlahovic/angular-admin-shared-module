@@ -1,4 +1,5 @@
 import { Injectable } from "@angular/core";
+import { HttpParams } from "@angular/common/http";
 import { Observable } from "rxjs";
 
 import { BaseCrudService } from "./base-crud.service";
@@ -7,34 +8,44 @@ import { BaseCrudService } from "./base-crud.service";
   providedIn: "root",
 })
 export abstract class NestedDataService<
-  T,
-  R,
-  ID = number,
-> extends BaseCrudService<T> {
-  abstract getCommonUrl(parentId: ID): string;
+  TEntity,
+  TRequest,
+  TParentId extends string | number | any = number,
+  TChildId extends string | number = number,
+> extends BaseCrudService<TEntity> {
+  abstract getCollectionUrl(parentId: TParentId): string;
 
-  protected buildItemUrl(parentId: ID, childId: any): string {
-    return `${this.getCommonUrl(parentId)}/${childId}`;
+  protected buildEntityUrl(parentId: TParentId, childId: TChildId): string {
+    return `${this.getCollectionUrl(parentId)}/${childId}`;
   }
 
-  getItems(parentId: ID): Observable<T[]> {
-    const url = this.getCommonUrl(parentId);
-    return this.http.get<T[]>(url);
+  fetchAll(parentId: TParentId, params?: HttpParams): Observable<TEntity[]> {
+    return this.http.get<TEntity[]>(this.getCollectionUrl(parentId), {
+      params,
+    });
   }
 
-  createItem(parentId: ID, request: R): Observable<T> {
-    return this.http.post<T>(this.getCommonUrl(parentId), request, {
+  create(parentId: TParentId, request: TRequest): Observable<TEntity> {
+    return this.http.post<TEntity>(this.getCollectionUrl(parentId), request, {
       headers: this.httpHeaders,
     });
   }
 
-  updateItem(parentId: ID, childId: any, request: R): Observable<T> {
-    const url = `${this.getCommonUrl(parentId)}/${childId}`;
-    return this.http.put<T>(url, request, { headers: this.httpHeaders });
+  update(
+    parentId: TParentId,
+    childId: TChildId,
+    request: TRequest,
+  ): Observable<TEntity> {
+    return this.http.put<TEntity>(
+      this.buildEntityUrl(parentId, childId),
+      request,
+      { headers: this.httpHeaders },
+    );
   }
 
-  deleteItem(parentId: ID, childId: any): Observable<{}> {
-    const url = `${this.getCommonUrl(parentId)}/${childId}`;
-    return this.http.delete<any>(url, { headers: this.httpHeaders });
+  delete(parentId: TParentId, childId: TChildId): Observable<void> {
+    return this.http.delete<void>(this.buildEntityUrl(parentId, childId), {
+      headers: this.httpHeaders,
+    });
   }
 }

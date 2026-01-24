@@ -36,7 +36,7 @@ export abstract class BaseBackendAdapter implements BackendAdapter {
     };
 
     if (options?.selectList) {
-      convention.selectList = {
+      convention.listConfig = {
         url: (p) => options.selectList!.url(p, base),
         searchParamKey: options.selectList.searchParamKey,
         responseDataKey: options.selectList.responseDataKey,

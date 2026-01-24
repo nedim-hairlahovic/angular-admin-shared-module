@@ -1,4 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { ParamMap } from "@angular/router";
+import { Observable } from "rxjs";
 
 import { AdminTabConfig } from "../../models/tabbed-view";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
@@ -16,28 +18,42 @@ import { AdminBreadcrumbsComponent } from "../admin-breadcrumbs/admin-breadcrumb
   standalone: true,
   imports: [AdminBreadcrumbsComponent],
 })
-export class AdminTabbedDetailsViewTemplateComponent<T extends ApiResource>
-  extends AdminAbstractTabbedDetailsViewBase<T>
+export class AdminTabbedDetailsViewTemplateComponent<
+  TEntity extends ApiResource,
+>
+  extends AdminAbstractTabbedDetailsViewBase<TEntity>
   implements OnChanges
 {
-  @Input() declare tabs: AdminTabConfig[];
+  @Input() declare tabsConfig: AdminTabConfig[];
   @Input() declare pageTitle: string;
 
-  ngOnInit(): void {}
+  override ngOnInit(): void {}
 
   ngOnChanges(changes: SimpleChanges): void {
     this.showTabs();
   }
 
-  override getTitle(): string {
+  override title(): string {
     return "";
   }
-  override initTabs(): void {}
+  override tabs(): AdminTabConfig[] {
+    return [];
+  }
   override navigateToEdit(): void {}
-  override getDetailsData(): DetailsViewData {
+  override detailsData(): DetailsViewData {
     return {} as DetailsViewData;
   }
-  override getRouteConfig(): DetailsViewConfigRouteConfig<T> {
-    return {} as DetailsViewConfigRouteConfig<T>;
+  override routeConfig(): DetailsViewConfigRouteConfig<TEntity> {
+    return {} as DetailsViewConfigRouteConfig<TEntity>;
+  }
+
+  protected override entityIdParam(): string {
+    throw new Error("Method not implemented.");
+  }
+  protected override extractIds(params: ParamMap): void {
+    throw new Error("Method not implemented.");
+  }
+  protected override fetch$(): Observable<TEntity> {
+    throw new Error("Method not implemented.");
   }
 }

@@ -1,69 +1,54 @@
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Directive, OnInit } from "@angular/core";
+import { ParamMap } from "@angular/router";
+import { Observable } from "rxjs";
 
 import { ApiResource } from "../../models/api-resource";
 import { DataCrudService } from "../../services/data.service";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
-import { BreadcrumbItem } from "../../models/breadcrumb";
 import { DetailsViewConfigRouteConfig } from "../../models/details-view";
 import { UrlConfig } from "../../models/url-config";
 
-@Component({
-  template: "",
-})
+@Directive()
 export abstract class AdminAbstractTabbedDetailsViewComponent<
-    T extends ApiResource
-  >
-  extends AdminAbstractTabbedDetailsViewBase<T>
+  TEntity extends ApiResource,
+>
+  extends AdminAbstractTabbedDetailsViewBase<TEntity>
   implements OnInit
 {
-  constructor(
-    private dataService: DataCrudService<T, any>,
-    route: ActivatedRoute,
-    router: Router
-  ) {
-    super(route, router);
+  constructor(private dataService: DataCrudService<TEntity, any>) {
+    super();
   }
 
-  ngOnInit(): void {
-    this.route.paramMap.subscribe((params) => {
-      const id = params.get("id");
-      if (id) {
-        this.routeConfig = this.getRouteConfig();
-        this.getItem(id);
-      }
-    });
+  override entityIdParam(): string {
+    return "id";
   }
 
-  getItem(id: any): void {
-    this.dataService.getSingleItem(id).subscribe({
-      next: (_item: T) => {
-        this.item = _item;
-        this.pageTitle = this.getTitle();
-        this.showTabs();
-        this.breadcrumbs = this.initBreadcrumbs();
-      },
-      error: (err) => {
-        if (err.status >= 400 && err.status < 500) {
-          this.onNotFoundError();
-          return;
-        }
-
-        this.errorHandler.handleLoadError();
-      },
-    });
+  override extractIds(params: ParamMap): void {
+    this.entityId = this.readIdParam(params, this.entityIdParam());
   }
 
-  protected initBreadcrumbs(): BreadcrumbItem[] {
-    return [];
+  override fetch$(): Observable<TEntity> {
+    return this.dataService.fetch(this.entityId);
   }
 
-  protected initRouteConfig(
-    baseConfig: UrlConfig
-  ): DetailsViewConfigRouteConfig<T> {
+  protected override onEntityLoaded(entity: TEntity): void {
+    super.onEntityLoaded(entity);
+
+    this.config = {
+      routeConfig: this.routeConfig(),
+      tabs: this.tabs(),
+    };
+
+    this.pageTitle = this.title();
+    this.showTabs();
+  }
+
+  protected buildDefaultRouteConfig(
+    baseConfig: UrlConfig,
+  ): DetailsViewConfigRouteConfig<TEntity> {
     return {
-      edit: (item: T) => ({
-        url: `/${baseConfig.url}/${item.id}/edit`,
+      edit: (entity: TEntity) => ({
+        url: `/${baseConfig.url}/${entity.id}/edit`,
         fragment: baseConfig.fragment,
       }),
       onNotFound: {
