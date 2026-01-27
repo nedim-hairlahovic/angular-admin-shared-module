@@ -57,10 +57,14 @@ export default abstract class AdminAbstractEditViewBase<
 
     this.updateDefaultValuesFromQueryParams();
     this.fetchAndBindRelatedFormData();
+
+    this.updateFormData(entity);
+    this.breadcrumbItems = this.breadcrumbs(entity);
+    this.dataLoaded = true;
   }
 
   private resolveMode(): "ADD" | "EDIT" {
-    return this.entityId === "0" ? "ADD" : "EDIT";
+    return String(this.entityId) === "0" ? "ADD" : "EDIT";
   }
 
   protected verifyFormConfig(
@@ -127,7 +131,7 @@ export default abstract class AdminAbstractEditViewBase<
 
   protected updateSelectValues(
     selectValues: any[],
-    controlName: string,
+    controlName: Extract<keyof TForm, string>,
     value: string = "value",
     label: string = "label",
   ) {
@@ -255,7 +259,7 @@ export default abstract class AdminAbstractEditViewBase<
 
   protected loadSelectOptions<T>(
     source$: Observable<T[]>,
-    controlName: string,
+    controlName: Extract<keyof TForm, string>,
     valueKey: string,
     labelKey: string,
     onError?: (err: any) => void,
@@ -285,5 +289,11 @@ export default abstract class AdminAbstractEditViewBase<
       "Greška",
       0,
     );
+  }
+
+  protected toFormString(value: unknown, fallback = ""): string {
+    return value === null || value === undefined || value === 0
+      ? fallback
+      : String(value);
   }
 }

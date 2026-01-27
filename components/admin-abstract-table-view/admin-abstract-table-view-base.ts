@@ -1,17 +1,17 @@
-import { Directive, inject } from '@angular/core';
-import { Router } from '@angular/router';
+import { Directive, inject } from "@angular/core";
+import { Router } from "@angular/router";
 
 import {
   DataTableAction,
   DataTableConfig,
   DataTableRouteConfig,
-} from '../../models/data-table';
-import { CardButton } from '../../models/data-card';
-import { BreadcrumbItem } from '../../models/breadcrumb';
-import { AdminToastService } from '../../services/admin-toast.service';
-import { AdminErrorHandlerService } from '../../services/admin-error-handler.service';
-import { PagedData } from '../../config/backend/backend-types';
-import { getObjectValueByPath } from '../../utils/object.utils';
+} from "../../models/data-table";
+import { CardButton } from "../../models/data-card";
+import { BreadcrumbItem } from "../../models/breadcrumb";
+import { AdminToastService } from "../../services/admin-toast.service";
+import { AdminErrorHandlerService } from "../../services/admin-error-handler.service";
+import { PagedData } from "../../config/backend/backend-types";
+import { getObjectValueByPath } from "../../utils/object.utils";
 
 @Directive()
 export default abstract class AdminAbstractTableViewBase<TEntity> {
@@ -28,27 +28,27 @@ export default abstract class AdminAbstractTableViewBase<TEntity> {
 
   protected readonly DEFAULT_BUTTONS: CardButton[] = [
     {
-      label: 'Dodaj',
-      icon: 'fa-plus',
-      class: 'btn-primary',
-      actionName: 'add',
+      label: "Dodaj",
+      icon: "fa-plus",
+      class: "btn-primary",
+      actionName: "add",
       action: () => this.navigateToAddPage(),
     },
   ];
 
   protected readonly DEFAULT_ACTIONS: DataTableAction[] = [
     {
-      name: 'edit',
-      label: 'Uredi',
-      icon: 'fa fa-sm fa-pencil',
-      color: 'primary',
+      name: "edit",
+      label: "Uredi",
+      icon: "fa fa-sm fa-pencil",
+      color: "primary",
       click: (row) => this.navigateToEditPage(row),
     },
     {
-      name: 'delete',
-      label: 'Obriši',
-      icon: 'fa fa-sm fa-trash-o',
-      color: 'danger',
+      name: "delete",
+      label: "Obriši",
+      icon: "fa fa-sm fa-trash-o",
+      color: "danger",
       click: (row) => this.deleteEntity(row),
     },
   ];
@@ -57,7 +57,7 @@ export default abstract class AdminAbstractTableViewBase<TEntity> {
   protected abstract applyTableConfigDefaults(): void;
   protected abstract fetchData(requestParams?: any): void;
   protected abstract deleteEntity(entity: TEntity): void;
-  protected abstract deleteSuccessMessage(entity: TEntity): string;
+  protected abstract getDeleteSuccessMessage(entity: TEntity): string;
 
   ngOnInit(): void {
     this.config = this.tableConfig();
@@ -70,7 +70,7 @@ export default abstract class AdminAbstractTableViewBase<TEntity> {
     return {
       add: { url: `/${basePath}/0/edit` },
       edit: (entity: TEntity) => {
-        let idKey = this.config.idKey ?? 'id';
+        let idKey = this.config.idKey ?? "id";
         const id = getObjectValueByPath(entity, idKey);
         return { url: `/${basePath}/${id}/edit` };
       },

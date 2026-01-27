@@ -28,7 +28,7 @@ export class SpringBackendAdapter extends BaseBackendAdapter {
       ? Object.fromEntries(
           Object.entries(dto.fieldErrors).map(([field, fe]: any) => [
             field,
-            { code: fe?.errorCode, message: fe?.message, params: fe?.params },
+            { code: fe?.code, message: fe?.message, params: fe?.params },
           ]),
         )
       : undefined;

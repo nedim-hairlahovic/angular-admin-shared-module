@@ -9,9 +9,9 @@ import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-bas
 @Directive()
 export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
   TEntity extends ApiResource,
-  ID = number,
+  ID extends any = number,
 > extends AdminAbstractTabbedDetailsViewBase<TEntity> {
-  parentId!: number | string;
+  parentId!: any;
   childId!: string | null;
 
   constructor(private dataService: NestedDataService<TEntity, any, ID>) {

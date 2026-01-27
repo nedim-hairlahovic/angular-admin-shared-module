@@ -1,10 +1,10 @@
-import { Directive, inject, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Directive, inject, OnInit } from "@angular/core";
+import { ActivatedRoute } from "@angular/router";
 
-import { ApiResource } from '../../models/api-resource';
-import { DataCrudService } from '../../services/data.service';
-import AdminAbstractTableViewBase from './admin-abstract-table-view-base';
-import { AdminConfirmDialogService } from '../../services/admin-confirm-dialog.service';
+import { ApiResource } from "../../models/api-resource";
+import { DataCrudService } from "../../services/data.service";
+import AdminAbstractTableViewBase from "./admin-abstract-table-view-base";
+import { AdminConfirmDialogService } from "../../services/admin-confirm-dialog.service";
 
 @Directive()
 export abstract class AdminAbstractTableViewComponent<
@@ -26,7 +26,7 @@ export abstract class AdminAbstractTableViewComponent<
     super.ngOnInit();
 
     this.route.queryParamMap.subscribe((params) => {
-      this.searchValue = params.get('search');
+      this.searchValue = params.get("search");
     });
   }
 
@@ -36,7 +36,7 @@ export abstract class AdminAbstractTableViewComponent<
     }
 
     const actionsColumn = this.config.columns.find(
-      (c) => c.value === 'actions',
+      (c) => c.value === "actions",
     );
     if (actionsColumn && !actionsColumn.actions) {
       actionsColumn.actions = this.DEFAULT_ACTIONS;
@@ -60,18 +60,18 @@ export abstract class AdminAbstractTableViewComponent<
 
   override async deleteEntity(item: TEntity): Promise<void> {
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Potvrda brisanja',
+      title: "Potvrda brisanja",
       message: this.getDeletePrompt(item),
-      confirmText: 'Obriši',
-      cancelText: 'Odustani',
-      confirmVariant: 'danger',
+      confirmText: "Obriši",
+      cancelText: "Odustani",
+      confirmVariant: "danger",
     });
 
     if (!confirmed) return;
 
     this.dataService.delete(item.id).subscribe({
       next: () => {
-        this.toast.success(this.deleteSuccessMessage(item));
+        this.toast.success(this.getDeleteSuccessMessage(item));
         this.fetchData(this.tableState);
       },
       error: (err) => this.errorHandler.handleOperationError(err),

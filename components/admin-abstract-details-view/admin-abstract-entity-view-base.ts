@@ -59,7 +59,7 @@ export abstract class AdminAbstractEntityViewBase<
     });
   }
 
-  protected readIdParam(params: ParamMap, key: string): string | number {
+  protected readIdParam(params: ParamMap, key: string): any {
     const raw = params.get(key);
     if (!raw) {
       throw new Error(`${this.constructor.name}: missing route param "${key}"`);

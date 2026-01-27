@@ -1,4 +1,4 @@
-import { Component, Directive, OnInit } from "@angular/core";
+import { Directive, OnInit } from "@angular/core";
 import { ParamMap } from "@angular/router";
 import { map, Observable, switchMap } from "rxjs";
 
@@ -13,13 +13,13 @@ export abstract class AdminAbstractNestedEditViewComponent<
   TEntity extends ApiResource,
   TRequest,
   TForm,
-  TParentId extends string | number | any = number,
+  TParentId extends any = number,
   TParent extends ApiResource = any,
 >
   extends AdminAbstractEditViewBase<TEntity, TRequest, TForm>
   implements OnInit
 {
-  parentId!: string | number;
+  parentId!: any;
   parent!: TParent;
 
   constructor(
@@ -38,8 +38,12 @@ export abstract class AdminAbstractNestedEditViewComponent<
   }
 
   protected override extractIds(params: ParamMap): void {
-    this.parentId = this.readIdParam(params, this.parentIdParam());
+    this.parentId = this.extractParamId(params);
     this.entityId = this.readIdParam(params, this.entityIdParam());
+  }
+
+  protected extractParamId(params: ParamMap): TParentId {
+    return this.readIdParam(params, this.parentIdParam());
   }
 
   protected override fetch$(): Observable<TEntity> {

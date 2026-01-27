@@ -2,7 +2,10 @@ import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { ParamMap } from "@angular/router";
 import { Observable } from "rxjs";
 
-import { AdminTabConfig } from "../../models/tabbed-view";
+import {
+  AdminTabConfig,
+  TabbedDetailsViewConfig,
+} from "../../models/tabbed-view";
 import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-base";
 import {
   DetailsViewConfigRouteConfig,
@@ -24,7 +27,7 @@ export class AdminTabbedDetailsViewTemplateComponent<
   extends AdminAbstractTabbedDetailsViewBase<TEntity>
   implements OnChanges
 {
-  @Input() declare tabsConfig: AdminTabConfig[];
+  @Input() declare config: TabbedDetailsViewConfig<TEntity>;
   @Input() declare pageTitle: string;
 
   override ngOnInit(): void {}

@@ -29,14 +29,6 @@ export abstract class AdminAbstractEditViewComponent<
     this.entityId = this.readIdParam(params, this.entityIdParam());
   }
 
-  protected override onEntityLoaded(entity: TEntity): void {
-    super.onEntityLoaded(entity);
-
-    this.updateFormData(entity);
-    this.breadcrumbItems = this.breadcrumbs(entity);
-    this.dataLoaded = true;
-  }
-
   onSave(formData: TForm): void {
     this.processingRequest = true;
 

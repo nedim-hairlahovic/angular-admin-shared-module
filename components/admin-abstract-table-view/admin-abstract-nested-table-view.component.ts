@@ -1,14 +1,14 @@
-import { Directive, inject, Input, OnInit } from '@angular/core';
+import { Directive, inject, Input, OnInit } from "@angular/core";
 
-import { NestedDataService } from '../../services/nested-data.service';
-import { ApiResource } from '../../models/api-resource';
-import AdminAbstractTableViewBase from './admin-abstract-table-view-base';
-import { AdminConfirmDialogService } from '../../services/admin-confirm-dialog.service';
+import { NestedDataService } from "../../services/nested-data.service";
+import { ApiResource } from "../../models/api-resource";
+import AdminAbstractTableViewBase from "./admin-abstract-table-view-base";
+import { AdminConfirmDialogService } from "../../services/admin-confirm-dialog.service";
 
 @Directive()
 export abstract class AdminAbstractNestedTableViewComponent<
   TEntity extends ApiResource,
-  TParentId extends string | number = number,
+  TParentId extends string | number | any = number,
 >
   extends AdminAbstractTableViewBase<TEntity>
   implements OnInit
@@ -29,7 +29,7 @@ export abstract class AdminAbstractNestedTableViewComponent<
     }
 
     const actionsColumn = this.config.columns.find(
-      (c) => c.value === 'actions',
+      (c) => c.value === "actions",
     );
     if (actionsColumn && !actionsColumn.actions) {
       actionsColumn.actions = this.DEFAULT_ACTIONS;
@@ -53,18 +53,18 @@ export abstract class AdminAbstractNestedTableViewComponent<
 
   override async deleteEntity(entity: TEntity): Promise<void> {
     const confirmed = await this.confirmDialog.confirm({
-      title: 'Potvrda brisanja',
+      title: "Potvrda brisanja",
       message: this.getDeletePrompt(),
-      confirmText: 'Obriši',
-      cancelText: 'Odustani',
-      confirmVariant: 'danger',
+      confirmText: "Obriši",
+      cancelText: "Odustani",
+      confirmVariant: "danger",
     });
 
     if (!confirmed) return;
 
     this.dataService.delete(this.parentId, entity.id).subscribe({
       next: () => {
-        this.toast.success(this.deleteSuccessMessage(entity));
+        this.toast.success(this.getDeleteSuccessMessage(entity));
         this.fetchData(this.tableState);
       },
       error: (err) => this.errorHandler.handleOperationError(err),
