@@ -38,11 +38,11 @@ export abstract class AdminAbstractNestedEditViewComponent<
   }
 
   protected override extractIds(params: ParamMap): void {
-    this.parentId = this.extractParamId(params);
+    this.parentId = this.resolveParentId(params);
     this.entityId = this.readIdParam(params, this.entityIdParam());
   }
 
-  protected extractParamId(params: ParamMap): TParentId {
+  protected resolveParentId(params: ParamMap): TParentId {
     return this.readIdParam(params, this.parentIdParam());
   }
 

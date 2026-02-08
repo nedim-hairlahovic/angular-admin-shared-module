@@ -9,12 +9,12 @@ import AdminAbstractTabbedDetailsViewBase from "./admin-abstract-tabbed-view-bas
 @Directive()
 export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
   TEntity extends ApiResource,
-  ID extends any = number,
+  TParentId extends any = number,
 > extends AdminAbstractTabbedDetailsViewBase<TEntity> {
   parentId!: any;
   childId!: string | null;
 
-  constructor(private dataService: NestedDataService<TEntity, any, ID>) {
+  constructor(private dataService: NestedDataService<TEntity, any, TParentId>) {
     super();
   }
 
@@ -27,8 +27,12 @@ export abstract class AdminAbstractTabbedNestedDetailsViewComponent<
   }
 
   protected override extractIds(params: ParamMap): void {
-    this.parentId = this.readIdParam(params, this.parentIdParam());
+    this.parentId = this.resolveParentId(params);
     this.entityId = this.readIdParam(params, this.entityIdParam());
+  }
+
+  protected resolveParentId(params: ParamMap): TParentId {
+    return this.readIdParam(params, this.parentIdParam());
   }
 
   protected override fetch$(): Observable<TEntity> {
