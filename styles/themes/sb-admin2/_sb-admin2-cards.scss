@@ -1,0 +1,277 @@
+// ============================================================================
+// ADMIN CARDS - Card Components and Variations
+// ============================================================================
+
+@use 'variables' as *;
+@use 'sb-admin2-utilities' as *;
+
+// ----------------------------------------------------------------------------
+// Card Base
+// ----------------------------------------------------------------------------
+
+.card {
+  @include card-base;
+}
+
+.card-body {
+  flex: 1 1 auto;
+  min-height: 1px;
+  padding: $spacing-card-padding;
+}
+
+// ----------------------------------------------------------------------------
+// Card Shadows
+// ----------------------------------------------------------------------------
+
+.shadow-sm {
+  @include shadow-sm;
+}
+
+.shadow {
+  box-shadow: $shadow-base !important;
+}
+
+.shadow-lg {
+  @include shadow-lg;
+}
+
+.shadow-none {
+  @include shadow-none;
+}
+
+// ----------------------------------------------------------------------------
+// Card Children
+// ----------------------------------------------------------------------------
+
+.card {
+  > hr {
+    margin-right: 0;
+    margin-left: 0;
+  }
+
+  > .list-group {
+    border-top: inherit;
+    border-bottom: inherit;
+
+    &:first-child {
+      border-top-width: 0;
+      border-top-left-radius: calc(#{$radius-base} - 1px);
+      border-top-right-radius: calc(#{$radius-base} - 1px);
+    }
+
+    &:last-child {
+      border-bottom-width: 0;
+      border-bottom-right-radius: calc(#{$radius-base} - 1px);
+      border-bottom-left-radius: calc(#{$radius-base} - 1px);
+    }
+  }
+
+  > .card-header + .list-group,
+  > .list-group + .card-footer {
+    border-top: 0;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Card Content
+// ----------------------------------------------------------------------------
+
+.card-title {
+  margin-bottom: $spacing-md;
+}
+
+.card-subtitle {
+  margin-top: -0.375rem;
+  margin-bottom: 0;
+}
+
+.card-text:last-child {
+  margin-bottom: 0;
+}
+
+.card-link {
+  &:hover {
+    text-decoration: none;
+  }
+
+  + .card-link {
+    margin-left: $spacing-card-padding;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Card Header & Footer
+// ----------------------------------------------------------------------------
+
+.card-header {
+  padding: $spacing-card-header;
+  margin-bottom: 0;
+  background-color: $bg-secondary;
+  border-bottom: 1px solid $border-color;
+
+  &:first-child {
+    border-radius: calc(#{$radius-base} - 1px) calc(#{$radius-base} - 1px) 0 0;
+  }
+}
+
+.card-footer {
+  padding: $spacing-card-header;
+  background-color: $bg-secondary;
+  border-top: 1px solid $border-color;
+
+  &:last-child {
+    border-radius: 0 0 calc(#{$radius-base} - 1px) calc(#{$radius-base} - 1px);
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Card Header Tabs & Pills
+// ----------------------------------------------------------------------------
+
+.card-header-tabs {
+  margin-right: -0.625rem;
+  margin-bottom: -$spacing-md;
+  margin-left: -0.625rem;
+  border-bottom: 0;
+}
+
+.card-header-pills {
+  margin-right: -0.625rem;
+  margin-left: -0.625rem;
+}
+
+// ----------------------------------------------------------------------------
+// Card Images
+// ----------------------------------------------------------------------------
+
+.card-img-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  padding: $spacing-card-padding;
+  border-radius: calc(#{$radius-base} - 1px);
+}
+
+.card-img,
+.card-img-top,
+.card-img-bottom {
+  flex-shrink: 0;
+  width: 100%;
+}
+
+.card-img,
+.card-img-top {
+  border-top-left-radius: calc(#{$radius-base} - 1px);
+  border-top-right-radius: calc(#{$radius-base} - 1px);
+}
+
+.card-img,
+.card-img-bottom {
+  border-bottom-right-radius: calc(#{$radius-base} - 1px);
+  border-bottom-left-radius: calc(#{$radius-base} - 1px);
+}
+
+// ----------------------------------------------------------------------------
+// Card Deck
+// ----------------------------------------------------------------------------
+
+.card-deck .card {
+  margin-bottom: $spacing-md;
+}
+
+@include media-sm {
+  .card-deck {
+    display: flex;
+    flex-flow: row wrap;
+    margin-right: -$spacing-md;
+    margin-left: -$spacing-md;
+
+    .card {
+      flex: 1 0 0%;
+      margin-right: $spacing-md;
+      margin-bottom: 0;
+      margin-left: $spacing-md;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Card Group
+// ----------------------------------------------------------------------------
+
+.card-group > .card {
+  margin-bottom: $spacing-md;
+}
+
+@include media-sm {
+  .card-group {
+    display: flex;
+    flex-flow: row wrap;
+
+    > .card {
+      flex: 1 0 0%;
+      margin-bottom: 0;
+
+      + .card {
+        margin-left: 0;
+        border-left: 0;
+      }
+
+      &:not(:last-child) {
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+
+        .card-img-top,
+        .card-header {
+          border-top-right-radius: 0;
+        }
+
+        .card-img-bottom,
+        .card-footer {
+          border-bottom-right-radius: 0;
+        }
+      }
+
+      &:not(:first-child) {
+        border-top-left-radius: 0;
+        border-bottom-left-radius: 0;
+
+        .card-img-top,
+        .card-header {
+          border-top-left-radius: 0;
+        }
+
+        .card-img-bottom,
+        .card-footer {
+          border-bottom-left-radius: 0;
+        }
+      }
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Card Columns
+// ----------------------------------------------------------------------------
+
+.card-columns .card {
+  margin-bottom: $spacing-md;
+}
+
+@include media-sm {
+  .card-columns {
+    -moz-column-count: 3;
+    column-count: 3;
+    -moz-column-gap: $spacing-card-padding;
+    column-gap: $spacing-card-padding;
+    orphans: 1;
+    widows: 1;
+
+    .card {
+      display: inline-block;
+      width: 100%;
+    }
+  }
+}

@@ -8,10 +8,7 @@ import { AsyncPipe } from "@angular/common";
 @Component({
   selector: "admin-toast-container",
   templateUrl: "./admin-toast-container.component.html",
-  styleUrls: [
-    "../../admin-shared.css",
-    "./admin-toast-container.component.css",
-  ],
+  styleUrls: ["./admin-toast-container.component.scss"],
   standalone: true,
   imports: [AsyncPipe],
   changeDetection: ChangeDetectionStrategy.OnPush,

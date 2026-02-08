@@ -8,7 +8,6 @@ import { AdminConfirmDialogComponent } from "../admin-confirm-dialog/admin-confi
 @Component({
   selector: "admin-confirm-dialog-host",
   templateUrl: "./admin-confirm-dialog-host.component.html",
-  styleUrls: ["../../admin-shared.css"],
   standalone: true,
   imports: [AdminConfirmDialogComponent],
 })

@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   ElementRef,
   EventEmitter,
@@ -14,12 +15,13 @@ import {
 @Component({
   selector: "admin-modal",
   templateUrl: "./admin-modal.component.html",
-  styleUrls: ["../../admin-shared.css", "./admin-modal.component.css"],
+  styleUrls: ["./admin-modal.component.scss"],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
-export class AdminModalComponent implements OnChanges {
+export class AdminModalComponent implements OnChanges, AfterViewInit {
   @ViewChild("modal", { static: true }) modalRef!: ElementRef;
+  @ViewChild("backdrop", { static: true }) backdropRef!: ElementRef;
 
   @Input() show: boolean = false;
   @Input() title: string = "";
@@ -27,6 +29,11 @@ export class AdminModalComponent implements OnChanges {
   @Input() contentTemplate?: TemplateRef<any>;
 
   @Output() closed = new EventEmitter<void>();
+
+  ngAfterViewInit(): void {
+    // Initialize backdrop as hidden
+    this.backdropRef.nativeElement.style.display = "none";
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes["show"]) {
@@ -36,15 +43,23 @@ export class AdminModalComponent implements OnChanges {
 
   openModal(): void {
     const modal = this.modalRef.nativeElement;
+    const backdrop = this.backdropRef.nativeElement;
+
     modal.classList.add("show");
     modal.style.display = "block";
+    backdrop.classList.add("show");
+    backdrop.style.display = "block";
     document.body.classList.add("modal-open");
   }
 
   closeModal(): void {
     const modal = this.modalRef.nativeElement;
+    const backdrop = this.backdropRef.nativeElement;
+
     modal.classList.remove("show");
     modal.style.display = "none";
+    backdrop.classList.remove("show");
+    backdrop.style.display = "none";
     document.body.classList.remove("modal-open");
     this.closed.emit();
   }

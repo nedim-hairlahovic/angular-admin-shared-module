@@ -1,0 +1,563 @@
+// ============================================================================
+// ADMIN UTILITIES - Mixins, Utilities, and Small UI Components
+// ============================================================================
+// Consolidated from: _mixins.scss, _utilities.scss, _admin-badges.scss, _admin-tabs.scss
+
+@use 'variables' as *;
+
+// ============================================================================
+// MIXINS
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// Box Shadow Mixins
+// ----------------------------------------------------------------------------
+
+@mixin shadow-base {
+  box-shadow: $shadow-base;
+}
+
+@mixin shadow-sm {
+  box-shadow: $shadow-sm;
+}
+
+@mixin shadow-lg {
+  box-shadow: $shadow-lg;
+}
+
+@mixin shadow-none {
+  box-shadow: none;
+}
+
+// ----------------------------------------------------------------------------
+// Focus State Mixins
+// ----------------------------------------------------------------------------
+
+@mixin focus-primary {
+  outline: 0;
+  border-color: #80bdff;
+  box-shadow: $shadow-focus-primary;
+}
+
+@mixin focus-danger {
+  outline: 0;
+  border-color: $color-danger !important;
+  box-shadow: $shadow-focus-danger !important;
+}
+
+// ----------------------------------------------------------------------------
+// Button Variant Mixins
+// ----------------------------------------------------------------------------
+
+@mixin button-variant($color, $background, $border, $hover-background, $hover-border) {
+  color: $color;
+  background-color: $background;
+  border-color: $border;
+
+  &:hover {
+    color: $color;
+    background-color: $hover-background;
+    border-color: $hover-border;
+  }
+
+  &:focus,
+  &.focus {
+    color: $color;
+    background-color: $hover-background;
+    border-color: $hover-border;
+    box-shadow: $shadow-focus;
+  }
+
+  &.disabled,
+  &:disabled {
+    color: $color;
+    background-color: $background;
+    border-color: $border;
+  }
+}
+
+@mixin button-outline-variant($color, $hover-background) {
+  color: $color;
+  border-color: $color;
+  background-color: transparent;
+
+  &:hover {
+    color: $color-white;
+    background-color: $hover-background;
+    border-color: $hover-background;
+  }
+
+  &:focus,
+  &.focus {
+    box-shadow: 0 0 0 0.2rem rgba($color, 0.5);
+  }
+
+  &.disabled,
+  &:disabled {
+    color: $color;
+    background-color: transparent;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Card Mixins
+// ----------------------------------------------------------------------------
+
+@mixin card-base {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  word-wrap: break-word;
+  background-color: $bg-primary;
+  background-clip: border-box;
+  border: 1px solid $border-color;
+  border-radius: $radius-base;
+  color: $color-secondary;
+}
+
+// ----------------------------------------------------------------------------
+// Form Control Mixins
+// ----------------------------------------------------------------------------
+
+@mixin form-control-base {
+  border: 1px solid $border-color-light;
+  background-color: $bg-input;
+  border-radius: $radius-xl;
+  color: $form-control-color;
+  box-shadow: none;
+
+  &::placeholder {
+    color: $form-placeholder-color;
+  }
+
+  &:focus {
+    @include focus-primary;
+  }
+
+  &:hover:not(:focus) {
+    border-color: $border-color-dark;
+  }
+
+  &:disabled {
+    background-color: $form-disabled-bg;
+    color: $form-disabled-color;
+    border: 1px solid $form-disabled-border;
+    cursor: default;
+    opacity: 1;
+  }
+
+  &.is-invalid {
+    border-color: $color-danger !important;
+
+    &:focus {
+      @include focus-danger;
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Responsive Breakpoint Mixins (matching Bootstrap)
+// ----------------------------------------------------------------------------
+
+@mixin media-sm {
+  @media (min-width: 576px) {
+    @content;
+  }
+}
+
+@mixin media-md {
+  @media (min-width: 768px) {
+    @content;
+  }
+}
+
+@mixin media-lg {
+  @media (min-width: 992px) {
+    @content;
+  }
+}
+
+@mixin media-xl {
+  @media (min-width: 1200px) {
+    @content;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Utility Mixins
+// ----------------------------------------------------------------------------
+
+@mixin clearfix {
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@mixin text-truncate {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+// ============================================================================
+// UTILITY CLASSES
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// Text Utilities
+// ----------------------------------------------------------------------------
+
+.text-capitalize {
+  text-transform: capitalize !important;
+}
+
+small,
+.small {
+  font-size: 80%;
+  font-weight: $font-weight-normal;
+}
+
+.text-uppercase,
+.dropdown .dropdown-menu .dropdown-header,
+.sidebar .sidebar-heading {
+  text-transform: uppercase !important;
+}
+
+// ----------------------------------------------------------------------------
+// Text Colors
+// ----------------------------------------------------------------------------
+
+.text-primary {
+  color: $color-primary !important;
+}
+
+a.text-primary {
+  &:hover,
+  &:focus {
+    color: $color-primary-dark !important;
+  }
+}
+
+.text-secondary {
+  color: $color-secondary !important;
+}
+
+a.text-secondary {
+  &:hover,
+  &:focus {
+    color: $color-secondary-hover !important;
+  }
+}
+
+.text-success {
+  color: $color-success !important;
+}
+
+a.text-success {
+  &:hover,
+  &:focus {
+    color: $color-success-hover !important;
+  }
+}
+
+.text-info {
+  color: $color-info !important;
+}
+
+a.text-info {
+  &:hover,
+  &:focus {
+    color: #258391 !important;
+  }
+}
+
+.text-warning {
+  color: $color-warning !important;
+}
+
+a.text-warning {
+  &:hover,
+  &:focus {
+    color: $color-warning-hover !important;
+  }
+}
+
+.text-danger {
+  color: $color-danger !important;
+}
+
+a.text-danger {
+  &:hover,
+  &:focus {
+    color: $color-danger-dark !important;
+  }
+}
+
+.text-light {
+  color: $color-light !important;
+}
+
+a.text-light {
+  &:hover,
+  &:focus {
+    color: #c2cbe5 !important;
+  }
+}
+
+.text-dark {
+  color: $color-dark !important;
+}
+
+a.text-dark {
+  &:hover,
+  &:focus {
+    color: #373840 !important;
+  }
+}
+
+.text-body {
+  color: $text-muted !important;
+}
+
+.text-muted {
+  color: $text-muted !important;
+}
+
+.text-black-50 {
+  color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.text-white-50 {
+  color: rgba(255, 255, 255, .5) !important;
+}
+
+.text-hide {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+
+// ----------------------------------------------------------------------------
+// Font Weight Utilities
+// ----------------------------------------------------------------------------
+
+.font-weight-light {
+  font-weight: $font-weight-light !important;
+}
+
+.font-weight-lighter {
+  font-weight: lighter !important;
+}
+
+.font-weight-normal {
+  font-weight: $font-weight-normal !important;
+}
+
+.font-weight-bold {
+  font-weight: $font-weight-bold !important;
+}
+
+.font-weight-bolder {
+  font-weight: bolder !important;
+}
+
+.font-italic {
+  font-style: italic !important;
+}
+
+// ----------------------------------------------------------------------------
+// Font Awesome Icons
+// ----------------------------------------------------------------------------
+
+.fa-sm {
+  font-size: .875em;
+}
+
+// ============================================================================
+// UI COMPONENTS
+// ============================================================================
+
+// ----------------------------------------------------------------------------
+// Badges
+// ----------------------------------------------------------------------------
+
+.badge {
+  display: inline-block;
+  font-size: 75%;
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: $radius-base;
+  transition: $transition-color;
+}
+
+.badge-primary {
+  color: $color-white;
+  background-color: $color-primary;
+}
+
+.badge-success {
+  color: $color-white;
+  background-color: $color-success;
+}
+
+.badge-secondary {
+  color: $color-white;
+  background-color: $color-secondary;
+}
+
+.badge-info {
+  color: $color-white;
+  background-color: $color-info;
+}
+
+.badge-warning {
+  color: $color-white;
+  background-color: $color-warning;
+}
+
+.badge-danger {
+  color: $color-white;
+  background-color: $color-danger;
+}
+
+// ----------------------------------------------------------------------------
+// Custom Tooltip
+// ----------------------------------------------------------------------------
+
+.custom-tooltip {
+  position: absolute;
+  transform: translateX(-50%);
+  background-color: #333;
+  color: $color-white;
+  padding: 4px 8px;
+  font-size: $font-size-sm;
+  border-radius: 4px;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: $z-index-dropdown;
+  opacity: 0;
+  animation: fadeIn 0.15s forwards;
+
+  // Arrow at the bottom
+  &::after {
+    content: '';
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: -5px;
+    width: 0;
+    height: 0;
+    border-left: 6px solid transparent;
+    border-right: 6px solid transparent;
+    border-top: 6px solid #333;
+  }
+}
+
+@keyframes fadeIn {
+  to {
+    opacity: 1;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Tabs
+// ----------------------------------------------------------------------------
+
+.tabs-card {
+  border: 0;
+}
+
+.admin-tabs {
+  .nav-tabs {
+    border-bottom: 1px solid $tab-border-color;
+  }
+
+  .nav-link {
+    margin-bottom: 0;
+    border: none;
+    font-size: $font-size-md;
+    font-weight: $font-weight-medium;
+    line-height: $line-height-base;
+    color: $text-muted !important;
+    margin-left: 10px;
+  }
+
+  .nav-tabs .nav-link {
+    &.active,
+    &.active:hover {
+      border-bottom: 2px solid $tab-active-border !important;
+      color: $tab-active-color !important;
+      background-color: transparent;
+      box-shadow: none;
+    }
+
+    &:hover {
+      border-bottom: 2px solid $tab-hover-border !important;
+      color: $tab-hover-color !important;
+      background-color: transparent;
+      box-shadow: 0 .1rem .2rem rgba(0, 22, 41, .09);
+    }
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Toast
+// ----------------------------------------------------------------------------
+
+.toast-body {
+  padding: $spacing-md;
+}
+
+// ----------------------------------------------------------------------------
+// Modal
+// ----------------------------------------------------------------------------
+
+.modal-open {
+  overflow: hidden;
+
+  .modal {
+    overflow-x: hidden;
+    overflow-y: auto;
+  }
+}
+
+
+// ----------------------------------------------------------------------------
+// Display Utilities (for small screens)
+// ----------------------------------------------------------------------------
+
+@include media-sm {
+  .d-sm-inline-block {
+    display: inline-block !important;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Background Gradient
+// ----------------------------------------------------------------------------
+
+.bg-gradient-primary {
+  background-color: $color-primary;
+  background-image: linear-gradient(180deg, $color-primary 10%, $color-primary-dark 100%);
+  background-size: cover;
+}

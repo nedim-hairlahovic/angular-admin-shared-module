@@ -1,0 +1,307 @@
+@use 'variables' as *;
+
+// ============================================================================
+// ADMIN-SHARED COMPONENTS - Theme-Specific Styles
+// ============================================================================
+// This file contains theme-dependent styles for admin-shared components.
+// Structural/layout CSS remains in component files.
+
+// ----------------------------------------------------------------------------
+// Admin Spinner
+// ----------------------------------------------------------------------------
+// (no theme-dependent styles - only structural layout in component file)
+
+// ----------------------------------------------------------------------------
+// Admin Data Form
+// ----------------------------------------------------------------------------
+.form-array-item .form-control {
+    background-color: $bg-input;
+}
+
+.form-array-item .form-control:focus {
+    box-shadow: $shadow-focus-primary;
+}
+
+// ----------------------------------------------------------------------------
+// Admin Details View
+// ----------------------------------------------------------------------------
+.entity-meta a {
+    color: $color-primary;
+}
+
+.entity-meta a:hover {
+    color: $color-primary-dark;
+}
+
+.value {
+    font-weight: $font-weight-bold;
+    color: $table-body-color;
+}
+
+.subtle,
+.muted-note {
+    color: $text-secondary;
+}
+
+// ----------------------------------------------------------------------------
+// Admin Modal
+// ----------------------------------------------------------------------------
+.modal {
+    color: $color-secondary;
+}
+
+.modal-backdrop {
+    background-color: $bg-overlay;
+}
+
+.modal-backdrop.show {
+    opacity: 1;
+}
+
+.modal-title {
+    line-height: $line-height-base;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-medium;
+}
+
+// ----------------------------------------------------------------------------
+// Admin Breadcrumbs
+// ----------------------------------------------------------------------------
+.custom-breadcrumb .breadcrumb {
+    margin-bottom: $spacing-base;
+}
+
+.custom-breadcrumb .breadcrumb-item+.breadcrumb-item::before {
+    color: $breadcrumb-divider-color;
+    padding: 0 $spacing-sm 0 0;
+}
+
+.custom-breadcrumb .breadcrumb-item a {
+    color: $color-primary;
+    transition: $transition-fast;
+}
+
+.custom-breadcrumb .breadcrumb-item a:hover {
+    color: $color-primary-dark;
+}
+
+.custom-breadcrumb .breadcrumb-item.active {
+    color: $text-secondary;
+}
+
+// ----------------------------------------------------------------------------
+// Admin Searchable Select
+// ----------------------------------------------------------------------------
+.input-container {
+    background-color: $bg-input;
+}
+
+.input-container .form-control {
+    background-color: $bg-input;
+}
+
+.input-container .form-control:focus {
+    background-color: $color-white;
+    box-shadow: $shadow-focus-primary;
+}
+
+.input-container .form-control:disabled {
+    background-color: $color-white;
+}
+
+.input-container .overlay {
+    background-color: $bg-input;
+    z-index: $z-index-overlay;
+    border: 1px solid $border-color-light;
+    border-radius: $radius-base;
+    color: $text-body;
+}
+
+.input-container .overlay .clear-btn {
+    color: $text-secondary;
+    z-index: $z-index-overlay-clickable;
+    transition: $transition-fast;
+}
+
+.input-container .overlay .clear-btn:hover {
+    color: $text-body !important;
+}
+
+.input-container .dropdown-menu>li:first-of-type .dropdown-item:hover {
+    border-top-left-radius: $radius-xl;
+    border-top-right-radius: $radius-xl;
+}
+
+.input-container .dropdown-menu>li:last-of-type .dropdown-item:hover {
+    border-bottom-left-radius: $radius-xl;
+    border-bottom-right-radius: $radius-xl;
+}
+
+// ----------------------------------------------------------------------------
+// Admin Toast Container
+// ----------------------------------------------------------------------------
+.toast {
+    border-radius: $radius-base;
+    background: $toast-bg;
+    color: $toast-color;
+    border: 1px solid $toast-border;
+    box-shadow: $shadow-toast;
+    line-height: $line-height-relaxed;
+    transition: $transition-fast;
+}
+
+.toast-header {
+    border-bottom: 1px solid $toast-header-border;
+    font-weight: $font-weight-bold;
+}
+
+.toast-message {
+    color: $color-dark;
+}
+
+.toast-close {
+    font-size: $font-size-xl;
+}
+
+.toast.success {
+    border-left: .25rem solid $color-success;
+}
+
+.toast.warning {
+    border-left: .25rem solid $color-warning;
+}
+
+.toast.info {
+    border-left: .25rem solid $color-info;
+}
+
+.toast.success .toast-header {
+    color: $color-success;
+}
+
+.toast.warning .toast-header {
+    color: $color-warning;
+}
+
+.toast.info .toast-header {
+    color: $color-info;
+}
+
+// ----------------------------------------------------------------------------
+// Admin Data Table
+// ----------------------------------------------------------------------------
+.table th,
+.table td {
+    padding: $spacing-md;
+}
+
+.table-sm th,
+.table-sm td {
+    padding: .25rem;
+}
+
+.table th {
+    color: $table-header-color;
+    font-weight: $font-weight-bold;
+}
+
+.table tbody td {
+    color: $table-body-color;
+}
+
+.table-search .form-control {
+    font-size: $font-size-base;
+    color: $gray-700;
+}
+
+.table-search .form-control:focus {
+    color: $gray-700;
+    background-color: $color-white;
+    box-shadow: $shadow-focus-primary;
+}
+
+.table-footer {
+    color: $text-secondary;
+}
+
+.pagination {
+    border-radius: $radius-base;
+}
+
+.page-link {
+    padding: $spacing-sm $spacing-md;
+    color: $pagination-color;
+    background-color: $pagination-bg;
+    border: 1px solid $pagination-border;
+}
+
+.page-link:hover {
+    color: $color-primary-dark;
+    background-color: $pagination-hover-bg;
+    border-color: $pagination-border;
+}
+
+.page-link:focus {
+    box-shadow: $shadow-focus;
+}
+
+.page-item:first-child .page-link {
+    border-top-left-radius: $radius-base;
+    border-bottom-left-radius: $radius-base;
+}
+
+.page-item:last-child .page-link {
+    border-top-right-radius: $radius-base;
+    border-bottom-right-radius: $radius-base;
+}
+
+.page-item.active .page-link {
+    color: $color-white;
+    background-color: $pagination-active-bg;
+    border-color: $pagination-active-bg;
+}
+
+.page-item.disabled .page-link {
+    color: $pagination-disabled-color;
+    background-color: $pagination-bg;
+    border-color: $pagination-border;
+}
+
+.pagination-lg .page-link {
+    padding: $spacing-md $spacing-xl;
+    font-size: $font-size-xl;
+    line-height: $line-height-base;
+}
+
+.pagination-lg .page-item:first-child .page-link {
+    border-top-left-radius: $radius-lg;
+    border-bottom-left-radius: $radius-lg;
+}
+
+.pagination-lg .page-item:last-child .page-link {
+    border-top-right-radius: $radius-lg;
+    border-bottom-right-radius: $radius-lg;
+}
+
+.pagination-sm .page-link {
+    padding: $spacing-xs $spacing-sm;
+    line-height: $line-height-base;
+}
+
+.pagination-sm .page-item:first-child .page-link {
+    border-top-left-radius: $radius-sm;
+    border-bottom-left-radius: $radius-sm;
+}
+
+.pagination-sm .page-item:last-child .page-link {
+    border-top-right-radius: $radius-sm;
+    border-bottom-right-radius: $radius-sm;
+}
+
+.clear-btn {
+    color: $text-disabled;
+}
+
+.clear-btn:hover {
+    color: $text-secondary;
+}

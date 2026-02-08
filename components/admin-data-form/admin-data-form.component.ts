@@ -32,7 +32,7 @@ import { AdminSearchableSelectComponent } from "../admin-searchable-select/admin
 @Component({
   selector: "admin-data-form",
   templateUrl: "./admin-data-form.component.html",
-  styleUrls: ["../../admin-shared.css", "./admin-data-form.component.css"],
+  styleUrls: ["./admin-data-form.component.scss"],
   standalone: true,
   imports: [ReactiveFormsModule, AdminSearchableSelectComponent],
 })

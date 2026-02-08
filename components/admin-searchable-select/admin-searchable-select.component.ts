@@ -21,7 +21,7 @@ import { ClickOutsideDirective } from "../../directives/click-outside.directive"
 @Component({
   selector: "admin-searchable-select",
   templateUrl: "./admin-searchable-select.component.html",
-  styleUrls: ["./admin-searchable-select.component.css"],
+  styleUrls: ["./admin-searchable-select.component.scss"],
   standalone: true,
   imports: [FormsModule, ClickOutsideDirective],
 })

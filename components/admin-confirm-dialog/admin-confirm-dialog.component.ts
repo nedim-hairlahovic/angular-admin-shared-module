@@ -5,7 +5,6 @@ import { ConfirmDialogOptions } from "../../models/confirm-dialog";
 @Component({
   selector: "admin-confirm-dialog",
   templateUrl: "./admin-confirm-dialog.component.html",
-  styleUrls: ["../../admin-shared.css"],
   standalone: true,
 })
 export class AdminConfirmDialogComponent {

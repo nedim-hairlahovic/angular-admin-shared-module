@@ -21,13 +21,11 @@
 }
 
 .form-array-item .form-control {
-    background-color: #fafafa;
     transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
 .form-array-item .form-control:focus {
     border-color: #80bdff;
-    box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.15);
     outline: none;
 }
 

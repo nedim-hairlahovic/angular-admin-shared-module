@@ -1,21 +1,13 @@
 .input-container {
     position: relative;
-    background-color: #fafafa;
-}
-
-.input-container .form-control {
-    background-color: #fafafa;
 }
 
 .input-container .form-control:focus {
-    background-color: #fff;
     border-color: #80bdff;
-    box-shadow: 0 0 0 0.1rem rgba(0, 123, 255, 0.15);
     outline: none;
 }
 
 .input-container .form-control:disabled {
-    background-color: #fff;
     opacity: 1;
 }
 
@@ -25,15 +17,10 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: #fafafa;
-    z-index: 10;
     pointer-events: none;
-    border: 1px solid #e5e7eb;
-    border-radius: 0.35rem;
     align-items: center;
     display: none;
     padding-left: 10px;
-    color: #4b5563;
 }
 
 .input-container .overlay.visible {
@@ -44,18 +31,11 @@
     pointer-events: all;
     border: none;
     background: transparent;
-    color: #6b7280;
     cursor: pointer;
     padding: 0;
-    z-index: 11;
     position: absolute;
     right: 10px;
     top: 4px;
-    transition: color .15s ease, transform .15s ease;
-}
-
-.input-container .overlay .clear-btn:hover {
-    color: #4b5563 !important;
 }
 
 .clear-btn i {
@@ -79,16 +59,6 @@
     color: #212529;
     border-radius: 0;
     cursor: pointer;
-}
-
-.input-container .dropdown-menu>li:first-of-type .dropdown-item:hover {
-    border-top-left-radius: 6px;
-    border-top-right-radius: 6px;
-}
-
-.input-container .dropdown-menu>li:last-of-type .dropdown-item:hover {
-    border-bottom-left-radius: 6px;
-    border-bottom-right-radius: 6px;
 }
 
 .dropdown-item small {

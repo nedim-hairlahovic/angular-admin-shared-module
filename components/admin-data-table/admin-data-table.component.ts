@@ -25,7 +25,7 @@ import { getObjectValueByPath } from "../../utils/object.utils";
 @Component({
   selector: "admin-data-table",
   templateUrl: "./admin-data-table.component.html",
-  styleUrls: ["../../admin-shared.css", "./admin-data-table.component.css"],
+  styleUrls: ["./admin-data-table.component.scss"],
   imports: [TooltipDirective, CommonModule, RouterModule, ReactiveFormsModule],
   standalone: true,
 })

@@ -1,0 +1,220 @@
+// ============================================================================
+// DESIGN TOKENS - Football Stats Frontend
+// ============================================================================
+// This file contains all design tokens used throughout the application.
+// DO NOT import Bootstrap here - this is pure token definition.
+
+// ----------------------------------------------------------------------------
+// Color Palette
+// ----------------------------------------------------------------------------
+
+// Primary Colors
+$color-primary:       #4e73df;
+$color-primary-hover: #2e59d9;
+$color-primary-dark:  #224abe;
+
+// Secondary Colors
+$color-secondary:       #858796;
+$color-secondary-hover: #60616f;
+
+// Semantic Colors
+$color-success:       #1cc88a;
+$color-success-hover: #13855c;
+$color-danger:        #e74a3b;
+$color-danger-hover:  #e02d1b;
+$color-danger-dark:   #be2617;
+$color-warning:       #f6c23e;
+$color-warning-hover: #dda20a;
+$color-info:          #36b9cc;
+$color-info-hover:    #2c9faf;
+$color-info-active:   #2a96a5;
+
+// Neutral Colors
+$color-white:  #fff;
+$color-black:  #000;
+$color-light:  #f8f9fc;
+$color-dark:   #5a5c69;
+
+// Grays (matching current design)
+$gray-50:  #fafafa;
+$gray-100: #f8f9fc;
+$gray-200: #eaecf4;
+$gray-300: #dddfeb;
+$gray-400: #e3e6f0;
+$gray-500: #b7b9cc;
+$gray-600: #858796;
+$gray-700: #6e707e;
+$gray-800: #5a5c69;
+$gray-900: #3a3b45;
+
+// Borders
+$border-color-light:   #e5e7eb;
+$border-color:         #e3e6f0;
+$border-color-medium:  #dddfeb;
+$border-color-dark:    #d1d5db;
+
+// Text Colors
+$text-primary:   #444;
+$text-secondary: #6b7280;
+$text-muted:     #858796;
+$text-heading:   #374151;
+$text-body:      #4b5563;
+$text-disabled:  #9ca3af;
+
+// Background Colors
+$bg-primary:    #fff;
+$bg-secondary:  #f8f9fc;
+$bg-input:      #fafafa;
+$bg-disabled:   #f0f0f0;
+$bg-overlay:    rgba(0, 0, 0, 0.6);
+
+// Link Colors
+$link-color:       $color-primary;
+$link-hover-color: $color-primary-dark;
+
+// ----------------------------------------------------------------------------
+// Spacing System
+// ----------------------------------------------------------------------------
+
+$spacing-xs:   0.25rem;  // 4px
+$spacing-sm:   0.5rem;   // 8px
+$spacing-md:   0.75rem;  // 12px
+$spacing-base: 1rem;     // 16px
+$spacing-lg:   1.25rem;  // 20px
+$spacing-xl:   1.5rem;   // 24px
+$spacing-2xl:  2rem;     // 32px
+$spacing-3xl:  3rem;     // 48px
+
+// Specific spacing values from current design
+$spacing-card-padding: 1.25rem;
+$spacing-card-header:  0.75rem 1.25rem;
+
+// ----------------------------------------------------------------------------
+// Border Radius
+// ----------------------------------------------------------------------------
+
+$radius-sm:   0.2rem;
+$radius-base: 0.35rem;
+$radius-md:   0.35rem;
+$radius-lg:   0.3rem;
+$radius-xl:   6px;
+
+// ----------------------------------------------------------------------------
+// Shadows
+// ----------------------------------------------------------------------------
+
+$shadow-base: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
+$shadow-sm:   0 0.125rem 0.25rem 0 rgba(58, 59, 69, 0.2);
+$shadow-lg:   0 1rem 3rem rgba(0, 0, 0, 0.175);
+$shadow-toast: 0 4px 16px rgba(0, 0, 0, 0.12);
+$shadow-focus: 0 0 0 0.2rem rgba(78, 115, 223, 0.25);
+$shadow-focus-primary: 0 0 0 0.1rem rgba(0, 123, 255, 0.15);
+$shadow-focus-danger:  0 0 0 0.1rem rgba(231, 74, 59, 0.25);
+
+// ----------------------------------------------------------------------------
+// Typography
+// ----------------------------------------------------------------------------
+
+$font-family-base: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+
+$font-size-xs:   0.65rem;
+$font-size-sm:   0.75rem;
+$font-size-base: 0.85rem;
+$font-size-md:   1rem;
+$font-size-lg:   1.1rem;
+$font-size-xl:   1.25rem;
+$font-size-2xl:  1.75rem;
+
+$font-weight-light:  300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-bold:   700;
+$font-weight-bolder: 800;
+
+$line-height-tight: 1.2;
+$line-height-base:  1.5;
+$line-height-relaxed: 1.4;
+
+// ----------------------------------------------------------------------------
+// Layout
+// ----------------------------------------------------------------------------
+
+$sidebar-width-collapsed: 6.5rem;
+$sidebar-width-expanded:  14rem;
+$topbar-height:           4.375rem;
+$container-padding:       1.5rem;
+
+// ----------------------------------------------------------------------------
+// Z-Index Scale
+// ----------------------------------------------------------------------------
+
+$z-index-dropdown:  1000;
+$z-index-overlay:   10;
+$z-index-overlay-clickable: 11;
+$z-index-modal:     1050;
+$z-index-toast:     1060;
+
+// ----------------------------------------------------------------------------
+// Transitions
+// ----------------------------------------------------------------------------
+
+$transition-base:   all 0.15s ease-in-out;
+$transition-fast:   all 0.2s ease;
+$transition-medium: all 0.25s ease-out;
+$transition-color:  color 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+// ----------------------------------------------------------------------------
+// Animation Durations (for CSS animation property - excludes 'all' keyword)
+// ----------------------------------------------------------------------------
+
+$animation-duration-fast:   0.2s ease;
+$animation-duration-medium: 0.25s ease-out;
+$animation-duration-slow:   0.35s ease-out;
+
+// ----------------------------------------------------------------------------
+// Component-Specific Tokens
+// ----------------------------------------------------------------------------
+
+// Buttons
+$btn-action-color:       #6b7280;
+$btn-action-border:      #858796;
+$btn-padding-sm:         0.25rem 0.5rem;
+$btn-padding-action:     0.15rem 0.5rem;
+
+// Forms
+$form-label-color:       #444;
+$form-control-color:     #4b5563;
+$form-placeholder-color: #9ca3af;
+$form-disabled-bg:       #f0f0f0;
+$form-disabled-color:    #9ca3af;
+$form-disabled-border:   #d1d5db;
+
+// Tables
+$table-header-color:     #374151;
+$table-body-color:       #444;
+$table-border-color:     #dddfeb;
+$table-hover-bg:         rgba(224, 229, 236, 0.25);
+
+// Pagination
+$pagination-color:       #4e73df;
+$pagination-bg:          #fff;
+$pagination-border:      #dddfeb;
+$pagination-hover-bg:    #eaecf4;
+$pagination-active-bg:   #4e73df;
+$pagination-disabled-color: #858796;
+
+// Toasts
+$toast-bg:           #ffffff;
+$toast-color:        #4e4e4e;
+$toast-border:       rgba(0, 0, 0, 0.08);
+$toast-header-border: rgba(0, 0, 0, 0.05);
+
+// Tabs
+$tab-border-color:    #eceef0;
+$tab-active-color:    #2e59d9;
+$tab-active-border:   #2e59d9;
+$tab-hover-color:     #4e73df;
+$tab-hover-border:    #4e73df;
+
+// Breadcrumbs
+$breadcrumb-divider-color: #9ca3af;

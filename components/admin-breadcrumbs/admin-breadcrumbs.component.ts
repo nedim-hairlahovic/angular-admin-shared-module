@@ -6,7 +6,7 @@ import { RouterLink } from "@angular/router";
 @Component({
   selector: "admin-breadcrumbs",
   templateUrl: "./admin-breadcrumbs.component.html",
-  styleUrl: "./admin-breadcrumbs.component.css",
+  styleUrl: "./admin-breadcrumbs.component.scss",
   imports: [RouterLink],
   standalone: true,
 })

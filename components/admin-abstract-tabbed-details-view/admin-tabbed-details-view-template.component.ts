@@ -17,7 +17,6 @@ import { AdminBreadcrumbsComponent } from "../admin-breadcrumbs/admin-breadcrumb
 @Component({
   selector: "admin-tabbed-details-view-template",
   templateUrl: "./admin-tabbed-details-view-template.component.html",
-  styleUrl: "../../admin-shared.css",
   standalone: true,
   imports: [AdminBreadcrumbsComponent],
 })

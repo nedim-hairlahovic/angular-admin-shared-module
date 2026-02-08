@@ -1,0 +1,123 @@
+// ============================================================================
+// ADMIN FORMS - Form Controls, Validation, and Inline Forms
+// ============================================================================
+
+@use 'variables' as *;
+@use 'sb-admin2-utilities' as *;
+
+// ----------------------------------------------------------------------------
+// Form Controls
+// ----------------------------------------------------------------------------
+
+.form-control {
+  @include form-control-base;
+}
+
+.form-select {
+  @include form-control-base;
+
+  &:disabled {
+    background-image: none;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Form Labels
+// ----------------------------------------------------------------------------
+
+.form-label,
+.form-check-label {
+  font-weight: $font-weight-medium;
+  color: $form-label-color;
+}
+
+.form-label {
+  margin-bottom: $radius-base;
+}
+
+// ----------------------------------------------------------------------------
+// Form Control Placeholder
+// ----------------------------------------------------------------------------
+
+.form-control {
+  &::placeholder {
+    color: $form-placeholder-color;
+  }
+
+  &::-webkit-input-placeholder {
+    color: $text-muted;
+    opacity: 1;
+  }
+}
+
+// ----------------------------------------------------------------------------
+// Form Inline
+// ----------------------------------------------------------------------------
+
+.form-inline {
+  display: flex;
+  flex-flow: row wrap;
+  align-items: center;
+
+  .form-check {
+    width: 100%;
+  }
+}
+
+@include media-sm {
+  .form-inline {
+    label {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 0;
+    }
+
+    .form-group {
+      display: flex;
+      flex: 0 0 auto;
+      flex-flow: row wrap;
+      align-items: center;
+      margin-bottom: 0;
+    }
+
+    .form-control {
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .form-control-plaintext {
+      display: inline-block;
+    }
+
+    .input-group,
+    .custom-select {
+      width: auto;
+    }
+
+    .form-check {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: auto;
+      padding-left: 0;
+    }
+
+    .form-check-input {
+      position: relative;
+      flex-shrink: 0;
+      margin-top: 0;
+      margin-right: $spacing-xs;
+      margin-left: 0;
+    }
+
+    .custom-control {
+      align-items: center;
+      justify-content: center;
+    }
+
+    .custom-control-label {
+      margin-bottom: 0;
+    }
+  }
+}

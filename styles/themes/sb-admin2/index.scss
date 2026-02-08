@@ -1,0 +1,22 @@
+// ============================================================================
+// CUSTOM ADMIN THEME
+// ============================================================================
+// Custom admin dashboard theme built on SB Admin 2 foundation
+// The look and feel is inspired by SB Admin 2, but includes extensive custom
+// components, utilities, and design system enhancements tailored for this app.
+// Foundation: https://startbootstrap.com/theme/sb-admin-2
+
+// 1. Bootstrap customization
+@use 'bootstrap-overrides' as *;           // SB Admin 2 Bootstrap variables
+@use 'bootstrap/scss/bootstrap' as *;      // Bootstrap with SB Admin 2 overrides
+
+// 2. Theme design system
+@use 'variables' as *;                     // SB Admin 2 design tokens
+@use 'sb-admin2-utilities' as *;           // Mixins, utilities, badges, tabs, toasts, modals
+
+// 3. Theme component modules
+@use 'sb-admin2-core' as *;               // Layout, sidebar, topbar, wrapper, footer
+@use 'sb-admin2-cards' as *;              // Card components and variations
+@use 'sb-admin2-buttons' as *;            // Button base, variants, and sizes
+@use 'sb-admin2-forms' as *;              // Form controls, labels, validation
+@use 'sb-admin2-admin-components' as *;   // Admin-shared component styles

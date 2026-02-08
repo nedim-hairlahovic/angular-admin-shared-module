@@ -3,7 +3,7 @@ import { Component, Input, OnInit } from "@angular/core";
 @Component({
   selector: "admin-spinner",
   templateUrl: "./admin-spinner.component.html",
-  styleUrls: ["./admin-spinner.component.css"],
+  styleUrls: ["./admin-spinner.component.scss"],
   standalone: true,
 })
 export class AdminSpinnerComponent implements OnInit {
@@ -21,7 +21,7 @@ export class AdminSpinnerComponent implements OnInit {
     return this.size === "lg"
       ? "spinner-border-lg"
       : this.size === "sm"
-      ? "spinner-border-sm"
-      : "";
+        ? "spinner-border-sm"
+        : "";
   }
 }
