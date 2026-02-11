@@ -15,6 +15,7 @@ export interface DetailsViewField {
   label: string;
   value?: string;
   description?: string;
+  fullWidth?: boolean;
 }
 
 export interface DetailsViewConfigRouteConfig<T> {

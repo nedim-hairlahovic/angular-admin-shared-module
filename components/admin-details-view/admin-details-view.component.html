@@ -27,7 +27,7 @@
 
         <div class="detail-grid" aria-live="polite">
             @for (field of data.fields; track $index) {
-            <div class="field pb-3">
+            <div class="field pb-3" [class.full-width]="field.fullWidth">
                 <div class="label text-muted">{{ field.label }}</div>
                 <div>
                     <div class="value">{{ field.value || '-' }}</div>
