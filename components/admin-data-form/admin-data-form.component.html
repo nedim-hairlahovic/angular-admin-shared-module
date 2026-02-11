@@ -102,7 +102,7 @@
                         <!-- Array Types -->
                         @if (input.mode === DataFormControlMode.Array) {
                         <div [formArrayName]="input.name" class="form-array-section">
-                            <label class="form-label mb-2 fw-semibold">{{ input.label }}</label>
+                            <label class="form-label mb-2">{{ input.label }}</label>
 
                             <div class="form-array-list">
                                 @for (el of getFormArray(input.name).controls; track $index; let i = $index) {
