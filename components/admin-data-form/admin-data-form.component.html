@@ -105,7 +105,7 @@
                             <label class="form-label mb-2">{{ input.label }}</label>
 
                             <div class="form-array-list">
-                                @for (el of getFormArray(input.name).controls; track $index; let i = $index) {
+                                @for (el of getFormArray(input.name).controls; track el; let i = $index) {
                                 <div class="form-array-item">
                                     <div class="form-array-field">
 
