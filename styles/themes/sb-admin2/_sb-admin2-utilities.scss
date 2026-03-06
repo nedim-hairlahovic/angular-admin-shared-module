@@ -454,7 +454,7 @@ a.text-dark {
   border-radius: 4px;
   pointer-events: none;
   white-space: nowrap;
-  z-index: $z-index-dropdown;
+  z-index: $z-index-modal + 100;
   opacity: 0;
   animation: fadeIn 0.15s forwards;
 
