@@ -19,6 +19,7 @@ import { AdminModalComponent } from "./components/admin-modal/admin-modal.compon
 import { AdminToastContainerComponent } from "./components/admin-toast-container/admin-toast-container.component";
 import { AdminConfirmDialogComponent } from "./components/admin-confirm-dialog/admin-confirm-dialog.component";
 import { AdminConfirmDialogHostComponent } from "./components/admin-confirm-dialog-host/admin-confirm-dialog-host.component";
+import { AdminStatusIconComponent } from "./components/admin-status-icon/admin-status-icon.component";
 
 const ADMIN_SHARED_STANDALONE = [
   AdminDataFormComponent,
@@ -33,6 +34,7 @@ const ADMIN_SHARED_STANDALONE = [
   AdminTabbedDetailsViewTemplateComponent,
   AdminToastContainerComponent,
   TooltipDirective,
+  AdminStatusIconComponent,
 ];
 
 @NgModule({
