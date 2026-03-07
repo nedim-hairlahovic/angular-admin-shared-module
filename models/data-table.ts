@@ -1,4 +1,4 @@
-import { PipeTransform } from "@angular/core";
+import { PipeTransform, TemplateRef } from "@angular/core";
 
 import { CardButton } from "./data-card";
 import { UrlConfig } from "./url-config";
@@ -30,6 +30,7 @@ export interface DataTableColumn<T> {
   badge?: {
     [key: string]: string; // mapping value → bootstrap class (success, danger, warning, etc.)
   };
+  template?: TemplateRef<{ $implicit: T }>;
 }
 
 export interface DataTableRouteConfig<T> {
