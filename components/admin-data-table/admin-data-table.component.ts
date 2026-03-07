@@ -22,6 +22,8 @@ import { ADMIN_BACKEND_ADAPTER } from "../../config/backend/backend-adapter";
 import { PagedData, Pagination } from "../../config/backend/backend-types";
 import { getObjectValueByPath } from "../../utils/object.utils";
 
+const DEFAULT_TABLE_CLASSES = ["table-bordered", "table-hover"];
+
 @Component({
   selector: "admin-data-table",
   templateUrl: "./admin-data-table.component.html",
@@ -64,6 +66,11 @@ export class AdminDataTableComponent<T> implements OnChanges {
 
   get items(): T[] {
     return Array.isArray(this.data) ? this.data : (this.data?.items ?? []);
+  }
+
+  get tableClass(): string {
+    const classes = this.config?.tableClasses ?? DEFAULT_TABLE_CLASSES;
+    return ["table", ...classes].join(" ");
   }
 
   ngOnChanges(changes: SimpleChanges): void {

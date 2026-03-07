@@ -10,6 +10,8 @@ export interface DataTableConfig<T> {
   dataOptions?: DataTableDataOptions;
   idKey?: string;
   buttons?: CardButton[];
+  tableClasses?: string[];
+  theadClass?: string;
 }
 
 export interface DataTableColumn<T> {

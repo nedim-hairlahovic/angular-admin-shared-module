@@ -46,8 +46,8 @@
 
         <!-- Table -->
         <div class="table-responsive">
-            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                <thead>
+            <table [class]="tableClass" width="100%" cellspacing="0">
+                <thead [class]="config.theadClass">
                     <tr>
                         @for (col of config.columns; track $index) {
                         <th [ngStyle]="getHeaderStyle(col)" [class]="col.className">
@@ -178,8 +178,8 @@
     <div>
 
         <div class="table-responsive">
-            <table class="table table-bordered table-hover" width="100%" cellspacing="0">
-                <thead>
+            <table [class]="tableClass" width="100%" cellspacing="0">
+                <thead [class]="config.theadClass">
                     <tr>
                         @for (col of config.columns; track $index) {
                         <th [ngStyle]="getHeaderStyle(col)" [class]="col.className">
