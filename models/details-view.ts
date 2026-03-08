@@ -14,8 +14,15 @@ export interface DetailsViewInfo {
 export interface DetailsViewField {
   label: string;
   value?: string;
+  links?: DetailsViewLink[];
   description?: string;
   fullWidth?: boolean;
+}
+
+export interface DetailsViewLink {
+  label: string;
+  href: string;
+  openInNewTab?: boolean;
 }
 
 export interface DetailsViewConfigRouteConfig<T> {

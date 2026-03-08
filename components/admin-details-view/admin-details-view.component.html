@@ -30,7 +30,19 @@
             <div class="field pb-3" [class.full-width]="field.fullWidth">
                 <div class="label text-muted">{{ field.label }}</div>
                 <div>
+                    @if (field.links?.length) {
+                    <div class="value">
+                        @for (link of field.links; track $index; let last = $last) {
+                        @if (link.openInNewTab) {
+                        <a [href]="link.href" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
+                        } @else {
+                        <a [routerLink]="link.href">{{ link.label }}</a>
+                        }@if (!last) { <span class="text-muted mx-1">·</span> }
+                        }
+                    </div>
+                    } @else {
                     <div class="value">{{ field.value || '-' }}</div>
+                    }
                     @if (field.description) {
                     <div class="muted-note">{{ field.description }}</div>
                     }
