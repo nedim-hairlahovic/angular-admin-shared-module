@@ -1,4 +1,4 @@
-import { PipeTransform, TemplateRef } from "@angular/core";
+import { TemplateRef } from "@angular/core";
 
 import { CardButton } from "./data-card";
 import { UrlConfig } from "./url-config";
@@ -22,10 +22,6 @@ export interface DataTableColumn<T> {
   width?: string; // in percentages
   link?: (row: T) => string;
   sortable?: boolean;
-  pipe?: {
-    instance: PipeTransform;
-    args?: any[];
-  };
   actions?: DataTableAction[];
   badge?: {
     [key: string]: string; // mapping value → bootstrap class (success, danger, warning, etc.)

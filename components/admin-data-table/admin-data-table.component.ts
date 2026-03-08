@@ -5,7 +5,6 @@ import {
   Input,
   OnChanges,
   Output,
-  PipeTransform,
   SimpleChanges,
 } from "@angular/core";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
@@ -202,10 +201,6 @@ export class AdminDataTableComponent<T> implements OnChanges {
       return this.getText(row, column.value);
     }
     return "";
-  }
-
-  applyPipe(value: any, pipe?: { instance: PipeTransform; args?: any[] }): any {
-    return pipe ? pipe.instance.transform(value, ...(pipe.args ?? [])) : value;
   }
 
   emitFetchDataEvent(): void {
