@@ -3,6 +3,7 @@ import {
   ElementRef,
   HostListener,
   Input,
+  OnChanges,
   OnDestroy,
   Renderer2,
 } from "@angular/core";
@@ -11,12 +12,21 @@ import {
   selector: "[tooltip]",
   standalone: true,
 })
-export class TooltipDirective implements OnDestroy {
+export class TooltipDirective implements OnChanges, OnDestroy {
   @Input("tooltip") tooltipText!: string;
 
   private tooltipEl?: HTMLElement;
 
-  constructor(private el: ElementRef, private renderer: Renderer2) {}
+  constructor(
+    private el: ElementRef,
+    private renderer: Renderer2,
+  ) {}
+
+  ngOnChanges(): void {
+    if (this.tooltipEl) {
+      this.tooltipEl.innerText = this.tooltipText;
+    }
+  }
 
   @HostListener("mouseenter")
   onMouseEnter() {
@@ -36,12 +46,12 @@ export class TooltipDirective implements OnDestroy {
     this.renderer.setStyle(
       this.tooltipEl,
       "top",
-      `${hostPos.top + scrollY - 35}px`
+      `${hostPos.top + scrollY - 35}px`,
     );
     this.renderer.setStyle(
       this.tooltipEl,
       "left",
-      `${hostPos.left + hostPos.width / 2}px`
+      `${hostPos.left + hostPos.width / 2}px`,
     );
 
     document.body.appendChild(this.tooltipEl);
