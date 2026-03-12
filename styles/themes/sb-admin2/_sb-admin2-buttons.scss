@@ -336,6 +336,12 @@ fieldset:disabled a.btn {
     color: #31b9d5;
   }
 
+  &.warning:hover {
+    background-color: rgba(246, 194, 62, 0.1);
+    border-color: transparent;
+    color: $color-warning-hover;
+  }
+
   &:focus {
     outline: none !important;
     box-shadow: none !important;
