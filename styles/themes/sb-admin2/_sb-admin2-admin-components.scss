@@ -195,8 +195,13 @@
     padding: $spacing-md;
 }
 
-.table-sm th,
-.table-sm td {
+.table.table-md th,
+.table.table-md td {
+    padding: .5rem;
+}
+
+.table.table-sm th,
+.table.table-sm td {
     padding: .25rem;
 }
 
