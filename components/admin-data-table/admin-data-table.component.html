@@ -76,7 +76,7 @@
                         @for (column of config.columns; track $index) {
                         <td [class]="'align-middle ' + (column.className || '')" [ngStyle]="getHeaderStyle(column)">
                             @if (column.link) {
-                            <a [routerLink]="column.link(row)">
+                            <a [href]="'#' + column.link(row)">
                                 {{ getColumnText(row, column) }}
                             </a>
                             } @else if (column.template) {
@@ -208,7 +208,7 @@
                         @for (column of config.columns; track $index) {
                         <td [class]="'align-middle ' + (column.className || '')" [ngStyle]="getHeaderStyle(column)">
                             @if (column.link) {
-                            <a [routerLink]="column.link(row)">{{ getColumnText(row, column) }}</a>
+                            <a [href]="'#' + column.link(row)">{{ getColumnText(row, column) }}</a>
                             } @else if (column.template) {
                             <ng-container
                                 *ngTemplateOutlet="column.template; context: { $implicit: row }"></ng-container>
