@@ -217,8 +217,13 @@ export default abstract class AdminAbstractEditViewBase<
         );
       }
 
+      const globalErrorMessage = backendError?.code
+        ? this.errorMessageService.backendErrorToUserMessage(backendError)
+        : null;
+
       this.toast.error(
-        "Neuspješno spremanje podataka. Molimo ispravite označena polja.",
+        globalErrorMessage ??
+          "Neuspješno spremanje podataka. Molimo ispravite označena polja.",
       );
     } else {
       this.toast.error("Dogodila se greška. Pokušajte ponovo.");
