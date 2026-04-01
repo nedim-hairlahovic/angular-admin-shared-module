@@ -1,5 +1,6 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { RouterLink } from "@angular/router";
+import { NgComponentOutlet } from "@angular/common";
 
 import { DetailsViewData } from "../../models/details-view";
 import { CardButton } from "../../models/data-card";
@@ -9,7 +10,7 @@ import { CardButton } from "../../models/data-card";
   templateUrl: "./admin-details-view.component.html",
   styleUrls: ["./admin-details-view.component.scss"],
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgComponentOutlet],
 })
 export class AdminDetailsViewComponent {
   @Input() data!: DetailsViewData;

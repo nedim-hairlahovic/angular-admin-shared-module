@@ -40,6 +40,11 @@
                         }@if (!last) { <span class="text-muted mx-1">·</span> }
                         }
                     </div>
+                    } @else if (field.component) {
+                    <div class="value">
+                        <ng-container
+                            *ngComponentOutlet="field.component; inputs: field.componentInputs"></ng-container>
+                    </div>
                     } @else {
                     <div class="value">{{ field.value || '-' }}</div>
                     }

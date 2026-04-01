@@ -1,3 +1,4 @@
+import { Type } from "@angular/core";
 import { UrlConfig } from "./url-config";
 
 export interface DetailsViewData {
@@ -17,6 +18,8 @@ export interface DetailsViewField {
   links?: DetailsViewLink[];
   description?: string;
   fullWidth?: boolean;
+  component?: Type<any>;
+  componentInputs?: Record<string, any>;
 }
 
 export interface DetailsViewLink {
