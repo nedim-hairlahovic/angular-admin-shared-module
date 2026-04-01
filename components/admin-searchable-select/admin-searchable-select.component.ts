@@ -7,8 +7,10 @@ import {
   OnChanges,
   Output,
   SimpleChanges,
+  Type,
   ViewChild,
 } from "@angular/core";
+import { NgComponentOutlet } from "@angular/common";
 import { Subject, debounceTime, distinctUntilChanged, map } from "rxjs";
 
 import { SearchableSelectItem } from "../../models/searchable-select-item";
@@ -23,7 +25,7 @@ import { ClickOutsideDirective } from "../../directives/click-outside.directive"
   templateUrl: "./admin-searchable-select.component.html",
   styleUrls: ["./admin-searchable-select.component.scss"],
   standalone: true,
-  imports: [FormsModule, ClickOutsideDirective],
+  imports: [FormsModule, ClickOutsideDirective, NgComponentOutlet],
 })
 export class AdminSearchableSelectComponent<
   T extends ApiResource,
@@ -33,6 +35,10 @@ export class AdminSearchableSelectComponent<
   @Input() initialValue: any;
   @Input() resetTrigger: boolean = false;
   @Input() invalid = false;
+  @Input() itemComponent?: Type<any>;
+  @Input() itemComponentInputsFn?: (
+    item: SearchableSelectItem,
+  ) => Record<string, unknown>;
   @Output() onSelectEvent = new EventEmitter<any>();
 
   @ViewChild("searchInput") searchInput!: ElementRef<HTMLInputElement>;

@@ -1,8 +1,13 @@
 <div class="dropdown" (clickOutside)="closeDropdown()">
     <div class="input-container">
         <div class="overlay" [class.visible]="isValueSelected">
+            @if (itemComponent && itemComponentInputsFn && selectedValue) {
+            <ng-container
+                *ngComponentOutlet="itemComponent; inputs: itemComponentInputsFn(selectedValue)"></ng-container>
+            } @else {
             {{ selectedValue?.label }}
             <span class="ps-1">{{ selectedValue?.description }}</span>
+            }
 
             <button type="button" class="clear-btn" (click)="onClear()">
                 <i class="fa fa-times"></i>
@@ -41,7 +46,12 @@
                 <li>
                     <div class="dropdown-item clickable" [class.focused]="i === focusedIndex"
                         (mouseenter)="onMouseEnter(i)" (click)="onItemSelect(item)">
+                        @if (itemComponent && itemComponentInputsFn) {
+                        <ng-container
+                            *ngComponentOutlet="itemComponent; inputs: itemComponentInputsFn(item)"></ng-container>
+                        } @else {
                         {{ item.label }} <small>{{ item.description }}</small>
+                        }
                     </div>
                 </li>
                 }

@@ -61,6 +61,7 @@
 
                         <admin-searchable-select [inputName]="input.name" [dataService]="input.dataService"
                             [initialValue]="getFormInputValue(input.name)" [invalid]="!!displayMessages[input.name]"
+                            [itemComponent]="input.itemComponent" [itemComponentInputsFn]="input.itemComponentInputsFn"
                             (onSelectEvent)="onSearchableSelectChange(input.name, $event)">
                         </admin-searchable-select>
 
@@ -131,6 +132,8 @@
                                         <input type="hidden" class="form-control" [formControlName]="i">
                                         <admin-searchable-select [inputName]="input.name"
                                             [dataService]="input.dataService" [initialValue]="el.value"
+                                            [itemComponent]="input.itemComponent"
+                                            [itemComponentInputsFn]="input.itemComponentInputsFn"
                                             (onSelectEvent)="onSearchableSelectChangeInArray(input.name, i, $event)">
                                         </admin-searchable-select>
                                         }
