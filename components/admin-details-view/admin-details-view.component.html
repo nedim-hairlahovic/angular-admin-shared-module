@@ -30,8 +30,13 @@
             <div class="field pb-3" [class.full-width]="field.fullWidth">
                 <div class="label text-muted">{{ field.label }}</div>
                 <div>
-                    @if (field.links?.length) {
+                    @switch (field.type) {
+                    @case ('text') {
+                    <div class="value">{{ field.value ?? '-' }}</div>
+                    }
+                    @case ('link') {
                     <div class="value">
+                        @if (field.links.length) {
                         @for (link of field.links; track $index; let last = $last) {
                         @if (link.openInNewTab) {
                         <a [href]="link.href" target="_blank" rel="noopener noreferrer">{{ link.label }}</a>
@@ -39,14 +44,15 @@
                         <a [routerLink]="link.href">{{ link.label }}</a>
                         }@if (!last) { <span class="text-muted mx-1">·</span> }
                         }
+                        } @else { - }
                     </div>
-                    } @else if (field.component) {
+                    }
+                    @case ('component') {
                     <div class="value">
                         <ng-container
                             *ngComponentOutlet="field.component; inputs: field.componentInputs"></ng-container>
                     </div>
-                    } @else {
-                    <div class="value">{{ field.value || '-' }}</div>
+                    }
                     }
                     @if (field.description) {
                     <div class="muted-note">{{ field.description }}</div>

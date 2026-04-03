@@ -12,15 +12,32 @@ export interface DetailsViewInfo {
   publicUrl?: string;
 }
 
-export interface DetailsViewField {
+interface DetailsViewFieldBase {
   label: string;
-  value?: string;
-  links?: DetailsViewLink[];
-  description?: string;
   fullWidth?: boolean;
-  component?: Type<any>;
+  description?: string;
+}
+
+export interface DetailsViewTextField extends DetailsViewFieldBase {
+  type: "text";
+  value?: string | number | null;
+}
+
+export interface DetailsViewLinkField extends DetailsViewFieldBase {
+  type: "link";
+  links: DetailsViewLink[];
+}
+
+export interface DetailsViewComponentField extends DetailsViewFieldBase {
+  type: "component";
+  component: Type<any>;
   componentInputs?: Record<string, any>;
 }
+
+export type DetailsViewField =
+  | DetailsViewTextField
+  | DetailsViewLinkField
+  | DetailsViewComponentField;
 
 export interface DetailsViewLink {
   label: string;
