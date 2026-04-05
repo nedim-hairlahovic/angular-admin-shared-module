@@ -93,4 +93,45 @@ export abstract class DataCrudService<
       label: entity.id,
     } as SearchableSelectItem;
   }
+
+  /**
+   * Override in a child service to enable image upload/delete for this resource.
+   * - `path`       – URL suffix for POST upload,  e.g. '/logo'
+   * - `fieldName`  – FormData field name sent to the backend
+   * - `deletePath` – URL suffix for DELETE (optional; omit to disable delete)
+   *
+   * Example:
+   *   protected override imageUploadConfig() {
+   *     return { path: '/logo', fieldName: 'file', deletePath: '/logo' };
+   *   }
+   */
+  protected imageUploadConfig(): {
+    path: string;
+    fieldName: string;
+    deletePath?: string;
+  } | null {
+    return null;
+  }
+
+  uploadImage(id: string | number, file: File): Observable<TEntity> {
+    const config = this.imageUploadConfig();
+    if (!config) {
+      throw new Error(
+        `${this.constructor.name}: image upload is not configured. Override imageUploadConfig() to enable it.`,
+      );
+    }
+    const fd = new FormData();
+    fd.append(config.fieldName, file);
+    return this.http.post<TEntity>(this.buildEntityUrl(id) + config.path, fd);
+  }
+
+  deleteImage(id: string | number): Observable<void> {
+    const config = this.imageUploadConfig();
+    if (!config?.deletePath) {
+      throw new Error(
+        `${this.constructor.name}: image delete is not configured. Add deletePath to imageUploadConfig() to enable it.`,
+      );
+    }
+    return this.http.delete<void>(this.buildEntityUrl(id) + config.deletePath);
+  }
 }

@@ -1,0 +1,61 @@
+<!-- ── Default variant: compact click-to-upload square ──────────────────── -->
+@if (variant === 'default') {
+<div class="image-upload image-upload--default" [class.is-invalid]="invalid">
+    <div class="image-preview" (click)="triggerFilePicker()">
+        @if (previewUrl) {
+        <img [src]="previewUrl" alt="Preview" class="preview-img" />
+        <button type="button" class="btn-clear" (click)="clearImage(); $event.stopPropagation()" title="Ukloni sliku">
+            <i class="fa fa-times"></i>
+        </button>
+        } @else {
+        <div class="placeholder">
+            <i class="fa fa-image fa-2x"></i>
+            <span>Odaberite sliku</span>
+        </div>
+        }
+    </div>
+
+    <input #fileInput type="file" [accept]="accept" class="d-none" (change)="onFileSelected($event)" />
+
+    @if (errorMessage) {
+    <div class="invalid-feedback d-block">{{ errorMessage }}</div>
+    }
+</div>
+}
+
+<!-- ── Card variant: sidebar-style with larger preview and upload button ─ -->
+@if (variant === 'card') {
+<div class="image-upload image-upload--card">
+
+    <div class="card-preview-area">
+        @if (previewUrl) {
+        <img [src]="previewUrl" alt="Preview" class="card-preview-img" />
+        } @else {
+        <div class="card-preview-placeholder">
+            <i class="fa fa-shield fa-3x"></i>
+        </div>
+        }
+    </div>
+
+    <input #fileInput type="file" [accept]="accept" class="d-none" (change)="onFileSelected($event)" />
+
+    <div class="card-actions">
+        <button type="button" class="btn btn-primary btn-sm upload-btn" (click)="triggerFilePicker()">
+            <i class="fa fa-upload me-2"></i>
+            @if (previewUrl) { Zamijeni sliku } @else { Postavi sliku }
+        </button>
+        @if (previewUrl && currentImageUrl) {
+        <button type="button" class="btn btn-outline-secondary btn-sm upload-btn mt-2" (click)="deleteRequest.emit()">
+            <i class="fa fa-times me-2"></i>Ukloni sliku
+        </button>
+        }
+    </div>
+
+    @if (errorMessage) {
+    <div class="text-danger small mt-2">
+        <i class="fa fa-exclamation-circle me-1"></i>{{ errorMessage }}
+    </div>
+    }
+
+</div>
+}

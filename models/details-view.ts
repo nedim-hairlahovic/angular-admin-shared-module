@@ -1,4 +1,6 @@
 import { Type } from "@angular/core";
+import { Observable } from "rxjs";
+
 import { UrlConfig } from "./url-config";
 
 export interface DetailsViewData {
@@ -48,4 +50,19 @@ export interface DetailsViewLink {
 export interface DetailsViewConfigRouteConfig<T> {
   edit?: (item: T) => UrlConfig;
   onNotFound: UrlConfig;
+}
+
+export interface DetailsViewImageUploadConfig {
+  /** Card header label. */
+  label: string;
+  /** Current image URL shown as preview in edit mode. */
+  currentUrl?: string | null;
+  /** Accepted MIME types passed to the file input. Defaults to 'image/*'. */
+  accept?: string;
+  /** Max file size in bytes. No limit when omitted. */
+  maxSizeBytes?: number;
+  /** Called with the selected File; must return an Observable of the saved entity. */
+  uploadFn: (file: File) => Observable<any>;
+  /** Optional. Called when the user removes the image; must return an Observable. */
+  deleteFn?: () => Observable<any>;
 }
