@@ -61,7 +61,8 @@
 
                         <admin-searchable-select [inputName]="input.name" [dataService]="input.dataService"
                             [initialValue]="getFormInputValue(input.name)" [invalid]="!!displayMessages[input.name]"
-                            [itemComponent]="input.itemComponent" [itemComponentInputsFn]="input.itemComponentInputsFn"
+                            [disabled]="input.disabled" [itemComponent]="input.itemComponent"
+                            [itemComponentInputsFn]="input.itemComponentInputsFn"
                             (onSelectEvent)="onSearchableSelectChange(input.name, $event)">
                         </admin-searchable-select>
 

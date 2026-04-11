@@ -35,6 +35,7 @@ export class AdminSearchableSelectComponent<
   @Input() initialValue: any;
   @Input() resetTrigger: boolean = false;
   @Input() invalid = false;
+  @Input() disabled = false;
   @Input() itemComponent?: Type<any>;
   @Input() itemComponentInputsFn?: (
     item: SearchableSelectItem,
