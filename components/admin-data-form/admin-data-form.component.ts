@@ -158,6 +158,15 @@ export class AdminDataFormComponent<
 
     this.validationMessages = validationMessages;
     this.dataForm = this.fb.group(formControls);
+
+    for (const el of this.config.elements) {
+      if (el.onChange) {
+        const control = this.dataForm.get(el.name);
+        control?.valueChanges.subscribe((value) => {
+          el.onChange!(value, this.dataForm);
+        });
+      }
+    }
   }
 
   updateDataForm(): void {
@@ -299,7 +308,7 @@ export class AdminDataFormComponent<
 
   onSave(): void {
     if (this.dataForm.valid) {
-      const formValues = { ...this.dataForm.value };
+      const formValues = { ...this.dataForm.getRawValue() };
       const formData = { ...this.config.data, ...formValues };
       this.btnSaveEvent.emit(formData);
     }

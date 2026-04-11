@@ -1,5 +1,5 @@
 import { Type } from "@angular/core";
-import { ValidatorFn } from "@angular/forms";
+import { FormGroup, ValidatorFn } from "@angular/forms";
 
 import { ApiResource } from "./api-resource";
 import { DataCrudService } from "../services/data.service";
@@ -30,6 +30,7 @@ export interface DataFormElement<TForm> {
   itemComponentInputsFn?: (
     item: SearchableSelectItem,
   ) => Record<string, unknown>;
+  onChange?: (value: any, form: FormGroup) => void;
 }
 
 export enum DataFormControlMode {
