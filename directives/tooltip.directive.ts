@@ -40,21 +40,24 @@ export class TooltipDirective implements OnChanges, OnDestroy {
     this.tooltipEl.innerText = this.tooltipText;
     this.renderer.addClass(this.tooltipEl, "custom-tooltip");
 
-    // Position tooltip above the element
+    document.body.appendChild(this.tooltipEl);
+
+    // Position tooltip above the element after it's in the DOM so we can measure its height
     const hostPos = this.el.nativeElement.getBoundingClientRect();
+    const tooltipHeight = this.tooltipEl.offsetHeight;
     const scrollY = window.scrollY || document.documentElement.scrollTop;
+    const gap = 8;
+
     this.renderer.setStyle(
       this.tooltipEl,
       "top",
-      `${hostPos.top + scrollY - 35}px`,
+      `${hostPos.top + scrollY - tooltipHeight - gap}px`,
     );
     this.renderer.setStyle(
       this.tooltipEl,
       "left",
       `${hostPos.left + hostPos.width / 2}px`,
     );
-
-    document.body.appendChild(this.tooltipEl);
   }
 
   @HostListener("mouseleave")

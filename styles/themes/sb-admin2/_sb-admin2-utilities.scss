@@ -453,7 +453,9 @@ a.text-dark {
   font-size: $font-size-sm;
   border-radius: 4px;
   pointer-events: none;
-  white-space: nowrap;
+  white-space: normal;
+  max-width: 240px;
+  word-wrap: break-word;
   z-index: $z-index-modal + 100;
   opacity: 0;
   animation: fadeIn 0.15s forwards;
