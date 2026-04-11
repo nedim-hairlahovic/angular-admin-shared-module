@@ -9,9 +9,11 @@
             <span class="ps-1">{{ selectedValue?.description }}</span>
             }
 
+            @if (!disabled) {
             <button type="button" class="clear-btn" (click)="onClear()">
                 <i class="fa fa-times"></i>
             </button>
+            }
         </div>
 
         <input #searchInput type="text" class="form-control" [class.is-invalid]="invalid" [(ngModel)]="selectedValue"

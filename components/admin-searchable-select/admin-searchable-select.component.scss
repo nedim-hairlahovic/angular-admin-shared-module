@@ -17,6 +17,11 @@
     pointer-events: none;
 }
 
+.input-container.disabled .overlay {
+    background-color: #e9ecef;
+    cursor: not-allowed;
+}
+
 .input-container .overlay {
     position: absolute;
     top: 0;
