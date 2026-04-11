@@ -11,7 +11,13 @@
                         @if (input.mode === undefined || input.mode === DataFormControlMode.Control) {
 
                         @if (input.type === TEXT) {
-                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <label [for]="input.id" class="form-label">{{ input.label }}
+                            @if (input.description) {
+                            <span class="field-info-icon ms-1" [tooltip]="input.description">
+                                <i class="fa fa-info"></i>
+                            </span>
+                            }
+                        </label>
                         <input type="text" class="form-control" [id]="input.id" [formControlName]="input.name"
                             [class.is-invalid]="displayMessages[input.name]" autocomplete="off">
                         <div class="invalid-feedback">
@@ -20,7 +26,13 @@
                         }
 
                         @if (input.type === DATE) {
-                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <label [for]="input.id" class="form-label">{{ input.label }}
+                            @if (input.description) {
+                            <span class="field-info-icon ms-1" [tooltip]="input.description">
+                                <i class="fa fa-info"></i>
+                            </span>
+                            }
+                        </label>
                         <input type="date" class="form-control" [id]="input.id" [formControlName]="input.name"
                             [class.is-invalid]="displayMessages[input.name]">
                         <div class="invalid-feedback">
@@ -29,7 +41,13 @@
                         }
 
                         @if (input.type === NUMBER) {
-                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <label [for]="input.id" class="form-label">{{ input.label }}
+                            @if (input.description) {
+                            <span class="field-info-icon ms-1" [tooltip]="input.description">
+                                <i class="fa fa-info"></i>
+                            </span>
+                            }
+                        </label>
                         <input type="number" class="form-control" [id]="input.id" [formControlName]="input.name"
                             [class.is-invalid]="displayMessages[input.name]">
                         <div class="invalid-feedback">
@@ -38,7 +56,13 @@
                         }
 
                         @if (input.type === SELECT) {
-                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <label [for]="input.id" class="form-label">{{ input.label }}
+                            @if (input.description) {
+                            <span class="field-info-icon ms-1" [tooltip]="input.description">
+                                <i class="fa fa-info"></i>
+                            </span>
+                            }
+                        </label>
                         <select class="form-select" [id]="input.id" [formControlName]="input.name"
                             [class.is-invalid]="displayMessages[input.name]">
                             <option value="">Odaberite opciju</option>
@@ -55,7 +79,13 @@
 
                         @if (input.type === SEARCHABLE_SELECT && input.dataService) {
 
-                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <label [for]="input.id" class="form-label">{{ input.label }}
+                            @if (input.description) {
+                            <span class="field-info-icon ms-1" [tooltip]="input.description">
+                                <i class="fa fa-info"></i>
+                            </span>
+                            }
+                        </label>
                         <input type="hidden" class="form-control" [id]="input.id" [formControlName]="input.name"
                             [class.is-invalid]="displayMessages[input.name]">
 
@@ -72,7 +102,13 @@
                         }
 
                         @if (input.type === TEXTAREA) {
-                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <label [for]="input.id" class="form-label">{{ input.label }}
+                            @if (input.description) {
+                            <span class="field-info-icon ms-1" [tooltip]="input.description">
+                                <i class="fa fa-info"></i>
+                            </span>
+                            }
+                        </label>
                         <textarea class="form-control" [id]="input.id" [formControlName]="input.name"
                             [class.is-invalid]="displayMessages[input.name]" autocomplete="off"></textarea>
                         <div class="invalid-feedback">
@@ -81,7 +117,13 @@
                         }
 
                         @if (input.type === TIME) {
-                        <label [for]="input.id" class="form-label">{{ input.label }}</label>
+                        <label [for]="input.id" class="form-label">{{ input.label }}
+                            @if (input.description) {
+                            <span class="field-info-icon ms-1" [tooltip]="input.description">
+                                <i class="fa fa-info"></i>
+                            </span>
+                            }
+                        </label>
                         <input type="time" class="form-control" [id]="input.id" [formControlName]="input.name"
                             [class.is-invalid]="displayMessages[input.name]">
                         <div class="invalid-feedback">

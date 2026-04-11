@@ -28,13 +28,18 @@ import {
 } from "../../models/data-form";
 import { ApiResource } from "../../models/api-resource";
 import { AdminSearchableSelectComponent } from "../admin-searchable-select/admin-searchable-select.component";
+import { TooltipDirective } from "../../directives/tooltip.directive";
 
 @Component({
   selector: "admin-data-form",
   templateUrl: "./admin-data-form.component.html",
   styleUrls: ["./admin-data-form.component.scss"],
   standalone: true,
-  imports: [ReactiveFormsModule, AdminSearchableSelectComponent],
+  imports: [
+    ReactiveFormsModule,
+    AdminSearchableSelectComponent,
+    TooltipDirective,
+  ],
 })
 export class AdminDataFormComponent<
   TEntity extends ApiResource,

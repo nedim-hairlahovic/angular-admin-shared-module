@@ -19,6 +19,7 @@ export interface DataFormElement<TForm> {
   id: Extract<keyof TForm, string>;
   name: Extract<keyof TForm, string>;
   label: string;
+  description?: string;
   type: DataFormElementType;
   mode: DataFormControlMode;
   validators?: ValidatorConfig[];

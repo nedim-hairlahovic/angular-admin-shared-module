@@ -1,3 +1,19 @@
+.field-info-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    border: 1.5px solid #b0b7c3;
+    color: #b0b7c3;
+    font-size: 7px;
+    cursor: default;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
+}
+
 .form-array-list {
     display: flex;
     flex-direction: column;
