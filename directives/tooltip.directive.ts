@@ -44,15 +44,9 @@ export class TooltipDirective implements OnChanges, OnDestroy {
 
     // Position tooltip above the element after it's in the DOM so we can measure its height
     const hostPos = this.el.nativeElement.getBoundingClientRect();
-    const tooltipHeight = this.tooltipEl.offsetHeight;
-    const scrollY = window.scrollY || document.documentElement.scrollTop;
     const gap = 8;
 
-    this.renderer.setStyle(
-      this.tooltipEl,
-      "top",
-      `${hostPos.top + scrollY - tooltipHeight - gap}px`,
-    );
+    this.renderer.setStyle(this.tooltipEl, "top", `${hostPos.top - gap}px`);
     this.renderer.setStyle(
       this.tooltipEl,
       "left",

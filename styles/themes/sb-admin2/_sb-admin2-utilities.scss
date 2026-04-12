@@ -445,8 +445,8 @@ a.text-dark {
 // ----------------------------------------------------------------------------
 
 .custom-tooltip {
-  position: absolute;
-  transform: translateX(-50%);
+  position: fixed;
+  transform: translateX(-50%) translateY(-100%);
   background-color: #333;
   color: $color-white;
   padding: 4px 8px;
