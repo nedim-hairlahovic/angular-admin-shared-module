@@ -79,9 +79,9 @@
                             <a [href]="'#' + column.link(row)">
                                 {{ getColumnText(row, column) }}
                             </a>
-                            } @else if (column.template) {
+                            } @else if (column.component) {
                             <ng-container
-                                *ngTemplateOutlet="column.template; context: { $implicit: row }"></ng-container>
+                                *ngComponentOutlet="column.component; inputs: column.componentInputs?.(row)"></ng-container>
                             } @else if (column.badge && column.value) {
                             <span class="badge"
                                 [class]="'badge-' + (column.badge[(getText(row, column.value) ?? '').toString()] || 'light')">
@@ -209,9 +209,9 @@
                         <td [class]="'align-middle ' + (column.className || '')" [ngStyle]="getHeaderStyle(column)">
                             @if (column.link) {
                             <a [href]="'#' + column.link(row)">{{ getColumnText(row, column) }}</a>
-                            } @else if (column.template) {
+                            } @else if (column.component) {
                             <ng-container
-                                *ngTemplateOutlet="column.template; context: { $implicit: row }"></ng-container>
+                                *ngComponentOutlet="column.component; inputs: column.componentInputs?.(row)"></ng-container>
                             } @else if (column.badge && column.value) {
                             <span class="badge"
                                 [class]="'badge-' + (column.badge[(getText(row, column.value) ?? '').toString()] || 'light')">

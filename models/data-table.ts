@@ -1,4 +1,4 @@
-import { TemplateRef } from "@angular/core";
+import { Type } from "@angular/core";
 
 import { CardButton } from "./data-card";
 import { UrlConfig } from "./url-config";
@@ -26,7 +26,8 @@ export interface DataTableColumn<T> {
   badge?: {
     [key: string]: string; // mapping value → bootstrap class (success, danger, warning, etc.)
   };
-  template?: TemplateRef<{ $implicit: T }>;
+  component?: Type<any>;
+  componentInputs?: (row: T) => Record<string, any>;
 }
 
 export interface DataTableRouteConfig<T> {
