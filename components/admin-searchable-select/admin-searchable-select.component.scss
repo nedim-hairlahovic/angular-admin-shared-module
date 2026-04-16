@@ -59,9 +59,19 @@
 }
 
 .input-container .dropdown-menu .dropdown-item,
+.input-container .dropdown-menu .dropdown-item.clickable,
 .input-container .dropdown-menu .dropdown-item.clickable:hover {
     cursor: pointer;
     background-color: transparent;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+
+.input-container .dropdown-menu .dropdown-item.non-clickable {
+    cursor: default;
 }
 
 .input-container .dropdown-menu .dropdown-item.focused,
@@ -78,7 +88,5 @@
 }
 
 .icon-up {
-    position: relative;
-    top: -1px;
     font-size: 12px;
 }

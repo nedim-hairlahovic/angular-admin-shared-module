@@ -23,7 +23,7 @@
         <ul class="dropdown-menu" [class.show]="isDropdownOpen">
             @if (!searching && (selectedValue === undefined || selectedValue === null)) {
             <li>
-                <div class="dropdown-item" (click)="closeDropdown()">
+                <div class="dropdown-item non-clickable" (click)="closeDropdown()">
                     Unesite pojam za pretragu...
                 </div>
             </li>
@@ -31,14 +31,14 @@
 
             @if (searching) {
             <li>
-                <div class="dropdown-item" (click)="closeDropdown()">
+                <div class="dropdown-item non-clickable" (click)="closeDropdown()">
                     Pretraga se provodi...
                 </div>
             </li>
             }
 
             @if (!searching && selectedValue != null && searchResults.length < 1) { <li>
-                <div class="dropdown-item" (click)="closeDropdown()">
+                <div class="dropdown-item non-clickable" (click)="closeDropdown()">
                     <i class="fa fa-ban icon-up" aria-hidden="true"></i> Nema rezultata
                 </div>
                 </li>
