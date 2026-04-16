@@ -82,11 +82,6 @@
                             } @else if (column.component) {
                             <ng-container
                                 *ngComponentOutlet="column.component; inputs: column.componentInputs?.(row)"></ng-container>
-                            } @else if (column.badge && column.value) {
-                            <span class="badge"
-                                [class]="'badge-' + (column.badge[(getText(row, column.value) ?? '').toString()] || 'light')">
-                                {{ getText(row, column.value) }}
-                            </span>
                             } @else {
                             @if (column.value !== 'actions') {
                             <span>{{ getColumnText(row, column) }}</span>
@@ -212,11 +207,6 @@
                             } @else if (column.component) {
                             <ng-container
                                 *ngComponentOutlet="column.component; inputs: column.componentInputs?.(row)"></ng-container>
-                            } @else if (column.badge && column.value) {
-                            <span class="badge"
-                                [class]="'badge-' + (column.badge[(getText(row, column.value) ?? '').toString()] || 'light')">
-                                {{ getText(row, column.value) }}
-                            </span>
                             } @else {
                             @if (column.value !== 'actions') {
                             <span>{{ getColumnText(row, column) }}</span>

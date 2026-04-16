@@ -21,6 +21,7 @@ import { AdminConfirmDialogComponent } from "./components/admin-confirm-dialog/a
 import { AdminConfirmDialogHostComponent } from "./components/admin-confirm-dialog-host/admin-confirm-dialog-host.component";
 import { AdminStatusIconComponent } from "./components/admin-status-icon/admin-status-icon.component";
 import { AdminImageUploadComponent } from "./components/admin-image-upload/admin-image-upload.component";
+import { AdminBadgeComponent } from "./components/admin-badge/admin-badge.component";
 
 const ADMIN_SHARED_STANDALONE = [
   AdminDataFormComponent,
@@ -37,6 +38,7 @@ const ADMIN_SHARED_STANDALONE = [
   TooltipDirective,
   AdminStatusIconComponent,
   AdminImageUploadComponent,
+  AdminBadgeComponent,
 ];
 
 @NgModule({

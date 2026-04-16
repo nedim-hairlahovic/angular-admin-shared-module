@@ -23,9 +23,6 @@ export interface DataTableColumn<T> {
   link?: (row: T) => string;
   sortable?: boolean;
   actions?: DataTableAction[];
-  badge?: {
-    [key: string]: string; // mapping value → bootstrap class (success, danger, warning, etc.)
-  };
   component?: Type<any>;
   componentInputs?: (row: T) => Record<string, any>;
 }
