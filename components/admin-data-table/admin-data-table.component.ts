@@ -13,6 +13,7 @@ import { RouterModule } from "@angular/router";
 
 import {
   DataTableAction,
+  DataTableActionsColumn,
   DataTableColumn,
   DataTableConfig,
 } from "../../models/data-table";
@@ -158,6 +159,18 @@ export class AdminDataTableComponent<T> implements OnChanges {
       });
   }
 
+  isActionsColumn(col: DataTableColumn<T>): col is DataTableActionsColumn {
+    return col.type === "actions";
+  }
+
+  isSortable(col: DataTableColumn<T>): boolean {
+    return (col.type === "text" || col.type === "link") && !!col.sortable;
+  }
+
+  getSortField(col: DataTableColumn<T>): string | undefined {
+    return col.type === "text" || col.type === "link" ? col.value : undefined;
+  }
+
   getHeaderStyle(column: DataTableColumn<T>): { [key: string]: string } {
     const styles: { [key: string]: string } = {};
 
@@ -165,7 +178,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
     if (!column.width) {
       if (column.header === "ID") {
         styles["width"] = "5%";
-      } else if (column.actions) {
+      } else if (column.type === "actions") {
         styles["width"] = "10%";
       } else {
         styles["width"] = "auto";
@@ -176,7 +189,7 @@ export class AdminDataTableComponent<T> implements OnChanges {
 
     // Center align Actions or explicit text-center class
     if (
-      column.header === "Akcije" ||
+      column.type === "actions" ||
       column.className?.includes("text-center")
     ) {
       styles["text-align"] = "center";
@@ -193,12 +206,10 @@ export class AdminDataTableComponent<T> implements OnChanges {
     return row[columnValue];
   }
 
-  getColumnText(row: T, column: DataTableColumn<T>) {
-    if (column.valueFn) {
-      return column.valueFn(row);
-    }
-    if (column.value) {
-      return this.getText(row, column.value);
+  getColumnText(row: T, column: DataTableColumn<T>): string {
+    if (column.type === "text" || column.type === "link") {
+      if (column.valueFn) return column.valueFn(row);
+      if (column.value) return this.getText(row, column.value);
     }
     return "";
   }

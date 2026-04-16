@@ -2,6 +2,7 @@ import { Directive, inject, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 
 import { ApiResource } from "../../models/api-resource";
+import { DataTableActionsColumn } from "../../models/data-table";
 import { DataCrudService } from "../../services/data.service";
 import AdminAbstractTableViewBase from "./admin-abstract-table-view-base";
 import { AdminConfirmDialogService } from "../../services/admin-confirm-dialog.service";
@@ -36,7 +37,7 @@ export abstract class AdminAbstractTableViewComponent<
     }
 
     const actionsColumn = this.config.columns.find(
-      (c) => c.value === "actions",
+      (c): c is DataTableActionsColumn => c.type === "actions",
     );
     if (actionsColumn && !actionsColumn.actions) {
       actionsColumn.actions = this.DEFAULT_ACTIONS;

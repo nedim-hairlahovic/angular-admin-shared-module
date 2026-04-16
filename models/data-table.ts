@@ -14,18 +14,43 @@ export interface DataTableConfig<T> {
   theadClass?: string;
 }
 
-export interface DataTableColumn<T> {
+interface DataTableColumnBase {
   header: string;
-  value?: string; // property name in the row
-  valueFn?: (row: T) => string; // custom function for derived value
   className?: string;
-  width?: string; // in percentages
-  link?: (row: T) => string;
+  width?: string;
+}
+
+export interface DataTableTextColumn<T> extends DataTableColumnBase {
+  type: "text";
+  value?: string;
+  valueFn?: (row: T) => string;
   sortable?: boolean;
-  actions?: DataTableAction[];
-  component?: Type<any>;
+}
+
+export interface DataTableLinkColumn<T> extends DataTableColumnBase {
+  type: "link";
+  value?: string;
+  valueFn?: (row: T) => string;
+  link: (row: T) => string;
+  sortable?: boolean;
+}
+
+export interface DataTableComponentColumn<T> extends DataTableColumnBase {
+  type: "component";
+  component: Type<any>;
   componentInputs?: (row: T) => Record<string, any>;
 }
+
+export interface DataTableActionsColumn extends DataTableColumnBase {
+  type: "actions";
+  actions?: DataTableAction[];
+}
+
+export type DataTableColumn<T> =
+  | DataTableTextColumn<T>
+  | DataTableLinkColumn<T>
+  | DataTableComponentColumn<T>
+  | DataTableActionsColumn;
 
 export interface DataTableRouteConfig<T> {
   add?: UrlConfig;

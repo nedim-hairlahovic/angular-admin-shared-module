@@ -53,14 +53,14 @@
                         <th [ngStyle]="getHeaderStyle(col)" [class]="col.className">
                             {{ col.header }}
 
-                            @if (col.sortable) {
+                            @if (isSortable(col)) {
                             <div class="sort-icons">
-                                <button class="btn up" [class.active]="isSortActive(col.value, 'ASC')"
-                                    (click)="onSort(col.value, 'ASC')">
+                                <button class="btn up" [class.active]="isSortActive(getSortField(col), 'ASC')"
+                                    (click)="onSort(getSortField(col), 'ASC')">
                                     <i class="fa fa-caret-up" aria-hidden="true"></i>
                                 </button>
-                                <button class="btn down" [class.active]="isSortActive(col.value, 'DESC')"
-                                    (click)="onSort(col.value, 'ASC')">
+                                <button class="btn down" [class.active]="isSortActive(getSortField(col), 'DESC')"
+                                    (click)="onSort(getSortField(col), 'ASC')">
                                     <i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </button>
                             </div>
@@ -75,17 +75,20 @@
                     <tr>
                         @for (column of config.columns; track $index) {
                         <td [class]="'align-middle ' + (column.className || '')" [ngStyle]="getHeaderStyle(column)">
-                            @if (column.link) {
+                            @switch (column.type) {
+                            @case ('text') {
+                            <span>{{ getColumnText(row, column) }}</span>
+                            }
+                            @case ('link') {
                             <a [href]="'#' + column.link(row)">
                                 {{ getColumnText(row, column) }}
                             </a>
-                            } @else if (column.component) {
+                            }
+                            @case ('component') {
                             <ng-container
                                 *ngComponentOutlet="column.component; inputs: column.componentInputs?.(row)"></ng-container>
-                            } @else {
-                            @if (column.value !== 'actions') {
-                            <span>{{ getColumnText(row, column) }}</span>
-                            } @else {
+                            }
+                            @case ('actions') {
                             @for (action of column.actions; track $index) {
                             <button class="btn btn-action" [class]="'btn btn-action ' + (action.color || 'secondary')"
                                 (click)="handleActionClick(action, row)" [tooltip]="action.label">
@@ -180,14 +183,14 @@
                         @for (col of config.columns; track $index) {
                         <th [ngStyle]="getHeaderStyle(col)" [class]="col.className">
                             {{ col.header }}
-                            @if (col.sortable) {
+                            @if (isSortable(col)) {
                             <div class="sort-icons">
-                                <button class="btn up" [class.active]="isSortActive(col.value, 'ASC')"
-                                    (click)="onSort(col.value, 'ASC')">
+                                <button class="btn up" [class.active]="isSortActive(getSortField(col), 'ASC')"
+                                    (click)="onSort(getSortField(col), 'ASC')">
                                     <i class="fa fa-caret-up" aria-hidden="true"></i>
                                 </button>
-                                <button class="btn down" [class.active]="isSortActive(col.value, 'DESC')"
-                                    (click)="onSort(col.value, 'ASC')">
+                                <button class="btn down" [class.active]="isSortActive(getSortField(col), 'DESC')"
+                                    (click)="onSort(getSortField(col), 'ASC')">
                                     <i class="fa fa-caret-down" aria-hidden="true"></i>
                                 </button>
                             </div>
@@ -202,15 +205,18 @@
                     <tr>
                         @for (column of config.columns; track $index) {
                         <td [class]="'align-middle ' + (column.className || '')" [ngStyle]="getHeaderStyle(column)">
-                            @if (column.link) {
+                            @switch (column.type) {
+                            @case ('text') {
+                            <span>{{ getColumnText(row, column) }}</span>
+                            }
+                            @case ('link') {
                             <a [href]="'#' + column.link(row)">{{ getColumnText(row, column) }}</a>
-                            } @else if (column.component) {
+                            }
+                            @case ('component') {
                             <ng-container
                                 *ngComponentOutlet="column.component; inputs: column.componentInputs?.(row)"></ng-container>
-                            } @else {
-                            @if (column.value !== 'actions') {
-                            <span>{{ getColumnText(row, column) }}</span>
-                            } @else {
+                            }
+                            @case ('actions') {
                             @for (action of column.actions; track $index) {
                             <button class="btn btn-action" [class]="'btn btn-action ' + (action.color || 'secondary')"
                                 (click)="handleActionClick(action, row)" [tooltip]="action.label">
