@@ -113,8 +113,11 @@ export default abstract class AdminAbstractEditViewBase<
   protected fetchAndBindRelatedFormData(): void {}
 
   protected mapToRequest(form: TForm): TRequest {
-    // Default: form shape matches request DTO
-    return form as unknown as TRequest;
+    // Default: form shape matches request DTO; empty strings are mapped to null
+    const mapped = Object.fromEntries(
+      Object.entries(form as object).map(([k, v]) => [k, v === "" ? null : v]),
+    );
+    return mapped as unknown as TRequest;
   }
 
   protected mapFormToRequestFields(form: TForm): FormToRequestFieldMap<TForm> {
