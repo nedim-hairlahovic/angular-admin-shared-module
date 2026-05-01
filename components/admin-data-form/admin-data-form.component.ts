@@ -280,6 +280,13 @@ export class AdminDataFormComponent<
     return entry ? entry[0] : field;
   }
 
+  isRequired(input: any): boolean {
+    return (
+      input.validators?.some((v: ValidatorConfig) => v.key === "required") ??
+      false
+    );
+  }
+
   getFormInputValue(controlName: string): any {
     return this.dataForm.get(controlName)?.value;
   }
