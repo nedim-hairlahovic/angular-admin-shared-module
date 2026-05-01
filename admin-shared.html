@@ -20,12 +20,31 @@
 
         <!-- Navigation -->
         @for (item of menu.items; track $index) {
+        @if (item.children && item.children.length > 0) {
+        <li class="nav-item" [class.active]="isGroupActive(item)">
+            <a class="nav-link nav-link-collapse" [class.collapsed]="!isGroupOpen(item)" (click)="toggleGroup(item)"
+                href="javascript:void(0)">
+                <i [class]="item.icon"></i>
+                <span>{{ item.title }}</span>
+            </a>
+            <div class="nav-dropdown-collapse" [class.open]="isGroupOpen(item)">
+                <div class="collapse-inner">
+                    @for (child of item.children; track child.route) {
+                    <a class="collapse-item" [routerLink]="child.route" routerLinkActive="active">
+                        {{ child.title }}
+                    </a>
+                    }
+                </div>
+            </div>
+        </li>
+        } @else {
         <li class="nav-item" routerLinkActive="active">
             <a class="nav-link" [routerLink]="item.route">
                 <i [class]="item.icon"></i>
                 <span>{{ item.title }}</span>
             </a>
         </li>
+        }
         }
 
         <hr class="sidebar-divider d-none d-md-block">
