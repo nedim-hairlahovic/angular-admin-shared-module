@@ -64,3 +64,31 @@
     position: relative;
     top: 5px
 }
+
+.form-array-group-item {
+    gap: 0.6rem;
+}
+
+.form-array-group-field {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.form-array-group-field .form-label-sm {
+    font-size: 0.8rem;
+    line-height: 1.5;
+    margin-bottom: 0.25rem;
+    color: #6c757d;
+}
+
+.form-array-group-action {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-array-group-action-spacer {
+    height: calc(0.8rem * 1.5 + 0.25rem);
+    flex-shrink: 0;
+}

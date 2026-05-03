@@ -23,6 +23,7 @@ import { debounceTime, fromEvent, merge, Observable } from "rxjs";
 import {
   DataFormConfig,
   DataFormControlMode,
+  DataFormElement,
   DataFormElementType,
   ValidatorConfig,
 } from "../../models/data-form";
@@ -60,6 +61,10 @@ export class AdminDataFormComponent<
   dataForm!: FormGroup;
   validationMessages: Partial<Record<keyof TForm, Record<string, string>>> = {};
   displayMessages: { [key: string]: string } = {};
+  private groupValidationMessages: Record<
+    string,
+    Record<string, Record<string, string>>
+  > = {};
 
   readonly TEXT: DataFormElementType = DataFormElementType.Text;
   readonly DATE: DataFormElementType = DataFormElementType.Date;
@@ -144,6 +149,28 @@ export class AdminDataFormComponent<
         formControls[el.name] = this.fb.array([
           new FormControl("", validators),
         ]);
+      } else if (mode === DataFormControlMode.ArrayGroup) {
+        const arrayValidators = el.validators?.map((v) => v.validator) ?? [];
+        formControls[el.name] = this.fb.array(
+          [this.createGroupFormGroup(el)],
+          arrayValidators,
+        );
+
+        if (el.groupFields) {
+          this.groupValidationMessages[el.name as string] = {};
+          for (const field of el.groupFields) {
+            if (field.validators?.length) {
+              this.groupValidationMessages[el.name as string][field.name] =
+                field.validators.reduce(
+                  (acc, v) => {
+                    acc[v.key] = v.message;
+                    return acc;
+                  },
+                  {} as Record<string, string>,
+                );
+            }
+          }
+        }
       }
 
       // Collect validation messages per form control, keyed by validator name
@@ -208,6 +235,29 @@ export class AdminDataFormComponent<
 
           this.dataForm.setControl(element.name, formArray);
         }
+
+        if (mode === DataFormControlMode.ArrayGroup) {
+          const raw = data[element.name];
+          const items = Array.isArray(raw) ? raw : [];
+
+          const formArray = this.fb.array(
+            items.map((item: any) => {
+              const controls: Record<string, FormControl> = {};
+              for (const field of element.groupFields ?? []) {
+                const validators =
+                  field.validators?.map((v: ValidatorConfig) => v.validator) ??
+                  [];
+                controls[field.name] = new FormControl(
+                  item[field.name] ?? field.defaultValue ?? "",
+                  validators,
+                );
+              }
+              return this.fb.group(controls);
+            }),
+          );
+
+          this.dataForm.setControl(element.name, formArray);
+        }
       }
 
       this.dataForm.patchValue(values);
@@ -233,13 +283,28 @@ export class AdminDataFormComponent<
 
   private applyBackendFieldErrors(): void {
     Object.entries(this.backendFieldErrors!).forEach(([fieldName, message]) => {
+      // ArrayGroup field: cupRounds[0].seriesFormat
+      const arrayGroupFieldMatch = fieldName.match(/^(.+?)\[(\d+)\]\.(.+)$/);
+      if (arrayGroupFieldMatch) {
+        const [, arrayName, indexStr, groupFieldName] = arrayGroupFieldMatch;
+        const index = Number(indexStr);
+        const array = this.dataForm.get(arrayName) as FormArray | null;
+        const group = array?.at(index);
+        if (!(group instanceof FormGroup)) return;
+
+        const control = group.get(groupFieldName);
+        if (!control) return;
+
+        control.setErrors({ ...(control.errors ?? {}), backend: message });
+        control.markAsTouched();
+        return;
+      }
+
+      // Plain array item: cupRounds[0] or cupRounds0
       const arrayFieldMatch =
-        fieldName.match(/^(.+?)\[(\d+)\]$/) || // fieldName[0]
-        fieldName.match(/^(.+?)(\d+)$/); // fieldName0 (fallback)
+        fieldName.match(/^(.+?)\[(\d+)\]$/) || fieldName.match(/^(.+?)(\d+)$/);
 
       if (arrayFieldMatch) {
-        // TODO: Map backend array field names (request → form) using config.requestFieldMap
-        // (same mapping logic as resolveBackendFieldToFormField)
         const [, arrayName, indexStr] = arrayFieldMatch;
         const index = Number(indexStr);
         const array = this.dataForm.get(arrayName) as FormArray | null;
@@ -295,6 +360,28 @@ export class AdminDataFormComponent<
     return this.dataForm.get(controlName) as FormArray;
   }
 
+  private createGroupFormGroup(el: DataFormElement<TForm>): FormGroup {
+    const controls: Record<string, FormControl> = {};
+    for (const field of el.groupFields ?? []) {
+      const validators = field.validators?.map((v) => v.validator) ?? [];
+      controls[field.name] = new FormControl(
+        field.defaultValue ?? "",
+        validators,
+      );
+    }
+    return this.fb.group(controls);
+  }
+
+  addGroupToFormArray(controlName: string): void {
+    const formArray = this.getFormArray(controlName);
+    const config = this.config.elements.find(
+      (e: any) => e.name === controlName,
+    );
+    if (!config) return;
+    formArray.push(this.createGroupFormGroup(config));
+    formArray.markAsDirty();
+  }
+
   addInputToFormArray(controlName: string): void {
     const formArray = this.getFormArray(controlName);
     const config = this.config.elements.find(
@@ -316,6 +403,7 @@ export class AdminDataFormComponent<
     const formArray = this.getFormArray(controlName);
     formArray.removeAt(index);
     formArray.markAsDirty();
+    formArray.markAsTouched();
   }
 
   onSave(): void {
@@ -373,6 +461,30 @@ export class AdminDataFormComponent<
           }
         }
       }
+
+      if (mode === DataFormControlMode.ArrayGroup) {
+        const controlName = String(el.name);
+        const formArray = this.dataForm.get(controlName) as FormArray;
+        const arrayValue = values[controlName] ?? [];
+
+        if (formArray && formArray instanceof FormArray) {
+          formArray.clear();
+
+          for (const item of arrayValue) {
+            const controls: Record<string, FormControl> = {};
+            for (const field of el.groupFields ?? []) {
+              const validators =
+                field.validators?.map((v: ValidatorConfig) => v.validator) ??
+                [];
+              controls[field.name] = new FormControl(
+                item[field.name] ?? field.defaultValue ?? "",
+                validators,
+              );
+            }
+            formArray.push(this.fb.group(controls));
+          }
+        }
+      }
     }
   }
 
@@ -400,24 +512,58 @@ export class AdminDataFormComponent<
       }
 
       if (c instanceof FormArray) {
-        for (let i = 0; i < c.controls.length; i++) {
-          const singleControl = c.controls[i];
-          messages[controlKey + i] = "";
+        messages[controlKey] = "";
+        if ((c.dirty || c.touched) && c.errors) {
+          Object.entries(c.errors).forEach(([errorKey]) => {
+            if (validationMessages[key]?.[errorKey]) {
+              messages[controlKey] += validationMessages[key]![errorKey] + " ";
+            }
+          });
+        }
 
-          if (
-            (singleControl.dirty || singleControl.touched) &&
-            singleControl.errors
-          ) {
-            Object.entries(singleControl.errors).forEach(
-              ([errorKey, errorValue]) => {
+        for (let i = 0; i < c.controls.length; i++) {
+          const item = c.controls[i];
+
+          if (item instanceof FormGroup) {
+            for (const [fieldName, fieldControl] of Object.entries(
+              item.controls,
+            )) {
+              const msgKey = `${controlKey}${i}_${fieldName}`;
+              messages[msgKey] = "";
+
+              if (
+                (fieldControl.dirty || fieldControl.touched) &&
+                fieldControl.errors
+              ) {
+                const fieldValidators =
+                  this.groupValidationMessages[controlKey]?.[fieldName];
+                Object.entries(fieldControl.errors).forEach(
+                  ([errorKey, errorValue]) => {
+                    if (
+                      errorKey === "backend" &&
+                      typeof errorValue === "string"
+                    ) {
+                      messages[msgKey] += errorValue;
+                    } else if (fieldValidators?.[errorKey]) {
+                      messages[msgKey] += fieldValidators[errorKey];
+                    }
+                  },
+                );
+              }
+            }
+          } else {
+            messages[controlKey + i] = "";
+
+            if ((item.dirty || item.touched) && item.errors) {
+              Object.entries(item.errors).forEach(([errorKey, errorValue]) => {
                 if (errorKey === "backend" && typeof errorValue === "string") {
                   messages[controlKey + i] += errorValue;
                 } else if (validationMessages[key]?.[errorKey]) {
                   messages[controlKey + i] +=
                     validationMessages[key]![errorKey];
                 }
-              },
-            );
+              });
+            }
           }
         }
         continue;

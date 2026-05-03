@@ -211,6 +211,65 @@
                         </div>
                         }
 
+                        <!-- ArrayGroup Types -->
+                        @if (input.mode === DataFormControlMode.ArrayGroup) {
+                        <div [formArrayName]="input.name" class="form-array-section">
+                            <label class="form-label mb-2">{{ input.label }}@if (isRequired(input)) {<span
+                                    class="required-indicator">*</span>}</label>
+
+                            <div class="form-array-list">
+                                @for (el of getFormArray(input.name).controls; track el; let i = $index) {
+                                <div class="form-array-item form-array-group-item" [formGroupName]="i">
+                                    @for (field of input.groupFields; track field.name) {
+                                    <div class="form-array-group-field">
+                                        <label class="form-label form-label-sm">{{ field.label }}</label>
+
+                                        @if (field.type === SELECT) {
+                                        <select class="form-select" [formControlName]="field.name"
+                                            [class.is-invalid]="displayMessages[input.name + i + '_' + field.name]">
+                                            <option value="">Odaberite opciju</option>
+                                            @for (option of field.values; track $index) {
+                                            <option [value]="option.value">{{ option.label }}</option>
+                                            }
+                                        </select>
+                                        }
+
+                                        @if (field.type === NUMBER) {
+                                        <input type="number" class="form-control" [formControlName]="field.name"
+                                            [class.is-invalid]="displayMessages[input.name + i + '_' + field.name]"
+                                            min="1">
+                                        }
+
+                                        @if (displayMessages[input.name + i + '_' + field.name]) {
+                                        <div class="invalid-feedback d-block">
+                                            {{ displayMessages[input.name + i + '_' + field.name] }}
+                                        </div>
+                                        }
+                                    </div>
+                                    }
+
+                                    <div class="form-array-group-action">
+                                        <span class="form-array-group-action-spacer"></span>
+                                        <button type="button" class="btn btn-action danger" tooltip="Obriši stavku"
+                                            (click)="deleteInputFromFormArray(input.name, i)">
+                                            <i class="fa fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                }
+                            </div>
+
+                            @if (displayMessages[input.name]) {
+                            <div class="invalid-feedback d-block mt-1">{{ displayMessages[input.name] }}</div>
+                            }
+
+                            <button type="button" class="btn btn-action success mt-1"
+                                (click)="addGroupToFormArray(input.name)">
+                                <i class="fa fa-plus"></i> Dodaj stavku
+                            </button>
+                        </div>
+                        }
+
                     </div>
                     }
 

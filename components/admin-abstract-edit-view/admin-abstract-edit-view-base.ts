@@ -291,6 +291,36 @@ export default abstract class AdminAbstractEditViewBase<
     });
   }
 
+  protected loadGroupFieldSelectOptions<T>(
+    source$: Observable<T[]>,
+    controlName: Extract<keyof TForm, string>,
+    groupFieldName: string,
+    valueKey: string,
+    labelKey: string,
+  ): void {
+    source$.subscribe({
+      next: (data) => {
+        const selectOptions = data.map((item) => ({
+          value: (item as any)[valueKey],
+          label: (item as any)[labelKey],
+        }));
+
+        const element = this.formConfig?.elements.find(
+          (x: any) => x.id === controlName,
+        );
+        if (element?.groupFields) {
+          const groupField = element.groupFields.find(
+            (f: any) => f.name === groupFieldName,
+          );
+          if (groupField) {
+            groupField.values = selectOptions;
+          }
+        }
+      },
+      error: (err) => this.handleSelectLoadError(err, controlName),
+    });
+  }
+
   protected handleSelectLoadError(err?: any, controlName?: string): void {
     this.toast.error(
       "Greška prilikom učitavanja povezanih podataka. Formu trenutno nije moguće ispravno popuniti.",

@@ -15,6 +15,15 @@ export interface DataFormConfig<TEntity extends ApiResource, TForm> {
   requestFieldMap?: FormToRequestFieldMap<TForm>;
 }
 
+export interface DataFormGroupField {
+  name: string;
+  label: string;
+  type: DataFormElementType;
+  values?: DataFormSelectOption[];
+  validators?: ValidatorConfig[];
+  defaultValue?: any;
+}
+
 export interface DataFormElement<TForm> {
   id: Extract<keyof TForm, string>;
   name: Extract<keyof TForm, string>;
@@ -32,12 +41,14 @@ export interface DataFormElement<TForm> {
     item: SearchableSelectItem,
   ) => Record<string, unknown>;
   onChange?: (value: any, form: FormGroup) => void;
+  groupFields?: DataFormGroupField[];
 }
 
 export enum DataFormControlMode {
   Control = "Control",
   Array = "Array",
   Group = "Group",
+  ArrayGroup = "ArrayGroup",
 }
 
 // Maps form field names to request (backend) field names
@@ -59,6 +70,7 @@ export enum DataFormElementType {
   TextArea,
   Time,
   Checkbox,
+  Group,
 }
 
 export interface DataFormRouteConfig<TEntity extends ApiResource> {
