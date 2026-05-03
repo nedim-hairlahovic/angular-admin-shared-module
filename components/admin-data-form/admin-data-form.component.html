@@ -153,7 +153,8 @@
                         <!-- Array Types -->
                         @if (input.mode === DataFormControlMode.Array) {
                         <div [formArrayName]="input.name" class="form-array-section">
-                            <label class="form-label mb-2">{{ input.label }}</label>
+                            <label class="form-label mb-2">{{ input.label }}@if (isRequired(input)) {<span
+                                    class="required-indicator">*</span>}</label>
 
                             <div class="form-array-list">
                                 @for (el of getFormArray(input.name).controls; track el; let i = $index) {
