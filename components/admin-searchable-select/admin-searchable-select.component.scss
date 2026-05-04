@@ -12,14 +12,18 @@
 }
 
 .input-container.disabled .form-control {
-    background-color: #e9ecef;
-    cursor: not-allowed;
+    background-color: #f0f0f0;
+    color: #9ca3af;
+    border: 1px solid #d1d5db;
+    cursor: default;
+    opacity: 1;
     pointer-events: none;
 }
 
 .input-container.disabled .overlay {
-    background-color: #e9ecef;
-    cursor: not-allowed;
+    background-color: #f0f0f0;
+    color: #9ca3af;
+    cursor: default;
 }
 
 .input-container .overlay {
