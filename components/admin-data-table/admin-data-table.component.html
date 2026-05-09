@@ -1,7 +1,23 @@
 @if (!simpleTable) {
 <div class="card shadow mb-4">
+    @if (config.title) {
+    <div class="card-header py-3 d-flex align-items-center justify-content-between">
+        <h6 class="m-0 font-weight-bold text-primary">{{ config.title }}</h6>
+        <div class="d-flex align-items-center gap-2">
+            @for (button of config.buttons; track $index) {
+            <button (click)="handleBtnClick(button.actionName)" class="btn" [class]="button.class">
+                @if (button.icon) {
+                <i [class]="button.icon" class="fa text-white-50 me-1" style="font-size: 14px;"></i>
+                }
+                <span class="text">{{ button.label }}</span>
+            </button>
+            }
+        </div>
+    </div>
+    }
     <div class="card-body">
 
+        @if (config.dataOptions?.search || (!config.title && config.buttons?.length)) {
         <div class="row mb-3">
             <div class="d-flex align-items-center justify-content-between">
                 <div class="flex-grow-1 d-flex align-items-center">
@@ -29,7 +45,8 @@
                     </form>
                     }
 
-                    <!-- Action buttons -->
+                    <!-- Action buttons (only when no title; otherwise rendered in card-header) -->
+                    @if (!config.title) {
                     <div class="ms-auto d-flex align-items-center gap-2">
                         @for (button of config.buttons; track $index) {
                         <button (click)="handleBtnClick(button.actionName)" class="btn" [class]="button.class">
@@ -40,9 +57,11 @@
                         </button>
                         }
                     </div>
+                    }
                 </div>
             </div>
         </div>
+        }
 
         <!-- Table -->
         <div class="table-responsive">
