@@ -6,3 +6,17 @@
     margin-bottom: 0;
     color: #363d47;
 }
+
+.modal-header,
+.modal-footer {
+    border-color: #edf0f5;
+}
+
+.btn-close {
+    font-size: 0.65rem;
+    opacity: 0.35;
+
+    &:hover {
+        opacity: 0.6;
+    }
+}

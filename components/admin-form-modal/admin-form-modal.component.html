@@ -1,0 +1,23 @@
+<admin-modal [show]="show" [title]="title" [size]="size" (closed)="closed.emit()">
+    <admin-data-form [config]="config" [formProcessing]="formProcessing" [formId]="formId"
+        [backendFieldErrors]="backendFieldErrors" (btnSaveEvent)="btnSaveEvent.emit($event)"
+        (formValidChange)="formValid = $event">
+    </admin-data-form>
+
+    <div modal-footer class="modal-footer d-flex justify-content-between align-items-center">
+        <div class="d-flex gap-2">
+            <button type="button" class="btn-cancel" (click)="closed.emit()">{{ cancelLabel }}</button>
+            @for (action of actions; track action.name) {
+            <button type="button" class="btn btn-{{ action.variant }}" [disabled]="action.disabled || formProcessing"
+                (click)="actionClick.emit(action.name)">{{ action.label }}</button>
+            }
+        </div>
+        <button type="submit" [attr.form]="formId" class="btn btn-primary" [disabled]="!formValid || formProcessing">
+            @if (formProcessing) {
+            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+            } @else {
+            <span>{{ saveLabel }}</span>
+            }
+        </button>
+    </div>
+</admin-modal>

@@ -22,9 +22,13 @@ import { AdminConfirmDialogHostComponent } from "./components/admin-confirm-dial
 import { AdminStatusIconComponent } from "./components/admin-status-icon/admin-status-icon.component";
 import { AdminImageUploadComponent } from "./components/admin-image-upload/admin-image-upload.component";
 import { AdminBadgeComponent } from "./components/admin-badge/admin-badge.component";
+import { AdminFormCardComponent } from "./components/admin-form-card/admin-form-card.component";
+import { AdminFormModalComponent } from "./components/admin-form-modal/admin-form-modal.component";
 
 const ADMIN_SHARED_STANDALONE = [
   AdminDataFormComponent,
+  AdminFormCardComponent,
+  AdminFormModalComponent,
   AdminDetailsViewComponent,
   AdminDataTableComponent,
   AdminBreadcrumbsComponent,

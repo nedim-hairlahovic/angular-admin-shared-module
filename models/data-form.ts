@@ -1,16 +1,15 @@
 import { Type } from "@angular/core";
 import { FormGroup, ValidatorFn } from "@angular/forms";
 
-import { ApiResource } from "./api-resource";
 import { DataCrudService } from "../services/data.service";
 import { SearchableSelectItem } from "./searchable-select-item";
 import { UrlConfig } from "./url-config";
 
-export interface DataFormConfig<TEntity extends ApiResource, TForm> {
+export interface DataFormConfig<TEntity, TForm> {
   title?: string;
   elements: DataFormElement<TForm>[];
   data?: TForm;
-  routeConfig: DataFormRouteConfig<TEntity>;
+  routeConfig?: DataFormRouteConfig<TEntity>;
   isEditMode?: boolean;
   requestFieldMap?: FormToRequestFieldMap<TForm>;
 }
@@ -73,7 +72,7 @@ export enum DataFormElementType {
   Group,
 }
 
-export interface DataFormRouteConfig<TEntity extends ApiResource> {
+export interface DataFormRouteConfig<TEntity> {
   onSave: (item: TEntity) => UrlConfig;
   onNotFound: UrlConfig;
 }

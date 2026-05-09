@@ -11,7 +11,7 @@
 }
 
 @if (dataLoaded) {
-<admin-data-form [config]="formConfig" [formProcessing]="processingRequest" [backendFieldErrors]="backendFieldErrors"
+<admin-form-card [config]="formConfig" [formProcessing]="processingRequest" [backendFieldErrors]="backendFieldErrors"
     (btnSaveEvent)="onSave($event)">
-</admin-data-form>
+</admin-form-card>
 }

@@ -1,0 +1,19 @@
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow mb-4">
+            <div class="card-body">
+                <admin-data-form [config]="config" [formProcessing]="formProcessing"
+                    [backendFieldErrors]="backendFieldErrors" (btnSaveEvent)="btnSaveEvent.emit($event)"
+                    (formValidChange)="formValid = $event">
+                    <button type="submit" class="btn btn-primary" [disabled]="!formValid || formProcessing">
+                        @if (formProcessing) {
+                        <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        } @else {
+                        <span>Spremi</span>
+                        }
+                    </button>
+                </admin-data-form>
+            </div>
+        </div>
+    </div>
+</div>

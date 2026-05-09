@@ -27,7 +27,6 @@ import {
   DataFormElementType,
   ValidatorConfig,
 } from "../../models/data-form";
-import { ApiResource } from "../../models/api-resource";
 import { AdminSearchableSelectComponent } from "../admin-searchable-select/admin-searchable-select.component";
 import { TooltipDirective } from "../../directives/tooltip.directive";
 
@@ -42,11 +41,7 @@ import { TooltipDirective } from "../../directives/tooltip.directive";
     TooltipDirective,
   ],
 })
-export class AdminDataFormComponent<
-  TEntity extends ApiResource,
-  TRequest,
-  TForm,
->
+export class AdminDataFormComponent<TEntity, TRequest, TForm>
   implements OnInit, OnChanges, AfterViewInit
 {
   @ViewChildren(FormControlName, { read: ElementRef })
@@ -55,7 +50,9 @@ export class AdminDataFormComponent<
   @Input() config!: DataFormConfig<TEntity, TForm>;
   @Input() backendFieldErrors: Record<string, string> | null = null;
   @Input() formProcessing!: boolean;
+  @Input() formId: string = "";
   @Output() btnSaveEvent = new EventEmitter<TRequest>();
+  @Output() formValidChange = new EventEmitter<boolean>();
 
   mode!: "ADD" | "EDIT";
   dataForm!: FormGroup;
@@ -85,6 +82,7 @@ export class AdminDataFormComponent<
 
     this.initDataForm();
     this.updateDataForm();
+    this.formValidChange.emit(this.dataForm.valid);
   }
 
   private previousConfigData: any;
@@ -93,6 +91,8 @@ export class AdminDataFormComponent<
     // Only update the form if the actual config.data reference has changed
     // (avoid unnecessary form resets caused by unrelated Input changes like formProcessing)
     if (changes["config"] && !changes["config"].firstChange) {
+      this.mode = this.config.isEditMode ? "EDIT" : "ADD";
+
       const currentData = this.config?.data;
       const previousData = this.previousConfigData;
 
@@ -123,7 +123,12 @@ export class AdminDataFormComponent<
           this.dataForm,
           this.validationMessages,
         );
+        this.formValidChange.emit(this.dataForm.valid);
       });
+
+    this.dataForm.statusChanges.subscribe(() => {
+      this.formValidChange.emit(this.dataForm.valid);
+    });
   }
 
   initDataForm(): void {

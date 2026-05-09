@@ -31,12 +31,11 @@ export class AdminModalComponent implements OnChanges, AfterViewInit {
   @Output() closed = new EventEmitter<void>();
 
   ngAfterViewInit(): void {
-    // Initialize backdrop as hidden
-    this.backdropRef.nativeElement.style.display = "none";
+    this.show ? this.openModal() : this.closeModal();
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes["show"]) {
+    if (changes["show"] && !changes["show"].firstChange) {
       this.show ? this.openModal() : this.closeModal();
     }
   }
