@@ -330,8 +330,6 @@ export default abstract class AdminAbstractEditViewBase<
   }
 
   protected toFormString(value: unknown, fallback = ""): string {
-    return value === null || value === undefined || value === 0
-      ? fallback
-      : String(value);
+    return value === null || value === undefined ? fallback : String(value);
   }
 }

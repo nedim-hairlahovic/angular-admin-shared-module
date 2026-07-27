@@ -72,6 +72,7 @@ export class AdminDataFormComponent<TEntity, TRequest, TForm>
   readonly TEXTAREA: DataFormElementType = DataFormElementType.TextArea;
   readonly TIME: DataFormElementType = DataFormElementType.Time;
   readonly CHECKBOX: DataFormElementType = DataFormElementType.Checkbox;
+  readonly RADIO: DataFormElementType = DataFormElementType.Radio;
 
   DataFormControlMode = DataFormControlMode;
 

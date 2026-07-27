@@ -69,6 +69,7 @@ export enum DataFormElementType {
   TextArea,
   Time,
   Checkbox,
+  Radio,
   Group,
 }
 
