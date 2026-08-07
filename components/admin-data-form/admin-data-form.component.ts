@@ -28,6 +28,7 @@ import {
   ValidatorConfig,
 } from "../../models/data-form";
 import { AdminSearchableSelectComponent } from "../admin-searchable-select/admin-searchable-select.component";
+import { CustomFieldHostDirective } from "../../directives/custom-field-host.directive";
 import { TooltipDirective } from "../../directives/tooltip.directive";
 
 @Component({
@@ -38,6 +39,7 @@ import { TooltipDirective } from "../../directives/tooltip.directive";
   imports: [
     ReactiveFormsModule,
     AdminSearchableSelectComponent,
+    CustomFieldHostDirective,
     TooltipDirective,
   ],
 })
@@ -73,6 +75,7 @@ export class AdminDataFormComponent<TEntity, TRequest, TForm>
   readonly TIME: DataFormElementType = DataFormElementType.Time;
   readonly CHECKBOX: DataFormElementType = DataFormElementType.Checkbox;
   readonly RADIO: DataFormElementType = DataFormElementType.Radio;
+  readonly CUSTOM: DataFormElementType = DataFormElementType.Custom;
 
   DataFormControlMode = DataFormControlMode;
 
@@ -428,6 +431,19 @@ export class AdminDataFormComponent<TEntity, TRequest, TForm>
     }
 
     control.setValue(event?.value ?? null);
+    control.markAsTouched();
+    control.markAsDirty();
+    control.updateValueAndValidity({ emitEvent: true });
+  }
+
+  onCustomFieldChange(controlName: string, value: any) {
+    const control = this.dataForm.get(controlName);
+
+    if (!control) {
+      return;
+    }
+
+    control.setValue(value);
     control.markAsTouched();
     control.markAsDirty();
     control.updateValueAndValidity({ emitEvent: true });

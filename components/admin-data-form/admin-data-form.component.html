@@ -1,6 +1,7 @@
 <form novalidate [formGroup]="dataForm" (ngSubmit)="onSave()" [id]="formId || 'form-id'">
 
     @for (input of config.elements; track $index) {
+    @if (!input.hidden) {
     <div class="mb-3">
 
         <!-- Single Controls -->
@@ -163,6 +164,21 @@
         </div>
         }
 
+        @if (input.type === CUSTOM && input.component) {
+        <label [for]="input.id" class="form-label">{{ input.label }}@if (isRequired(input)) {<span
+                class="required-indicator">*</span>}
+        </label>
+        <input type="hidden" class="form-control" [id]="input.id" [formControlName]="input.name">
+
+        <ng-container [customFieldHost]="input.component" [initialValue]="getFormInputValue(input.name)"
+            (valueChange)="onCustomFieldChange(input.name, $event)">
+        </ng-container>
+
+        <div class="invalid-feedback d-block">
+            {{ displayMessages[input.name] }}
+        </div>
+        }
+
         }
 
         <!-- Array Types -->
@@ -282,6 +298,7 @@
         }
 
     </div>
+    }
     }
 
     <ng-content></ng-content>

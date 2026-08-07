@@ -1,9 +1,17 @@
-import { Type } from "@angular/core";
+import { EventEmitter, Type } from "@angular/core";
 import { FormGroup, ValidatorFn } from "@angular/forms";
 
 import { DataCrudService } from "../services/data.service";
 import { SearchableSelectItem } from "./searchable-select-item";
 import { UrlConfig } from "./url-config";
+
+// Contract for any component plugged in via DataFormElementType.Custom.
+// The dynamic form engine only ever talks to this shape - it never needs
+// to know about the concrete (app-specific) component implementing it.
+export interface DataFormCustomFieldComponent<T = any> {
+  initialValue: T | null;
+  valueChange: EventEmitter<T>;
+}
 
 export interface DataFormConfig<TEntity, TForm> {
   title?: string;
@@ -35,12 +43,17 @@ export interface DataFormElement<TForm> {
   dataService?: DataCrudService<any, any>;
   defaultValue?: any;
   disabled?: boolean;
+  hidden?: boolean;
   itemComponent?: Type<any>;
   itemComponentInputsFn?: (
     item: SearchableSelectItem,
   ) => Record<string, unknown>;
   onChange?: (value: any, form: FormGroup) => void;
   groupFields?: DataFormGroupField[];
+  // Used with DataFormElementType.Custom: the component rendered for this
+  // field. Must satisfy DataFormCustomFieldComponent (initialValue in,
+  // valueChange out) - see CustomFieldHostDirective.
+  component?: Type<DataFormCustomFieldComponent>;
 }
 
 export enum DataFormControlMode {
@@ -71,6 +84,7 @@ export enum DataFormElementType {
   Checkbox,
   Radio,
   Group,
+  Custom,
 }
 
 export interface DataFormRouteConfig<TEntity> {
